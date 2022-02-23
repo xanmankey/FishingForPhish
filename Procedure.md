@@ -1,4 +1,3 @@
-# DNF
 ## PREFACE
 This is the procedure that I followed, for those that want to attempt to replicate my experiment. 
 It's important to understand that due to the number of differences between computer builds and setups, exact replication will be difficult, but I went into as much detail as possible here to help with replicability as much as I could. This meant including a detailed methodology file (right here), 
