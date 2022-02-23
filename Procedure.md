@@ -1,10 +1,10 @@
 # DNF
 ## PREFACE
-This is the exact procedure that I followed, for those that want to attempt to replicate my experiment. 
+This is the procedure that I followed, for those that want to attempt to replicate my experiment. 
 It's important to understand that due to the number of differences between computer builds and setups, exact replication will be difficult, but I went into as much detail as possible here to help with replicability as much as I could. This meant including a detailed methodology file (right here), 
 as well as including datasets (images and .arff files), my .model files (which can be used to load up a WEKA classification algorithm; in regards to feature selection, 
 I didn't change the default WEKA settings at all, so config files aren't necessary), and my model output files (for WEKA classification models and feature selection). 
-These can be found in their respective directory in the repository.
+These can be found in their respective directory in the repository. Also, as much as I tried to avoid it, I ended up having to manually review my datasets for error screenshots, as not every screenshot took successfully, and some images wouldn't load using Selenium WebDriver, so I was forced to make adjustments to my datasets accordingly. However, the datasets that I got (from Open Page Rank and PhishStats) fluctuate at a high level anyway, and a machine learning methodology encourages the application of new data, so even though this comes at the cost of exact replicability from step 1 (which wasn't feasible anyway), the final datasets are provided (after preprocessing and manual review) and I highly encourage either making adaptations to my methodology or using new data to train the models.
 #### 🛈 A word of caution before attempting to replicate my methodology, your data may be at risk if you don't take proper precautions, due to the nature of phishing websites
 ## MATERIALS
 ### SPECS
@@ -20,7 +20,7 @@ These can be found in their respective directory in the repository.
   - Vercel (https://vercel.com/) for server hosting
 ### DATASETS
   - 5000 phishing-5000 legitimate dataset (https://doi.org/10.17632/h3cgnj8hft.1)
-  - 500 Phishing Screenshots for training the model (I acquired data from the PhishStats database (https://phishstats.info/) on February 16th, and only took screenshots of phishing sites with phish scores of 7 and up to help differentiate phishing sites from non-phishing sites. In hindsight, randomized sites may have been a better idea, as only using phishing sites with high phishscores may have included bias in my model and hurt my overall accuracy). Phash algorithms and manual review turned this dataset into 100 images.
+  - 500 Phishing Screenshots for training the model (I acquired data from the PhishStats database (https://phishstats.info/). I only took screenshots of phishing sites with phish scores of 7 and up to help differentiate phishing sites from non-phishing sites. In hindsight, randomized sites may have been a better idea, as only using phishing sites with high phishscores may have included bias in my model and hurt my overall accuracy). Phash algorithms and manual review turned this dataset into 100 images.
   - 500 Legitimate screenshots for training the model (https://www.domcop.com/, Open Page Rank data). Phash algorithms and manual review turned this dataset into 200 images.
 ## METHODS
 1. Collect all necessary data (the datasets are included in the GitHub repository; credit goes to the databases and researchers who created them). 
