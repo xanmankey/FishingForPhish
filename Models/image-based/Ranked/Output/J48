@@ -1,0 +1,90 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     AllFileNames-weka.filters.unsupervised.instance.imagefilter.FCTHFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.EdgeHistogramFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.ColorLayoutFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.BinaryPatternsPyramidFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.attribute.Remove-R1,5-35,37,40-109,113-763,766-774,776-779,781-818,820-824,826-843,845-855,857-859,861-862,864-871,873-877,879-895,897-918,921-943,945-1062-weka.filters.supervised.instance.SMOTE-C0-K5-P100.0-S1
+Instances:    400
+Attributes:   26
+              Spatial Pyramid of Local Binary Patterns0
+              Spatial Pyramid of Local Binary Patterns1
+              Spatial Pyramid of Local Binary Patterns2
+              Spatial Pyramid of Local Binary Patterns34
+              Spatial Pyramid of Local Binary Patterns36
+              Spatial Pyramid of Local Binary Patterns37
+              Spatial Pyramid of Local Binary Patterns108
+              Spatial Pyramid of Local Binary Patterns109
+              Spatial Pyramid of Local Binary Patterns110
+              MPEG-7 Color Layout6
+              MPEG-7 Color Layout7
+              MPEG-7 Color Layout17
+              MPEG-7 Color Layout22
+              MPEG-7 Edge Histogram28
+              MPEG-7 Edge Histogram34
+              MPEG-7 Edge Histogram53
+              MPEG-7 Edge Histogram65
+              MPEG-7 Edge Histogram69
+              MPEG-7 Edge Histogram72
+              FCTH1
+              FCTH7
+              FCTH25
+              FCTH48
+              FCTH49
+              FCTH73
+              CLASS_LABEL
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+Spatial Pyramid of Local Binary Patterns0 <= 0.938567
+|   Spatial Pyramid of Local Binary Patterns110 <= 0.941268: 1 (173.0/3.0)
+|   Spatial Pyramid of Local Binary Patterns110 > 0.941268
+|   |   Spatial Pyramid of Local Binary Patterns37 <= 0.184707
+|   |   |   Spatial Pyramid of Local Binary Patterns110 <= 1.380701: 1 (4.0)
+|   |   |   Spatial Pyramid of Local Binary Patterns110 > 1.380701: 0 (3.0/1.0)
+|   |   Spatial Pyramid of Local Binary Patterns37 > 0.184707: 0 (3.0)
+Spatial Pyramid of Local Binary Patterns0 > 0.938567
+|   Spatial Pyramid of Local Binary Patterns108 <= 0.812469
+|   |   MPEG-7 Edge Histogram69 <= 0.383716: 0 (8.0/1.0)
+|   |   MPEG-7 Edge Histogram69 > 0.383716: 1 (16.0/1.0)
+|   Spatial Pyramid of Local Binary Patterns108 > 0.812469
+|   |   Spatial Pyramid of Local Binary Patterns34 <= 2.682347
+|   |   |   MPEG-7 Edge Histogram28 <= 1.494734
+|   |   |   |   MPEG-7 Edge Histogram34 <= 3: 0 (8.0)
+|   |   |   |   MPEG-7 Edge Histogram34 > 3: 1 (3.0/1.0)
+|   |   |   MPEG-7 Edge Histogram28 > 1.494734: 1 (5.0)
+|   |   Spatial Pyramid of Local Binary Patterns34 > 2.682347: 0 (177.0/2.0)
+
+Number of Leaves  : 	10
+
+Size of the tree : 	19
+
+
+Time taken to build model: 0.02 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances         371               92.75   %
+Incorrectly Classified Instances        29                7.25   %
+Kappa statistic                          0.855 
+Mean absolute error                      0.0853
+Root mean squared error                  0.2534
+Relative absolute error                 17.0619 %
+Root relative squared error             50.6743 %
+Total Number of Instances              400     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.920    0.065    0.934      0.920    0.927      0.855    0.923     0.876     0
+                 0.935    0.080    0.921      0.935    0.928      0.855    0.923     0.893     1
+Weighted Avg.    0.928    0.073    0.928      0.928    0.927      0.855    0.923     0.884     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 184  16 |   a = 0
+  13 187 |   b = 1
+

@@ -1,0 +1,63 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     AllFileNames-weka.filters.unsupervised.instance.imagefilter.FCTHFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.EdgeHistogramFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.ColorLayoutFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.BinaryPatternsPyramidFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.supervised.instance.SMOTE-C0-K5-P100.0-S1-weka.filters.unsupervised.attribute.Remove-R1
+Instances:    400
+Attributes:   1062
+              [list of attributes omitted]
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+Spatial Pyramid of Local Binary Patterns0 <= 0.982932
+|   Spatial Pyramid of Local Binary Patterns398 <= 0.792851: 1 (177.0/2.0)
+|   Spatial Pyramid of Local Binary Patterns398 > 0.792851
+|   |   Spatial Pyramid of Local Binary Patterns243 <= 0: 0 (6.0)
+|   |   Spatial Pyramid of Local Binary Patterns243 > 0: 1 (5.0)
+Spatial Pyramid of Local Binary Patterns0 > 0.982932
+|   Spatial Pyramid of Local Binary Patterns142 <= 2.509534
+|   |   MPEG-7 Edge Histogram3 <= 1.419494
+|   |   |   FCTH12 <= 1: 0 (14.0/1.0)
+|   |   |   FCTH12 > 1: 1 (4.0)
+|   |   MPEG-7 Edge Histogram3 > 1.419494: 1 (9.0)
+|   Spatial Pyramid of Local Binary Patterns142 > 2.509534
+|   |   Spatial Pyramid of Local Binary Patterns73 <= 0.441695
+|   |   |   Spatial Pyramid of Local Binary Patterns306 <= 0: 0 (9.0)
+|   |   |   Spatial Pyramid of Local Binary Patterns306 > 0: 1 (5.0)
+|   |   Spatial Pyramid of Local Binary Patterns73 > 0.441695: 0 (171.0/1.0)
+
+Number of Leaves  : 	9
+
+Size of the tree : 	17
+
+
+Time taken to build model: 0.19 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances         377               94.25   %
+Incorrectly Classified Instances        23                5.75   %
+Kappa statistic                          0.885 
+Mean absolute error                      0.0634
+Root mean squared error                  0.233 
+Relative absolute error                 12.6894 %
+Root relative squared error             46.5908 %
+Total Number of Instances              400     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.935    0.050    0.949      0.935    0.942      0.885    0.942     0.935     0
+                 0.950    0.065    0.936      0.950    0.943      0.885    0.942     0.899     1
+Weighted Avg.    0.943    0.058    0.943      0.943    0.942      0.885    0.942     0.917     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 187  13 |   a = 0
+  10 190 |   b = 1
+

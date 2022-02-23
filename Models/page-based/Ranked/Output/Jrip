@@ -1,0 +1,66 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.JRip -F 3 -N 2.0 -O 2 -S 1
+Relation:     feature_compiled_all-weka.filters.unsupervised.attribute.Remove-R46-50,53,56-60-weka.filters.unsupervised.attribute.Remove-R2-4,6-26,28-33,36-38,40-47-weka.filters.unsupervised.attribute.Remove-R7
+Instances:    10000
+Attributes:   7
+              NumDots
+              NumDash
+              PctExtHyperlinks
+              PctNullSelfRedirectHyperlinks
+              FrequentDomainNameMismatch
+              SubmitInfoToEmail
+              CLASS_LABEL
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+JRIP rules:
+===========
+
+(PctExtHyperlinks <= 0) and (PctNullSelfRedirectHyperlinks >= 0.454545) => CLASS_LABEL=1 (975.0/4.0)
+(FrequentDomainNameMismatch >= 1) and (NumDash <= 1) and (PctExtHyperlinks >= 0.888889) and (NumDots >= 3) => CLASS_LABEL=1 (592.0/4.0)
+(PctExtHyperlinks <= 0.002793) and (PctNullSelfRedirectHyperlinks <= 0) and (SubmitInfoToEmail <= 0) and (NumDash <= 1) => CLASS_LABEL=1 (1783.0/169.0)
+(PctExtHyperlinks >= 0.833333) and (NumDash <= 2) => CLASS_LABEL=1 (867.0/17.0)
+(FrequentDomainNameMismatch >= 1) and (NumDash <= 1) and (SubmitInfoToEmail <= 0) => CLASS_LABEL=1 (230.0/22.0)
+(PctNullSelfRedirectHyperlinks >= 0.661017) => CLASS_LABEL=1 (201.0/1.0)
+(PctExtHyperlinks <= 0) and (PctNullSelfRedirectHyperlinks <= 0) and (SubmitInfoToEmail <= 0) and (NumDash <= 3) => CLASS_LABEL=1 (242.0/39.0)
+(PctExtHyperlinks >= 0.736842) and (FrequentDomainNameMismatch <= 0) and (NumDots >= 2) => CLASS_LABEL=1 (78.0/8.0)
+(PctExtHyperlinks <= 0) and (NumDash >= 2) and (PctNullSelfRedirectHyperlinks <= 0) and (NumDash <= 4) and (NumDots >= 2) and (SubmitInfoToEmail <= 0) => CLASS_LABEL=1 (32.0/3.0)
+(PctExtHyperlinks >= 0.375) and (PctNullSelfRedirectHyperlinks >= 0.166667) and (NumDots >= 3) => CLASS_LABEL=1 (31.0/0.0)
+(PctExtHyperlinks >= 0.481481) and (NumDots >= 3) and (FrequentDomainNameMismatch >= 1) => CLASS_LABEL=1 (49.0/10.0)
+(PctNullSelfRedirectHyperlinks >= 0.111111) and (PctExtHyperlinks >= 0.5) => CLASS_LABEL=1 (31.0/3.0)
+(PctNullSelfRedirectHyperlinks <= 0) and (PctExtHyperlinks >= 0.256757) and (NumDash <= 3) and (PctExtHyperlinks <= 0.258741) => CLASS_LABEL=1 (12.0/1.0)
+(NumDots >= 3) and (PctExtHyperlinks <= 0.375) and (PctExtHyperlinks >= 0.375) and (NumDash >= 1) => CLASS_LABEL=1 (7.0/0.0)
+ => CLASS_LABEL=0 (4870.0/151.0)
+
+Number of Rules : 15
+
+
+Time taken to build model: 0.8 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances        9519               95.19   %
+Incorrectly Classified Instances       481                4.81   %
+Kappa statistic                          0.9038
+Mean absolute error                      0.0848
+Root mean squared error                  0.2108
+Relative absolute error                 16.9558 %
+Root relative squared error             42.1692 %
+Total Number of Instances            10000     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.937    0.033    0.966      0.937    0.951      0.904    0.967     0.963     0
+                 0.967    0.063    0.938      0.967    0.953      0.904    0.967     0.956     1
+Weighted Avg.    0.952    0.048    0.952      0.952    0.952      0.904    0.967     0.960     
+
+=== Confusion Matrix ===
+
+    a    b   <-- classified as
+ 4683  317 |    a = 0
+  164 4836 |    b = 1
+

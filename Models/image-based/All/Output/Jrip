@@ -1,0 +1,49 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.JRip -F 3 -N 2.0 -O 2 -S 1
+Relation:     AllFileNames-weka.filters.unsupervised.instance.imagefilter.FCTHFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.EdgeHistogramFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.ColorLayoutFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.unsupervised.instance.imagefilter.BinaryPatternsPyramidFilter-DC:\CODING\JS(java)\machineLearning\Github\Datasets\Image-based\Screenshots\Combined-weka.filters.supervised.instance.SMOTE-C0-K5-P100.0-S1-weka.filters.unsupervised.attribute.Remove-R1
+Instances:    400
+Attributes:   1062
+              [list of attributes omitted]
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+JRIP rules:
+===========
+
+(Spatial Pyramid of Local Binary Patterns0 <= 0.908478) and (Spatial Pyramid of Local Binary Patterns398 <= 0.792851) => CLASS_LABEL=1 (175.0/2.0)
+(Spatial Pyramid of Local Binary Patterns142 <= 2.038237) and (MPEG-7 Edge Histogram3 >= 0.906412) => CLASS_LABEL=1 (20.0/3.0)
+(Spatial Pyramid of Local Binary Patterns37 <= 0) and (Spatial Pyramid of Local Binary Patterns63 >= 1) => CLASS_LABEL=1 (7.0/0.0)
+ => CLASS_LABEL=0 (198.0/3.0)
+
+Number of Rules : 4
+
+
+Time taken to build model: 0.49 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances         367               91.75   %
+Incorrectly Classified Instances        33                8.25   %
+Kappa statistic                          0.835 
+Mean absolute error                      0.1023
+Root mean squared error                  0.2824
+Relative absolute error                 20.4554 %
+Root relative squared error             56.4894 %
+Total Number of Instances              400     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.910    0.075    0.924      0.910    0.917      0.835    0.923     0.926     0
+                 0.925    0.090    0.911      0.925    0.918      0.835    0.923     0.877     1
+Weighted Avg.    0.918    0.083    0.918      0.918    0.917      0.835    0.923     0.901     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 182  18 |   a = 0
+  15 185 |   b = 1
+
