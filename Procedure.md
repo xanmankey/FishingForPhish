@@ -10,13 +10,13 @@ These can be found in their respective directory in the repository. Also, as muc
   - Windows 64bit version 21H2 + Ubuntu version 20.04 setup using VS Codespaces (for working away from my personal setup)
 ### NOTABLE SOFTWARE (other dependencies can be found in requirements.txt)
   - WEKA GUI (preprocessing, feature selection, and classification; .model files can be found in the corresponding config folder), in addition to the imagefilters, the   SMOTE oversampling filter, dataset-weights, and the chi-squared attribute eval weka packages.
-  - Selenium Webdriver (for scraping HTML, verifying URLs, and other request-based functionality)
-  - webscreenshot (automates the screenshot process using the PhantomJS renderer; unfortunately due to the nature of some websites or slow load times, I am not able to   successfully take a screenshot of every website due to an enforced timeout of 1.8 seconds. If you want a higher success rate, it's possible that increasing the timeout with the command line argument --ajax-max-timeouts could help, but I chose to leave it as the recommended default, as I didn't want to sacrifice the speed of the website).
+  - Selenium Webdriver (for scraping HTML, verifying URLs, taking screenshots, and other request-based functionality)
   - flask (web framework; I wanted to implement Django, but I'd never used it before and didn't have the time to learn it for this project)
   - python-weka-wrapper3 (for adding machine learning functionality to the website)
   - imagehash (specifically the phash algorithm, to preprocess my images by using computer vision to search for exact duplicates)
   - CS50 IDE + VS Codespaces for development
   - Vercel (https://vercel.com/) for server hosting
+  - MongoDB for noSQL database hosting
 ### DATASETS
   - 5000 phishing-5000 legitimate dataset (https://doi.org/10.17632/h3cgnj8hft.1)
   - 500 Phishing Screenshots for training the model (I acquired data from the PhishStats database (https://phishstats.info/). I only took screenshots of phishing sites with phish scores of 7 and up (where 10 is defined as "OMG PHISHING" by PhishStats) to help differentiate phishing sites from non-phishing sites. In hindsight, randomized sites may have been a better idea, as only using phishing sites with high phishscores may have included bias in my model and hurt my overall accuracy). Phash algorithms and manual review turned this dataset into 100 images.
