@@ -40,3 +40,11 @@ STATS: Significance test (you come up with a hypothesis and check it, more data 
 Hypothesis/Significance test: (you come up with a hypothesis and check it; we're gonna get changes in our data due to chance, )
 Statistically significant (less than 5% of the time; if you run multiple significance tests, especially 20, the likelihood of getting some "significant" data is likely)
 Null hypothesis (what we want to disprove)
+
+An interesting idea that Mr. Pope brought up was the idea of a scoring system; this could be helpful and would add to the website, but I'm not quite sure how I would do this (I know I would need to understand my features well; this might help w/ the analysis portion: https://machinelearningmastery.com/use-statistical-significance-tests-interpret-machine-learning-results/). I'd like to look for a ML algorithm that calculates the % chance an instance belongs to a certain class and use it for the website if possible
+  
+I CAN'T EMAIL THE PROFESSIONAL UNTIL I HAVE A COMPLETED PROCEDURE AND ALL DATA
+EDA: the process to analyzing a dataset and summarizing it's main features
+  Numerical summary: mean, median, ect.
+  Graphical summary: graphs
+  
