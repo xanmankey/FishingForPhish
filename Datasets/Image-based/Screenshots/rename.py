@@ -1,11 +1,12 @@
+# A Backup renaming file (I figured I'd include it because I made the mistake of renaming my files to numbers, I don't imagine you will, 
+# but this helped me out just in case you make that same error)
 # In case you name the files incorrectly (or struggle to reverse engineer the image names using rename.py)
 # You can use string comparison and compare against the actual URLs
 from difflib import SequenceMatcher
 import os
 import sys
 
-# THIS DOESN'T OUTPUT CORRECT DATA... I'LL NEED TO FIGURE THIS OUT, BUT FINISHING THE METHODOLOGY COMES FIRST
-# THEN COMES THIS AND THE GITHUB
+
 if len(sys.argv) != 2:
     print("Usage: backupGetURLs.py yourFileForNames.txt")
 
