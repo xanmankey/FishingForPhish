@@ -1,0 +1,75 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.JRip -F 3 -N 2.0 -O 2 -S 1
+Relation:     Combined page and image based data-weka.filters.unsupervised.attribute.Remove-R1
+Instances:    273
+Attributes:   27
+              PctExtHyperlinks
+              PctNullSelfRedirectHyperlinks
+              FrequentDomainNameMismatch
+              NumDash
+              SubmitInfoToEmail
+              NumDots
+              FCTH18
+              FCTH24
+              FCTH25
+              FCTH42
+              FCTH43
+              Spatial Pyramid of Local Binary Patterns0
+              Spatial Pyramid of Local Binary Patterns1
+              Spatial Pyramid of Local Binary Patterns34
+              Spatial Pyramid of Local Binary Patterns36
+              Spatial Pyramid of Local Binary Patterns37
+              MPEG-7 Edge Histogram17
+              MPEG-7 Edge Histogram20
+              MPEG-7 Edge Histogram37
+              MPEG-7 Edge Histogram39
+              MPEG-7 Edge Histogram42
+              MPEG-7 Color Layout1
+              MPEG-7 Color Layout3
+              MPEG-7 Color Layout4
+              MPEG-7 Color Layout5
+              MPEG-7 Color Layout8
+              nom
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+JRIP rules:
+===========
+
+(Spatial Pyramid of Local Binary Patterns37 <= 0) => nom=1 (66.0/6.0)
+(Spatial Pyramid of Local Binary Patterns34 <= 2) and (NumDash >= 1) => nom=1 (8.0/0.0)
+(NumDots >= 3) and (PctExtHyperlinks <= 0.758621) => nom=1 (6.0/1.0)
+ => nom=0 (193.0/3.0)
+
+Number of Rules : 4
+
+
+Time taken to build model: 0.04 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances         252               92.3077 %
+Incorrectly Classified Instances        21                7.6923 %
+Kappa statistic                          0.8078
+Mean absolute error                      0.1076
+Root mean squared error                  0.2686
+Relative absolute error                 26.7246 %
+Root relative squared error             59.9208 %
+Total Number of Instances              273     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.949    0.145    0.944      0.949    0.947      0.808    0.912     0.946     0
+                 0.855    0.051    0.867      0.855    0.861      0.808    0.912     0.784     1
+Weighted Avg.    0.923    0.119    0.923      0.923    0.923      0.808    0.912     0.901     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 187  10 |   a = 0
+  11  65 |   b = 1
+
