@@ -1,4 +1,4 @@
-@relation 'feature_compiled_all-weka.filters.unsupervised.attribute.Remove-R46-50,53,56-60-weka.filters.unsupervised.attribute.Remove-R2-4,6-26,28-33,36-38,40-47-weka.filters.unsupervised.attribute.Remove-R7'
+@relation 'Ranked Phishing_Legitimate Attributes'
 
 @attribute NumDots numeric
 @attribute NumDash numeric

@@ -1,4 +1,4 @@
-@relation 'AllFileNames-weka.filters.unsupervised.instance.imagefilter.FCTHFilter-DC:\\CODING\\JS(java)\\machineLearning\\Github\\Datasets\\Image-based\\Screenshots\\Combined-weka.filters.unsupervised.instance.imagefilter.EdgeHistogramFilter-DC:\\CODING\\JS(java)\\machineLearning\\Github\\Datasets\\Image-based\\Screenshots\\Combined-weka.filters.unsupervised.instance.imagefilter.ColorLayoutFilter-DC:\\CODING\\JS(java)\\machineLearning\\Github\\Datasets\\Image-based\\Screenshots\\Combined-weka.filters.unsupervised.instance.imagefilter.BinaryPatternsPyramidFilter-DC:\\CODING\\JS(java)\\machineLearning\\Github\\Datasets\\Image-based\\Screenshots\\Combined-weka.filters.unsupervised.attribute.Remove-R1,5-35,37,40-109,113-763,766-774,776-779,781-818,820-824,826-843,845-855,857-859,861-862,864-871,873-877,879-895,897-918,921-943,945-1062-weka.filters.supervised.instance.SMOTE-C0-K5-P100.0-S1'
+@relation 'Ranked Image-Based Attributes'
 
 @attribute 'Spatial Pyramid of Local Binary Patterns0' numeric
 @attribute 'Spatial Pyramid of Local Binary Patterns1' numeric
