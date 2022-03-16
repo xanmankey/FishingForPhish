@@ -32,6 +32,7 @@ with open(sys.argv[3], "r") as r:
                 url = url.replace('\n', '')
                 errorURL, code = errors[i].split("  ")
                 errorURL = errorURL.replace("\n", "")
+                # https:///addons.mozilla.org/en-US/firefox/               
                 print(errorURL)
                 if url == errorURL:
                     i += 1
@@ -39,6 +40,7 @@ with open(sys.argv[3], "r") as r:
                 db.execute("INSERT INTO screenshots (url) VALUES (?)", url)
             for error in errors:
                 url, code = error.split("  ")
+                print(url)
                 # My initial split into connectionErrors versus other errors; outdated, might be changed in the future
                 # As there are likely to be other errors as well, this was just for initialization
                 if code != "HTML error" or code != "404":
@@ -57,5 +59,5 @@ with open(sys.argv[3], "r") as r:
                 if (meridian == 'PM'):
                     hour += 12
                 time = "%02d" % hour + time[2:8]
-                db.execute("INSERT INTO results (classification, time, externalURL, redirectURL, hostnameMismatch, numDash, numEmail, numDots, FCTH18, FCTH24, FCTH25, FCTH42, FCTH43, 'Spatial Pyramid of Local Binary Patterns0', 'Spatial Pyramid of Local Binary Patterns1', 'Spatial Pyramid of Local Binary Patterns34', 'Spatial Pyramid of Local Binary Patterns36', 'Spatial Pyramid of Local Binary Patterns37', 'MPEG-7 Edge Histogram17', 'MPEG-7 Edge Histogram20', 'MPEG-7 Edge Histogram37', 'MPEG-7 Edge Histogram39', 'MPEG-7 Edge Histogram42', 'MPEG-7 Color Layout1', 'MPEG-7 Color Layout3', 'MPEG-7 Color Layout4', 'MPEG-7 Color Layout5', 'MPEG-7 Color Layout8') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                classification, time, externalURL, redirectURL, hostnameMismatch, numDash, numEmail, numDots, FCTH18, FCTH24, FCTH25, FCTH42, FCTH43, Pyramid0, Pyramid1, Pyramid34, Pyramid36, Pyramid37, Edge17, Edge20, Edge37, Edge39, Edge42, Color1, Color3, Color4, Color5, Color8)
+                db.execute("INSERT INTO results (classification, time, externalURL, redirectURL, hostnameMismatch, numDash, numEmail, numDots, numLinks, urlLength FCTH18, FCTH24, FCTH25, FCTH42, FCTH43, 'Spatial Pyramid of Local Binary Patterns0', 'Spatial Pyramid of Local Binary Patterns1', 'Spatial Pyramid of Local Binary Patterns34', 'Spatial Pyramid of Local Binary Patterns36', 'Spatial Pyramid of Local Binary Patterns37', 'MPEG-7 Edge Histogram17', 'MPEG-7 Edge Histogram20', 'MPEG-7 Edge Histogram37', 'MPEG-7 Edge Histogram39', 'MPEG-7 Edge Histogram42', 'MPEG-7 Color Layout1', 'MPEG-7 Color Layout3', 'MPEG-7 Color Layout4', 'MPEG-7 Color Layout5', 'MPEG-7 Color Layout8') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                classification, time, externalURL, redirectURL, hostnameMismatch, numDash, numEmail, numDots, "?", "?", FCTH18, FCTH24, FCTH25, FCTH42, FCTH43, Pyramid0, Pyramid1, Pyramid34, Pyramid36, Pyramid37, Edge17, Edge20, Edge37, Edge39, Edge42, Color1, Color3, Color4, Color5, Color8)
