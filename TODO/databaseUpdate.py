@@ -45,8 +45,8 @@ with open(sys.argv[3], "r") as r:
                     db.execute("INSERT INTO errors (url, error) VALUES (?, ?)", url, code)
                 else:
                     db.execute("INSERT INTO connectionErrors (userInput, error) VALUES (?, ?)", url, code)
-            for i in range(len(instances) - dataSplit):
-                filename, externalURL, redirectURL, hostnameMismatch, numDash, numEmail, numDots, FCTH18, FCTH24, FCTH25, FCTH42, FCTH43, Pyramid0, Pyramid1, Pyramid34, Pyramid36, Pyramid37, Edge17, Edge20, Edge37, Edge39, Edge42, Color1, Color3, Color4, Color5, Color8, classification = instances[i + dataInitial].split(",")
+            for i in range(dataInitial, len(instances) - dataSplit):
+                filename, externalURL, redirectURL, hostnameMismatch, numDash, numEmail, numDots, FCTH18, FCTH24, FCTH25, FCTH42, FCTH43, Pyramid0, Pyramid1, Pyramid34, Pyramid36, Pyramid37, Edge17, Edge20, Edge37, Edge39, Edge42, Color1, Color3, Color4, Color5, Color8, classification = instances[i].split(",")
                 time = str(datetime.now())
                 time = time[11:19]
                 hour = int(time[:2])
