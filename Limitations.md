@@ -22,6 +22,7 @@ The thing that is most likely incorrect are my averaging scripts (especially for
 ASK about PctExtNullSelfRedirectHyperlinksRT
 I should mention that I used the source I found here: https://pdfs.semanticscholar.org/2589/5814fe70d994f7d673b6a6e2cc49f7f8d3b9.pdf for test legitimate websites (Malicious_n_Non-Malicious URL)
 Why does the Selenium web rename file method delete some files? Maybe search recycle bin? I want to get my Github out right away for use tomorrow
+I only looked at single webpages rather than entire websites
 
 
 POST PAPER
