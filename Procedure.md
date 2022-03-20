@@ -17,6 +17,7 @@ These can be found in their respective directory in the repository. Also, as muc
   - CS50 IDE + VS Codespaces for development
   - Vercel (https://vercel.com/) for server hosting
   - MongoDB for noSQL database hosting
+  - (Some other software that I'm currently using to revise my methodology: imagemagick and Beautiful Soup)
 ### DATASETS
   - 5000 phishing-5000 legitimate dataset (https://doi.org/10.17632/h3cgnj8hft.1)
   - 500 Phishing Screenshots for training the model (I acquired data from the PhishStats database (https://phishstats.info/). I only took screenshots of phishing sites with phish scores of 7 and up (where 10 is defined as "OMG PHISHING" by PhishStats) to help differentiate phishing sites from non-phishing sites. In hindsight, randomized sites may have been a better idea, as only using phishing sites with high phishscores may have included bias in my model and hurt my overall accuracy). Phash algorithms and manual review turned this dataset into 100 images.
