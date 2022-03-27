@@ -80,18 +80,4 @@ on the datasets, and then the scraping session and machine learning wrapper are 
     
 ----
 
-.. code-block:: python
-
-    from classes import initialize, page, image, combine
-    
-    def main():
-       # Initialization
-       print("test")
-       
-    if __name__ == "__main__":
-       main()
-      
-----
-
-
 Specifics regarding usage cases, classes, methods, and attributes can all be found in the documentation
