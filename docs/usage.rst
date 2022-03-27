@@ -35,41 +35,47 @@ features are automatically generated, a variety of datasets are automatically cr
 on the datasets, and then the scraping session and machine learning wrapper are closed and the program exits.
 
 .. code-block:: python
-    # Initialization
-    run = initialize()
-    run.initializeAll()
-
-    # PageBased data generation + initialization
-    pageData = page(
-        urlFile="data/urls.txt",
-        dataDir="data",
-        driver=run.driver,
-        BS=run.BS)
-    pageData.pageScrape()
-    print(pageData.pageFeatures)
-
-    # ImageBased data generation
-    imageData = image(
-        urlFile="data/urls.txt",
-        dataDir="data",
-        driver=run.driver,
-        BS=run.BS)
-    imageData.imageScrape()
-    print(imageData.imageFeatures)
-
-    # Data Combination
-    DC = combine(
-        pageFeatures=pageData.pageFeatures,
-        imageFeatures=imageData.imageFeatures,
-        urlFile="data/urls.txt",
-        dataDir="data")
-    DC.createDatasets()
+    from classes import initialize, page, image, combine
     
-    # Classification     
-    DC.classify()
-    
-    # Exiting
-    run.closeSelenium()
+    def main():
+       # Initialization
+       run = initialize()
+       run.initializeAll()
+
+       # PageBased data generation + initialization
+       pageData = page(
+           urlFile="data/urls.txt",
+           dataDir="data",
+           driver=run.driver,
+           BS=run.BS)
+       pageData.pageScrape()
+       print(pageData.pageFeatures)
+
+       # ImageBased data generation
+       imageData = image(
+           urlFile="data/urls.txt",
+           dataDir="data",
+           driver=run.driver,
+           BS=run.BS)
+       imageData.imageScrape()
+       print(imageData.imageFeatures)
+
+       # Data Combination
+       DC = combine(
+           pageFeatures=pageData.pageFeatures,
+           imageFeatures=imageData.imageFeatures,
+           urlFile="data/urls.txt",
+           dataDir="data")
+       DC.createDatasets()
+
+       # Classification     
+       DC.classify()
+
+       # Exiting
+       run.closeSelenium()
+       
+   if __name__ == "__main__":
+      main()
     
 ----
 
