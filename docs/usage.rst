@@ -86,7 +86,7 @@ on the datasets, and then the scraping session and machine learning wrapper are 
        # Initialization
        print("test")
        
-   if __name__ == "__main__":
+   if __name__ == "__main":
       main()
       
 ----
