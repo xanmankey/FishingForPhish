@@ -85,11 +85,10 @@ on the datasets, and then the scraping session and machine learning wrapper are 
     import subprocess
 
     # OWN
-    from rst_include import *
+    # from rst_include import *
 
     def main():
-        rst_inc(source='./.docs/README_template.rst', target='./README.rst')
-        rst_str_replace(source='./README.rst', target='', str_pattern='{{some pattern}}', str_replace='some text', inplace=True)
+        print("test")
 
     if __name__ == '__main':
         main()
