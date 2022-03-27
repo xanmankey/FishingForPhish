@@ -1,17 +1,14 @@
 Ready to go fishing for phish? (TODO)
 ===================================
 
-**FishingForPhish** is a Python library that I haven't started the documentation for for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
+**FishingForPhish** is a phishing detection framework that focuses on the detection of image and page based features. Classes and methods are provided for collecting data regarding proposed image-based features and page-based features from existing research, as well as for new features in order to attempt to determine new patterns or relationships. Selenium Webdriver, Python Weka Wrapper 3, Beautiful Soup, and ImageMagick are primarily used for feature detection. The classes and methods provided by this package are documented in the API section. An analysis of the detected features and resulting data thereof can be found here: TODO.
 
-Check out the :doc:`usage` section for further information, including
+See the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
 
 .. note::
 
-   This project is under active development.
+   This project is under active development. COntributions and adaptations of the methodology outlined in (TODO) are encouraged.
 
 Contents
 --------
