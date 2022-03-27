@@ -8,7 +8,7 @@ the :ref:`installation` of the project.
 
 .. note::
 
-   This project is under active development. COntributions and adaptations of the methodology outlined in (TODO) are encouraged.
+   This project is under active development. Contributions and adaptations of the methodology outlined in (TODO) are encouraged.
 
 Contents
 --------
