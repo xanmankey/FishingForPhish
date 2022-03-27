@@ -34,7 +34,7 @@ A common usage example can be found below, where scraping is initialized, the sc
 features are automatically generated, a variety of datasets are automatically created, classification algorithms are run 
 on the datasets, and then the scraping session and machine learning wrapper are closed and the program exits.
 
-.. code:: python
+.. code-block:: python
     # Initialization
     run = initialize()
     run.initializeAll()
@@ -70,5 +70,7 @@ on the datasets, and then the scraping session and machine learning wrapper are 
     
     # Exiting
     run.closeSelenium()
+    
+----
 
 Specifics regarding usage cases, classes, methods, and attributes can all be found in the documentation
