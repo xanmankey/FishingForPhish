@@ -19,29 +19,27 @@ You can do that by creating an instance of the class initialize and then calling
 
 The initialize class has 3 attributes: dataDir, driver, and BS:
 
-TODO: how to get rid of grey bar on the left?
-
-   * dataDir=None
+* dataDir=None
       The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
       "data" directory following the file system structure will be created.
-   * driver=None
+* driver=None
       The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
       the initialization process for it can be skipped).
-   * BS=None
+* BS=None
       The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
       
 The initialize class has 4 methods in addition to __init__() and initializeAll():
 
-   * installResources(self)
+* installResources(self)
       Installs potentially-useful resources used during the methodology of the research here: TODO. This includes the chiSquaredAttributeEval feature selector for WEKA, the SMOTE oversampler for WEKA, and the Wayback Machine add-on for Firefox.
-   * initializeSelenium(self, add_ons=None)
+* initializeSelenium(self, add_ons=None)
       Creates the Selenium instance. A list of paths to add_ons (.xpi files) can be passed to enhance the scraping experience. The wayback_machine add-on is added to the webdriver instance with the method initializeAll().
-   * initializePWW3(self, jvmOptions)
+* initializePWW3(self, jvmOptions)
       Starts JVM with a list of optional parameters, jvmOptions (some default options, system_cp and packages, are passed with the initializeAll() method).
-   * initializeBS(self, html)
+* initializeBS(self, html)
       Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
 
-initialize
+scrape
 ----------
 
 In order to scrape, parse html, or work with datasets, you first have to initialize the library.
@@ -56,26 +54,25 @@ You can do that by creating an instance of the class initialize and then calling
 
 The initialize class has 3 attributes: dataDir, driver, and BS:
 
-   * dataDir=None
+* dataDir=None
       The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
       "data" directory following the file system structure will be created.
-   * driver=None
+* driver=None
       The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
       the initialization process for it can be skipped).
-   * BS=None
+* BS=None
       The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
       
 The initialize class has 4 methods in addition to __init__() and initializeAll():
 
-   * installResources(self)
+* installResources(self)
       Installs potentially-useful resources used during the methodology of the research here: TODO. This includes the chiSquaredAttributeEval feature selector for WEKA, the SMOTE oversampler for WEKA, and the Wayback Machine add-on for Firefox.
-   * initializeSelenium(self, add_ons=None)
+* initializeSelenium(self, add_ons=None)
       Creates the Selenium instance. A list of paths to add_ons (.xpi files) can be passed to enhance the scraping experience. The wayback_machine add-on is added to the webdriver instance with the method initializeAll().
-   * initializePWW3(self, jvmOptions)
+* initializePWW3(self, jvmOptions)
       Starts JVM with a list of optional parameters, jvmOptions (some default options, system_cp and packages, are passed with the initializeAll() method).
-   * initializeBS(self, html)
+* initializeBS(self, html)
       Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
-
 
 .. autosummary::
    :toctree: generated
