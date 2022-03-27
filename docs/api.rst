@@ -19,6 +19,8 @@ You can do that by creating an instance of the class initialize and then calling
 
 The initialize class has 3 attributes: dataDir, driver, and BS:
 
+TODO: how to get rid of grey bar on the left?
+
    * dataDir=None
       The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
       "data" directory following the file system structure will be created.
