@@ -80,19 +80,48 @@ on the datasets, and then the scraping session and machine learning wrapper are 
 ----
 
 .. code-block:: python
-
-    # STDLIB
-    import subprocess
-
-    # OWN
-    # from rst_include import *
-
+    from classes import initialize, page, image, combine
+    
     def main():
-        print("test")
+       # Initialization
+       run = initialize()
+       run.initializeAll()
 
-    if __name__ == '__main':
-        main()
+       # PageBased data generation + initialization
+       pageData = page(
+           urlFile="data/urls.txt",
+           dataDir="data",
+           driver=run.driver,
+           BS=run.BS)
+       pageData.pageScrape()
+       print(pageData.pageFeatures)
 
+       # ImageBased data generation
+       imageData = image(
+           urlFile="data/urls.txt",
+           dataDir="data",
+           driver=run.driver,
+           BS=run.BS)
+       imageData.imageScrape()
+       print(imageData.imageFeatures)
+
+       # Data Combination
+       DC = combine(
+           pageFeatures=pageData.pageFeatures,
+           imageFeatures=imageData.imageFeatures,
+           urlFile="data/urls.txt",
+           dataDir="data")
+       DC.createDatasets()
+
+       # Classification     
+       DC.classify()
+
+       # Exiting
+       run.closeSelenium()
+       
+   if __name__ == "__main__":
+      main()
+      
 ----
 
 
