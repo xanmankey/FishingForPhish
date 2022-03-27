@@ -34,7 +34,7 @@ A common usage example can be found below, where scraping is initialized, the sc
 features are automatically generated, a variety of datasets are automatically created, classification algorithms are run 
 on the datasets, and then the scraping session and machine learning wrapper are closed and the program exits.
 
-.. code-block::
+.. code-block:: console
     # Initialization
     run = initialize()
     run.initializeAll()
