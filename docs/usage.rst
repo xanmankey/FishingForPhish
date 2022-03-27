@@ -35,6 +35,7 @@ features are automatically generated, a variety of datasets are automatically cr
 on the datasets, and then the scraping session and machine learning wrapper are closed and the program exits.
 
 .. code-block:: python
+
     from classes import initialize, page, image, combine
     
     def main():
