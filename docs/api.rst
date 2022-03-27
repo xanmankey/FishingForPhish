@@ -1,6 +1,8 @@
 API
 ===
 
+The following section provides examples and goes into more depth about using FishingForPhish
+
 .. autosummary::
    :toctree: generated
 
