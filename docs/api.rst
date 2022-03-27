@@ -17,7 +17,7 @@ You can do that by creating an instance of the class initialize and then calling
    initializing = initialize(dataDir="data")
    initializing.initializeAll()
 
-The initialize class has 3 attributes: dataDir, driver, and BS:
+The initialize class has 3 attributes:
 
 * dataDir=None
       The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
@@ -42,18 +42,26 @@ The initialize class has 4 methods in addition to __init__() and initializeAll()
 scrape
 ----------
 
-In order to scrape, parse html, or work with datasets, you first have to initialize the library.
-You can do that by creating an instance of the class initialize and then calling the method initializeAll.
+The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. There is no encompassing method (such as initializeAll()) in the scrape class, but the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality. You will probably not want to create an instance of the scrape class, as it serves as a base initialization class to be inherited from, and cannot be used effectively standalone.
 
-.. code-block:: python
+The scrape class inherits 3 attributes (dataDir, driver, and BS) and declares 8 new ones:
 
-   from classes import initialize
-   
-   initializing = initialize(dataDir="data")
-   initializing.initializeAll()
-
-The initialize class has 3 attributes: dataDir, driver, and BS:
-
+* dataDir=None
+      The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
+      "data" directory following the file system structure will be created.
+* driver=None
+      The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
+      the initialization process for it can be skipped).
+* BS=None
+      The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
+* dataDir=None
+      The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
+      "data" directory following the file system structure will be created.
+* driver=None
+      The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
+      the initialization process for it can be skipped).
+* BS=None
+      The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
 * dataDir=None
       The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
       "data" directory following the file system structure will be created.
