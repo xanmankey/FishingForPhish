@@ -2,7 +2,8 @@ API
 ===
 
 The following section provides examples and goes into more depth about using FishingForPhish.
-More examples and documentation will be added when time allows. <span style=“color:green;”> Red</span> 
+More examples and documentation will be added when time allows. 
+The API examples are currently broken down into example code snippets (*which won't always be able to stand alone*) and a simple combined example at the end of the documentation.
 
 initialize
 ----------
@@ -17,7 +18,7 @@ You can do that by creating an instance of the class initialize and then calling
    run = initialize(dataDir="data")
    run.initializeAll()
    
-   # Call .closeSelenium() to close and quit the webdriver process
+   # Additionally call .closeSelenium() to close and quit the webdriver process
    run.closeSelenium()
 
 The initialize class has 3 attributes:
@@ -108,17 +109,11 @@ An example of using the page class to print a set of full pageFeatures can be se
 
 .. code-block:: python
 
-   from classes import initialize, page
-   
-   # Initialization
-   run = initialize()
-   run.initializeAll()
+   from classes import page
    
    pageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
    pageData.pageScrape()
    print(pageData.pageFeatures)
-   
-   run.closeSelenium()
 
 The page class inherits all attributes from the initialize and scrape classes and declares 1 more:
 
@@ -191,11 +186,7 @@ An example of using the image class to print a set of full imageFeatures can be 
 
 .. code-block:: python
 
-   from classes import initialize, image
-   
-   # Initialization
-   run = initialize()
-   run.initializeAll()
+   from classes import image
    
    imageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
    # If imageScrape is run with the HASH=True parameter then the phash and dhash ImageHash algorithms will be run
@@ -203,7 +194,6 @@ An example of using the image class to print a set of full imageFeatures can be 
    imageData.imageScrape(HASH=True)
    print(pageData.imageFeatures)
    
-   run.closeSelenium()
 
 The image class inherits all attributes from the initialize and scrape classes and declares 1 more:
 
@@ -260,17 +250,16 @@ An example of using the data class to create and classify the ranked (selected f
 
 .. code-block:: python
 
-   from classes import initialize, image, page, data
+   from classes import data
    
-   # Initialization
-   run = initialize()
-   run.initializeAll()
-   
-   imageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
-   # If imageScrape is run with the HASH=True parameter then the phash and dhash ImageHash algorithms will be run
-   # and the resulting hashes will be inserted in the hashes table for future use
-   imageData.imageScrape(HASH=True)
-   print(pageData.imageFeatures)
+    # Data Combination
+    DC = data(
+        pageFeatures=pageData.pageFeatures,
+        imageFeatures=imageData.imageFeatures,
+        urlFile="data/urls.txt",
+        dataDir="data")
+    DC.createDatasets()
+    DC.classify()
 
 The data class inherits all attributes from all previously defined classes and declares 25 new ones, with each attribute falling into one of four categories (with the exception of the allFeatures attribute); dataset, accuracy, false positive, or false negatives (the attributes are grouped below into sets of 4 by their dataset attribute; note that all datasets are saved as <dataDir>/datasets/<filename> + ".arff".):
 
@@ -333,7 +322,7 @@ The data class inherits all attributes from all previously defined classes and d
       
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
-* closeSelenium(self)
+* FS(self)
       Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
 * shorten(self, url)
       Uses pyshorteners to create a shortened version of the url with 5 unique characters at the end; those characters are then incorporated into the filename in a _<self.id>_<5 characters>.png filename that can be reverse engineered to get the url from a filename with a specific id (database functionality makes this process even easier, and is recommended).
@@ -351,7 +340,7 @@ The data class also has 5 methods in addition to __init__() and createDatasets()
 Example
 -------
 
-This example is also included in the class file itself for standalone usage.
+This example is the result of all the code snippets above, and is also included in the class file itself for standalone usage.
 
 .. code-block:: python
    
