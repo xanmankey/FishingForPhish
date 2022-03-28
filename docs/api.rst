@@ -245,48 +245,65 @@ The image class also has 3 other methods in addition to __init__() and imageScra
 * imageHash(self, url, filename)
       Runs the perceptual and difference hash algorithms from the ImageHash library IF database functionality is enabled. Inserts resulting data into the hashes table, which couldbe used for future research once enough data has been collected.
       
-combine
+data
 -------
 
-The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. There is no encompassing method (such as initializeAll()) in the scrape class, but the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality. You will probably not want to create an instance of the scrape class, as it serves as a base initialization class to be inherited from, and cannot be used effectively standalone.
+The data class helps tie the data together, with methods that create .arff files from the data, oversample the data, perform feature selection, and classify the data. 
 
-The scrape class inherits all attributes from the initialize class and declares 8 new ones:
+The data class inherits all attributes from all previously defined classes and declares 25 new ones, with each attribute falling into one of four categories (with the exception of the allFeatures attribute); dataset, accuracy, false positive, or false negatives (the attributes are grouped below into sets of 4 by their dataset attribute):
 
-* urlFile
+* pageDataset
       A required argument; the path to a .txt file with a url on each line.
-* database=None
-      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
-|
-#. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
+      * pageAccuracy
+         A
+      * pageFP
+         A
+      * pageFN
+         A
+* imageDataset
+      A required argument; the path to a .txt file with a url on each line.
+      * imageAccuracy
+         A
+      * imageFP
+         A
+      * imageFN
+         A
+* combinedDataset
+      A required argument; the path to a .txt file with a url on each line.
+      * combinedAccuracy
+         A
+      * combinedFP
+         A
+      * combinedFN
+         A
+* combinedBalancedDataset
+      A required argument; the path to a .txt file with a url on each line.
+      * combinedBalancedAccuracy
+         A
+      * combinedBalancedFP
+         A
+      * combinedBalancedFN
+         A
+* fullDataset
+      A required argument; the path to a .txt file with a url on each line.
+      * fullAccuracy
+         A
+      * fullAccuracyFP
+         A
+      * fullAccuracyFN
+         A
+* fullBalancedDataset
+      A required argument; the path to a .txt file with a url on each line.
+      * fullBalancedAccuracy
+         A
+      * fullBalancedAccuracyFP
+         A
+      * fullBalancedAccuracyFN
+         A
+* allFeatures
+      A combination list composed of the pageFeature + imageFeature values.
       
-#. pageData: TODO ALL OF THIS
-      
-#. errors:
-      
-#. imageData:
-      
-#. otherData:
-      
-#. allFeatures:
-      
-#. hashes:
-
-|
-
-* screenshotDir=None
-      A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
-* htmlDir=None
-      Similarly, htmlDir is a path to a directory with html files, and is useful for minimizing necessary scraping
-* cssDir=None
-      cssDir also has a similar function, and is a path to a directory with css files and can be passed as an argument to minimize scraping as long as the url file passed relates to the ids of the files.
-* cursor=None
-      An sqlite3 cursor attribute; if you pass a database object, a cursor object will be initialized with an associated database, so no need to pass a preexisting one.
-* id=0
-      Used for naming filenames, databases, and selecting urls. Defaults to 0, but if you are resuming the script from where you left off (existing files/database) the script will attempt to determine the id for you (alternatively you can manually pass a value as well).
-* errors={}
-      A dictionary that stores urls and errors as key value pairs. Updates the errors sqlite3 table if database functionality is enabled.
-      
-The scrape class also has 7 methods in addition to __init__():
+The data class also has 5 methods in addition to __init__() and createDatasets():
 
 * closeSelenium(self)
       Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
@@ -309,7 +326,9 @@ Example
 This example is also included in the class file itself for standalone usage.
 
 .. code-block:: python
-
+   
+   from classes import initialize, page, image, data 
+   
    def main():
       # Initialization
       run = initialize()
@@ -334,7 +353,7 @@ This example is also included in the class file itself for standalone usage.
       print(imageData.imageFeatures)
 
       # Data Combination
-      DC = combine(
+      DC = data(
          pageFeatures=pageData.pageFeatures,
          imageFeatures=imageData.imageFeatures,
          urlFile="data/urls.txt",
@@ -349,7 +368,8 @@ This example is also included in the class file itself for standalone usage.
       print(DC.fullAccuracy)
       print(DC.fullFP)
       print(DC.fullFN)
-
+      
+      DC.closePWW3()
       run.closeSelenium()
 
 
