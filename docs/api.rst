@@ -322,20 +322,16 @@ The data class inherits all attributes from all previously defined classes and d
       
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
-* FS(self)
+* FS(self, page=True, image=True)
       Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
-* shorten(self, url)
+* generateInstances(self, combined=True, full=True)
       Uses pyshorteners to create a shortened version of the url with 5 unique characters at the end; those characters are then incorporated into the filename in a _<self.id>_<5 characters>.png filename that can be reverse engineered to get the url from a filename with a specific id (database functionality makes this process even easier, and is recommended).
-* expand(self, urlID)
+* closePWW3(self, image=True, page=True, combined=True, combinedBalanced=True, full=True, fullBalanced=True)
       Takes the 5 characters used at the end of a filename (excluding .png) as input, and expands and returns the original url.
-* generateFilename(self, url)
+* createAttributes(self)
       A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
-* saveScreenshot(self, url)
+* classify(self, image=True, page=True, combined=True, combinedBalanced=True, full=True, fullBalanced=True)
       Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
-* siteValidation(self, url)
-      Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
-* getTime(self)
-      Gets the current time based on time zone; only called if database functionality is enabled.
       
 Example
 -------
