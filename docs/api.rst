@@ -14,8 +14,8 @@ You can do that by creating an instance of the class initialize and then calling
 
    from classes import initialize
    
-   initializing = initialize(dataDir="data")
-   initializing.initializeAll()
+   run = initialize(dataDir="data")
+   run.initializeAll()
 
 The initialize class has 3 attributes:
 
@@ -44,7 +44,7 @@ scrape
 
 The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. There is no encompassing method (such as initializeAll()) in the scrape class, but the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality. You will probably not want to create an instance of the scrape class, as it serves as a base initialization class to be inherited from, and cannot be used effectively standalone.
 
-The scrape class inherits 3 attributes (dataDir, driver, and BS) and declares 8 new ones:
+The scrape class inherits all attributes from the initialize class and declares 8 new ones:
 
 * urlFile
       A required argument; the path to a .txt file with a url on each line.
@@ -69,6 +69,50 @@ The scrape class inherits 3 attributes (dataDir, driver, and BS) and declares 8 
       Used for naming filenames, databases, and selecting urls. Defaults to 0, but if you are resuming the script from where you left off (existing files/database) the script will attempt to determine the id for you (alternatively you can manually pass a value as well).
 * errors={}
       A dictionary that stores urls and errors as key value pairs. Updates the errors sqlite3 table if database functionality is enabled.
+      
+The scrape class also has 7 methods in addition to __init__():
+
+* closeSelenium(self)
+      Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
+* shorten(self, url)
+      Uses pyshorteners to create a shortened version of the url with 5 unique characters at the end; those characters are then incorporated into the filename in a _<self.id>_<5 characters>.png filename that can be reverse engineered to get the url from a filename with a specific id (database functionality makes this process even easier, and is recommended).
+* expand(self, urlID)
+      Takes the 5 characters used at the end of a filename (excluding .png) as input, and expands and returns the original url.
+* generateFilename(self, url)
+      A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
+* saveScreenshot(self, url)
+      Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
+* siteValidation(self, url)
+      Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
+* getTime(self)
+      Gets the current time based on time zone; only called if database functionality is enabled.
+      
+page
+----------
+
+The page class is for scraping the page-based features outlined by the research here: TODO. It relies on many of the methods provided by the scrape class.
+An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping**).
+
+.. code-block:: python
+
+   from classes import initialize, page
+   
+   # Initialization
+   run = initialize()
+   run.initializeAll()
+   
+   pageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
+   pageData.pageScrape()
+   print(pageData.pageFeatures)
+
+The page class inherits all attributes from the initialize and scrape classes and declares 1 more:
+
+* pageFeatures=None
+      A 2D list containing the values of each page feature for each url. The scraped features are defined below:
+      1. 
+      2. 
+      3. 
+      4. 
       
 The scrape class also has 7 methods in addition to __init__():
 
