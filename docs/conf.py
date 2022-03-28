@@ -35,4 +35,4 @@ html_theme = 'sphinx_rtd_theme'
 epub_show_urls = 'footnote'
 
 # -- Adds color support
-rst_epilog = "\n.. include:: .special.rst\n"
+rst_prolog = "\n.. include:: .special.rst\n"
