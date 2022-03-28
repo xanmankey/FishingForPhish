@@ -323,18 +323,16 @@ The data class inherits all attributes from all previously defined classes and d
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
 * FS(self, page=True, image=True)
-      Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
+      Uses the feature selection process followed in the research at TODO to select the top ranked features (the correlational, information gain, and chiSquared ranked feature selection methods are run and the output is stored in arrays, of which the index values are then used (with 0 being the highest value and len(array - 1) being the lowest value) to calculate the top overall ranked features). Parameters for selecting page and/or image features are available, and defaults to returning a length 2 array of the top ranked page and then image features respectively (the numerical index of the attribute is returned).
 * generateInstances(self, combined=True, full=True)
-      Uses pyshorteners to create a shortened version of the url with 5 unique characters at the end; those characters are then incorporated into the filename in a _<self.id>_<5 characters>.png filename that can be reverse engineered to get the url from a filename with a specific id (database functionality makes this process even easier, and is recommended).
+      Uses the SMOTE weka filter to oversample the minority class. 2 optional parameters default to True, combined and full, each of which represent the dataset that you want to oversample (note that oversampling does not edit a dataset, but rather generates a new one).
 * closePWW3(self, image=True, page=True, combined=True, combinedBalanced=True, full=True, fullBalanced=True)
-      Takes the 5 characters used at the end of a filename (excluding .png) as input, and expands and returns the original url.
-* createAttributes(self)
-      A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
+      A function that saves all the altered datasets in dataDir/datasets/(dataset) and closes jvm. There are 6 predefined arguments, each of which True, representing the datasets that you want to save. A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
 * classify(self, image=True, page=True, combined=True, combinedBalanced=True, full=True, fullBalanced=True)
-      Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
+      A function for classifying the resulting datasets. Specifically the J48, Jrip, and Naive Bayes models were used for the purposes of this research, but many more can easily be added for customization. A model output file is saved in the output directory, and model percentage and confusion matrices are returned as output.
       
-Example
--------
+Example (FINALLY)
+-----------------
 
 This example is the result of all the code snippets above, and is also included in the class file itself for standalone usage.
 
