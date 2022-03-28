@@ -311,46 +311,46 @@ This example is also included in the class file itself for standalone usage.
 .. code-block:: python
 
    def main():
-    # Initialization
-    run = initialize()
-    run.initializeAll()
+      # Initialization
+      run = initialize()
+      run.initializeAll()
 
-    # PageBased data generation + initialization
-    pageData = page(
-        urlFile="data/urls.txt",
-        dataDir="data",
-        driver=run.driver,
-        BS=run.BS)
-    pageData.pageScrape()
-    print(pageData.pageFeatures)
+      # PageBased data generation + initialization
+      pageData = page(
+         urlFile="data/urls.txt",
+         dataDir="data",
+         driver=run.driver,
+         BS=run.BS)
+      pageData.pageScrape()
+      print(pageData.pageFeatures)
 
-    # ImageBased data generation
-    imageData = image(
-        urlFile="data/urls.txt",
-        dataDir="data",
-        driver=run.driver,
-        BS=run.BS)
-    imageData.imageScrape()
-    print(imageData.imageFeatures)
+      # ImageBased data generation
+      imageData = image(
+         urlFile="data/urls.txt",
+         dataDir="data",
+         driver=run.driver,
+         BS=run.BS)
+      imageData.imageScrape()
+      print(imageData.imageFeatures)
 
-    # Data Combination
-    DC = combine(
-        pageFeatures=pageData.pageFeatures,
-        imageFeatures=imageData.imageFeatures,
-        urlFile="data/urls.txt",
-        dataDir="data")
-    DC.createDatasets()
-    DC.classify()
+      # Data Combination
+      DC = combine(
+         pageFeatures=pageData.pageFeatures,
+         imageFeatures=imageData.imageFeatures,
+         urlFile="data/urls.txt",
+         dataDir="data")
+      DC.createDatasets()
+      DC.classify()
 
-    # Where FP stands for False Positive and FN for False Negative
-    print(DC.combinedBalancedAccuracy)
-    print(DC.combinedBalancedFP)
-    print(DC.combinedBalancedFN)
-    print(DC.fullAccuracy)
-    print(DC.fullFP)
-    print(DC.fullFN)
+      # Where FP stands for False Positive and FN for False Negative
+      print(DC.combinedBalancedAccuracy)
+      print(DC.combinedBalancedFP)
+      print(DC.combinedBalancedFN)
+      print(DC.fullAccuracy)
+      print(DC.fullFP)
+      print(DC.fullFN)
 
-    run.closeSelenium()
+      run.closeSelenium()
 
 
    if __name__ == "__main__":
