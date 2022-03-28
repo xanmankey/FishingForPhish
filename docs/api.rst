@@ -49,21 +49,21 @@ The scrape class inherits all attributes from the initialize class and declares 
 * urlFile
       A required argument; the path to a .txt file with a url on each line.
 * database=None
-      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including::
-
-      1. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
+      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
+         
+         #. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
       
-      2. pageData: TODO ALL OF THIS
+         #. pageData: TODO ALL OF THIS
       
-      3. errors:
+         #. errors:
       
-      4. imageData:
+         #. imageData:
       
-      5. otherData:
+         #. otherData:
       
-      6. allFeatures:
+         #. allFeatures:
       
-      7. hashes:
+         #. hashes:
       
 * screenshotDir=None
       A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
