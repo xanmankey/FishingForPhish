@@ -16,6 +16,9 @@ You can do that by creating an instance of the class initialize and then calling
    
    run = initialize(dataDir="data")
    run.initializeAll()
+   
+   # Call .closeSelenium() to close and quit the webdriver process
+   run.closeSelenium()
 
 The initialize class has 3 attributes:
 
@@ -101,7 +104,7 @@ page
 ----
 
 The page class is for scraping the page-based features outlined by the research here: TODO. It relies on many of the methods provided by the scrape class.
-An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping!**).
+An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping, and remember to close it AFTER scraping!**).
 
 .. code-block:: python
 
@@ -114,6 +117,8 @@ An example of using the page class to print a set of full pageFeatures can be se
    pageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
    pageData.pageScrape()
    print(pageData.pageFeatures)
+   
+   run.closeSelenium()
 
 The page class inherits all attributes from the initialize and scrape classes and declares 1 more:
 
@@ -182,7 +187,7 @@ image
 -----
 
 The image class is similar to the page class, where it's primary use is for scraping image-based features (the justification for feature selection can be found in the research at TODO; each feature can be categorized under the layout, style, or other category).
-An example of using the image class to print a set of full imageFeatures can be seen below (**Remember to initialize Selenium Webdriver!**).
+An example of using the image class to print a set of full imageFeatures can be seen below (**Again, don't forget about initialization and shutdown!**).
 
 .. code-block:: python
 
@@ -197,6 +202,8 @@ An example of using the image class to print a set of full imageFeatures can be 
    # and the resulting hashes will be inserted in the hashes table for future use
    imageData.imageScrape(HASH=True)
    print(pageData.imageFeatures)
+   
+   run.closeSelenium()
 
 The image class inherits all attributes from the initialize and scrape classes and declares 1 more:
 
@@ -249,11 +256,27 @@ data
 -------
 
 The data class helps tie the data together, with methods that create .arff files from the data, oversample the data, perform feature selection, and classify the data. 
+An example of using the data class to create and classify the ranked (selected feature) datasets is seen below
+
+.. code-block:: python
+
+   from classes import initialize, image, page, data
+   
+   # Initialization
+   run = initialize()
+   run.initializeAll()
+   
+   imageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
+   # If imageScrape is run with the HASH=True parameter then the phash and dhash ImageHash algorithms will be run
+   # and the resulting hashes will be inserted in the hashes table for future use
+   imageData.imageScrape(HASH=True)
+   print(pageData.imageFeatures)
 
 The data class inherits all attributes from all previously defined classes and declares 25 new ones, with each attribute falling into one of four categories (with the exception of the allFeatures attribute); dataset, accuracy, false positive, or false negatives (the attributes are grouped below into sets of 4 by their dataset attribute):
 
 * pageDataset
       A required argument; the path to a .txt file with a url on each line.
+      
       * pageAccuracy
          A
       * pageFP
@@ -262,6 +285,7 @@ The data class inherits all attributes from all previously defined classes and d
          A
 * imageDataset
       A required argument; the path to a .txt file with a url on each line.
+      
       * imageAccuracy
          A
       * imageFP
@@ -270,6 +294,7 @@ The data class inherits all attributes from all previously defined classes and d
          A
 * combinedDataset
       A required argument; the path to a .txt file with a url on each line.
+      
       * combinedAccuracy
          A
       * combinedFP
@@ -278,6 +303,7 @@ The data class inherits all attributes from all previously defined classes and d
          A
 * combinedBalancedDataset
       A required argument; the path to a .txt file with a url on each line.
+      
       * combinedBalancedAccuracy
          A
       * combinedBalancedFP
@@ -286,6 +312,7 @@ The data class inherits all attributes from all previously defined classes and d
          A
 * fullDataset
       A required argument; the path to a .txt file with a url on each line.
+      
       * fullAccuracy
          A
       * fullAccuracyFP
@@ -294,6 +321,7 @@ The data class inherits all attributes from all previously defined classes and d
          A
 * fullBalancedDataset
       A required argument; the path to a .txt file with a url on each line.
+      
       * fullBalancedAccuracy
          A
       * fullBalancedAccuracyFP
@@ -301,7 +329,7 @@ The data class inherits all attributes from all previously defined classes and d
       * fullBalancedAccuracyFN
          A
 * allFeatures
-      A combination list composed of the pageFeature + imageFeature values.
+   A combination list composed of the pageFeature + imageFeature values.
       
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
