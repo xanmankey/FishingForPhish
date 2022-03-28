@@ -272,62 +272,62 @@ An example of using the data class to create and classify the ranked (selected f
    imageData.imageScrape(HASH=True)
    print(pageData.imageFeatures)
 
-The data class inherits all attributes from all previously defined classes and declares 25 new ones, with each attribute falling into one of four categories (with the exception of the allFeatures attribute); dataset, accuracy, false positive, or false negatives (the attributes are grouped below into sets of 4 by their dataset attribute):
+The data class inherits all attributes from all previously defined classes and declares 25 new ones, with each attribute falling into one of four categories (with the exception of the allFeatures attribute); dataset, accuracy, false positive, or false negatives (the attributes are grouped below into sets of 4 by their dataset attribute; note that all datasets are saved as <dataDir>/datasets/<filename> + ".arff".):
 
 * pageDataset
-      A required argument; the path to a .txt file with a url on each line.
+      A dataset object (see python weka wrapper's documentation here for more information: https://fracpete.github.io/python-weka-wrapper/weka.core.html#module-weka.core.dataset) created from the pageFeatures array.
       
       * pageAccuracy
-         A
+         The classification accuracy of the pageDataset.
       * pageFP
-         A
+         The false positive percentage of the pageDataset.
       * pageFN
-         A
+         The false negative percentage of the pageDataset.
 * imageDataset
-      A required argument; the path to a .txt file with a url on each line.
+      A dataset object created from the imageFeatures array.
       
       * imageAccuracy
-         A
+         The classification accuracy of the imageDataset.
       * imageFP
-         A
+         The false positive percentage of the imageDataset.
       * imageFN
-         A
+         The false negative percentage of the imageDataset.
 * combinedDataset
-      A required argument; the path to a .txt file with a url on each line.
+      A dataset object created from both the top ranked (in regards to feature selection) pageDataset and imageDataset. 
       
       * combinedAccuracy
-         A
+         The classification accuracy of the combinedDataset.
       * combinedFP
-         A
+         The false positive percentage of the combinedDataset.
       * combinedFN
-         A
+         The false negative percentage of the combinedDataset.
 * combinedBalancedDataset
-      A required argument; the path to a .txt file with a url on each line.
+      A resulting dataset object from oversampling performed on the combinedDataset (in order to balance the classes).
       
       * combinedBalancedAccuracy
-         A
+         The classification accuracy of the combinedBalancedDataset.
       * combinedBalancedFP
-         A
+         The false positive percentage of the combinedBalancedDataset.
       * combinedBalancedFN
-         A
+         The false negative percentage of the combinedBalancedDataset.
 * fullDataset
-      A required argument; the path to a .txt file with a url on each line.
+      A dataset object created from all the pageDataset and imageDataset attributes and instances. 
       
       * fullAccuracy
-         A
+         The classification accuracy of the fullDataset.
       * fullAccuracyFP
-         A
+         The false positive percentage of the fullDataset.
       * fullAccuracyFN
-         A
+         The false negative percentage of the fullDataset.
 * fullBalancedDataset
-      A required argument; the path to a .txt file with a url on each line.
+      A resulting dataset object from oversampling performed on the fullDataset.
       
       * fullBalancedAccuracy
-         A
+         The classification accuracy of the fullBalancedDataset.
       * fullBalancedAccuracyFP
-         A
+         The false positive percentage of the fullBalancedDataset.
       * fullBalancedAccuracyFN
-         A
+         The false negative percentage of the fullBalancedDataset.
 * allFeatures
    A combination list composed of the pageFeature + imageFeature values.
       
