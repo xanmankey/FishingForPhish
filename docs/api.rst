@@ -2,7 +2,7 @@ API
 ===
 
 The following section provides examples and goes into more depth about using FishingForPhish.
-More examples and documentation will be added when time allows.
+More examples and documentation will be added when time allows. <span style=“color:green;”> Red</span> 
 
 initialize
 ----------
@@ -40,7 +40,7 @@ The initialize class has 4 methods in addition to __init__() and initializeAll()
       Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
 
 scrape
-----------
+------
 
 The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. There is no encompassing method (such as initializeAll()) in the scrape class, but the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality. You will probably not want to create an instance of the scrape class, as it serves as a base initialization class to be inherited from, and cannot be used effectively standalone.
 
@@ -50,21 +50,23 @@ The scrape class inherits all attributes from the initialize class and declares 
       A required argument; the path to a .txt file with a url on each line.
 * database=None
       An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
-         
-         #. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
+|
+#. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
       
-         #. pageData: TODO ALL OF THIS
+#. pageData: TODO ALL OF THIS
       
-         #. errors:
+#. errors:
       
-         #. imageData:
+#. imageData:
       
-         #. otherData:
+#. otherData:
       
-         #. allFeatures:
+#. allFeatures:
       
-         #. hashes:
-      
+#. hashes:
+
+|
+
 * screenshotDir=None
       A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
 * htmlDir=None
@@ -96,10 +98,10 @@ The scrape class also has 7 methods in addition to __init__():
       Gets the current time based on time zone; only called if database functionality is enabled.
       
 page
-----------
+----
 
 The page class is for scraping the page-based features outlined by the research here: TODO. It relies on many of the methods provided by the scrape class.
-An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping**).
+An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping!**).
 
 .. code-block:: python
 
@@ -117,10 +119,172 @@ The page class inherits all attributes from the initialize and scrape classes an
 
 * pageFeatures=None
       A 2D list containing the values of each page feature for each url. The scraped features are defined below:
-      1. 
-      2. 
-      3. 
-      4. 
+|
+
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+
+|
+
+The page class also has 1 other method in addition to __init__() and pageScrape():
+
+* getPageFeatures(self, url)
+      Searches through the html of a url to populate the paegFeatures list accordingly.
+
+image
+-----
+
+The image class is similar to the page class, where it's primary use is for scraping image-based features (the justification for feature selection can be found in the research at TODO; each feature can be categorized under the layout, style, or other category).
+An example of using the image class to print a set of full imageFeatures can be seen below (**Remember to initialize Selenium Webdriver!**).
+
+.. code-block:: python
+
+   from classes import initialize, image
+   
+   # Initialization
+   run = initialize()
+   run.initializeAll()
+   
+   imageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
+   # If imageScrape is run with the HASH=True parameter then the phash and dhash ImageHash algorithms will be run
+   # and the resulting hashes will be inserted in the hashes table for future use
+   imageData.imageScrape(HASH=True)
+   print(pageData.imageFeatures)
+
+The image class inherits all attributes from the initialize and scrape classes and declares 1 more:
+
+* imageFeatures=None
+      A 2D list containing the values of each page feature for each url. The scraped features are defined below:
+|
+
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+
+|
+
+The image class also has 3 other methods in addition to __init__() and imageScrape():
+
+* getImageFeatures(self, filename)
+      Searches through the html of a url to populate the pageFeatures list accordingly.
+* getImagemagickData(self, result)
+      Runs the imagemagick identify -verbose <datadir>/screenshots/<filename> + .png as a subprocess, where color, brightness, and other resulting data is returned from the screenshot of the website.
+* imageHash(self, url, filename)
+      Runs the perceptual and difference hash algorithms from the ImageHash library IF database functionality is enabled. Inserts resulting data into the hashes table, which couldbe used for future research once enough data has been collected.
+      
+combine
+-------
+
+The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. There is no encompassing method (such as initializeAll()) in the scrape class, but the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality. You will probably not want to create an instance of the scrape class, as it serves as a base initialization class to be inherited from, and cannot be used effectively standalone.
+
+The scrape class inherits all attributes from the initialize class and declares 8 new ones:
+
+* urlFile
+      A required argument; the path to a .txt file with a url on each line.
+* database=None
+      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
+|
+#. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
+      
+#. pageData: TODO ALL OF THIS
+      
+#. errors:
+      
+#. imageData:
+      
+#. otherData:
+      
+#. allFeatures:
+      
+#. hashes:
+
+|
+
+* screenshotDir=None
+      A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
+* htmlDir=None
+      Similarly, htmlDir is a path to a directory with html files, and is useful for minimizing necessary scraping
+* cssDir=None
+      cssDir also has a similar function, and is a path to a directory with css files and can be passed as an argument to minimize scraping as long as the url file passed relates to the ids of the files.
+* cursor=None
+      An sqlite3 cursor attribute; if you pass a database object, a cursor object will be initialized with an associated database, so no need to pass a preexisting one.
+* id=0
+      Used for naming filenames, databases, and selecting urls. Defaults to 0, but if you are resuming the script from where you left off (existing files/database) the script will attempt to determine the id for you (alternatively you can manually pass a value as well).
+* errors={}
+      A dictionary that stores urls and errors as key value pairs. Updates the errors sqlite3 table if database functionality is enabled.
       
 The scrape class also has 7 methods in addition to __init__():
 
@@ -138,11 +302,59 @@ The scrape class also has 7 methods in addition to __init__():
       Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
 * getTime(self)
       Gets the current time based on time zone; only called if database functionality is enabled.
+      
+Example
+-------
+
+This example is also included in the class file itself for standalone usage.
+
+.. code-block:: python
+
+   def main():
+    # Initialization
+    run = initialize()
+    run.initializeAll()
+
+    # PageBased data generation + initialization
+    pageData = page(
+        urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        BS=run.BS)
+    pageData.pageScrape()
+    print(pageData.pageFeatures)
+
+    # ImageBased data generation
+    imageData = image(
+        urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        BS=run.BS)
+    imageData.imageScrape()
+    print(imageData.imageFeatures)
+
+    # Data Combination
+    DC = combine(
+        pageFeatures=pageData.pageFeatures,
+        imageFeatures=imageData.imageFeatures,
+        urlFile="data/urls.txt",
+        dataDir="data")
+    DC.createDatasets()
+    DC.classify()
+
+    # Where FP stands for False Positive and FN for False Negative
+    print(DC.combinedBalancedAccuracy)
+    print(DC.combinedBalancedFP)
+    print(DC.combinedBalancedFN)
+    print(DC.fullAccuracy)
+    print(DC.fullFP)
+    print(DC.fullFN)
+
+    run.closeSelenium()
+
+
+   if __name__ == "__main__":
+      main()
 
 .. autosummary::
    :toctree: generated
-
-   FishingForPhish
-
-   This is where I go more in-depth about my code and explain it (see here for an example: https://fracpete.github.io/python-weka-wrapper/api.html)
-
