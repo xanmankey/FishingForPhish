@@ -46,41 +46,46 @@ The scrape class is a useful compilation of all the scraping-related methods use
 
 The scrape class inherits 3 attributes (dataDir, driver, and BS) and declares 8 new ones:
 
-* dataDir=None
-      The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
-      "data" directory following the file system structure will be created.
-* driver=None
-      The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
-      the initialization process for it can be skipped).
-* BS=None
-      The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
-* dataDir=None
-      The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
-      "data" directory following the file system structure will be created.
-* driver=None
-      The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
-      the initialization process for it can be skipped).
-* BS=None
-      The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
-* dataDir=None
-      The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
-      "data" directory following the file system structure will be created.
-* driver=None
-      The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
-      the initialization process for it can be skipped).
-* BS=None
-      The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
+* urlFile
+      A required argument; the path to a .txt file with a url on each line.
+* database=None
+      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including
+      1. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
+      2. pageData: TODO ALL OF THIS
+      3. errors:
+      4. imageData:
+      5. otherData:
+      6. allFeatures:
+      7. hashes: 
+* screenshotDir=None
+      A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
+* htmlDir=None
+      Similarly, htmlDir is a path to a directory with html files, and is useful for minimizing necessary scraping
+* cssDir=None
+      cssDir also has a similar function, and is a path to a directory with css files and can be passed as an argument to minimize scraping as long as the url file passed relates to the ids of the files.
+* cursor=None
+      An sqlite3 cursor attribute; if you pass a database object, a cursor object will be initialized with an associated database, so no need to pass a preexisting one.
+* id=0
+      Used for naming filenames, databases, and selecting urls. Defaults to 0, but if you are resuming the script from where you left off (existing files/database) the script will attempt to determine the id for you (alternatively you can manually pass a value as well).
+* errors={}
+      A dictionary that stores urls and errors as key value pairs. Updates the errors sqlite3 table if database functionality is enabled.
       
-The initialize class has 4 methods in addition to __init__() and initializeAll():
+The scrape class also has 7 methods in addition to __init__():
 
-* installResources(self)
-      Installs potentially-useful resources used during the methodology of the research here: TODO. This includes the chiSquaredAttributeEval feature selector for WEKA, the SMOTE oversampler for WEKA, and the Wayback Machine add-on for Firefox.
-* initializeSelenium(self, add_ons=None)
-      Creates the Selenium instance. A list of paths to add_ons (.xpi files) can be passed to enhance the scraping experience. The wayback_machine add-on is added to the webdriver instance with the method initializeAll().
-* initializePWW3(self, jvmOptions)
-      Starts JVM with a list of optional parameters, jvmOptions (some default options, system_cp and packages, are passed with the initializeAll() method).
-* initializeBS(self, html)
-      Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
+* closeSelenium(self)
+      Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
+* shorten(self, url)
+      Uses pyshorteners to create a shortened version of the url with 5 unique characters at the end; those characters are then incorporated into the filename in a _<self.id>_<5 characters>.png filename that can be reverse engineered to get the url from a filename with a specific id (database functionality makes this process even easier, and is recommended).
+* expand(self, urlID)
+      Takes the 5 characters used at the end of a filename (excluding .png) as input, and expands and returns the original url.
+* generateFilename(self, url)
+      A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
+* saveScreenshot(self, url)
+      Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
+* siteValidation(self, url)
+      Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
+* getTime(self)
+      Gets the current time based on time zone; only called if database functionality is enabled.
 
 .. autosummary::
    :toctree: generated
