@@ -159,8 +159,7 @@ class scrape(initialize):
                 urls = f.readlines()
                 for url in urls:
                     url = url.replace("\n", "")
-                    ### Terry ### Assuming you're stripping leading and trailing spaces, and not internal spaces, use https://www.w3schools.com/python/ref_string_strip.asp
-                    url = url.replace(" ", "")
+                    url = url.strip()
                     if not validators.url(url):
                         raise ValueError(
                             """Sorry, are you sure urlFile contains valid urls?""")
