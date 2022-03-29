@@ -72,6 +72,7 @@ class fisher():
         options.add_argument("--headless")
         options.add_argument('--hide-scrollbars')
         options.add_argument('--disable-gpu')
+        options.set_preference("javascript.enabled", False)
         driver = webdriver.Firefox(options=options)
         if add_ons: ### Terry ### if statement isn't necessary if the defaulf or add_ons is () rather than None.
             for add_on in add_ons:
