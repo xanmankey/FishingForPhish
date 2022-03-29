@@ -74,14 +74,13 @@ class fisher():
         options.add_argument('--disable-gpu')
         options.set_preference("javascript.enabled", False)
         driver = webdriver.Firefox(options=options)
-        if add_ons: ### Terry ### if statement isn't necessary if the defaulf or add_ons is () rather than None.
-            for add_on in add_ons:
-                if add_on[len(add_on) - 4:len(add_on)].upper() == ".XPI":
-                    try:
-                        driver.install_addon(add_on, temporary=True)
-                    except Exception:
-                        ### Terry ### log the exception here, just in case, for troubleshooting
-                        continue
+        for add_on in add_ons:
+            if add_on[len(add_on) - 4:len(add_on)].upper() == ".XPI":
+                try:
+                    driver.install_addon(add_on, temporary=True)
+                except Exception:
+                    logging.warning(add_on + " is not a valid Firefox addon!")
+                    continue
         self.driver = driver
         self.driver.implicitly_wait(20)
 
