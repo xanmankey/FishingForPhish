@@ -29,7 +29,7 @@ The initialize class has 4 attributes:
 * driver=None
       The instance of Selenium Webdriver. In most cases, this will be None (unless a webdriver instance has already been created; in which case
       the initialization process for it can be skipped).
-* jvmToggle=None
+* jvmToggle=False
       A toggle attribute that follows the state of the jvm (as python weka wrapper currently doesn't support checking the current run state of the jvm). A value should **NOT** be passed for this variable, otherwise functions reliant on the jvm can be called before the jvm's initialization.
 * BS=None
       The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
