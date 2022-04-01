@@ -12,13 +12,12 @@ setup(
     version = "1.0.0"
     description = "FishingForPhish is a phishing detection framework focused on adaptive web scraping and the analysis of website image and page based features.",
     long_description = long_description
-    keywords = phishing-detection, machine learning, data analysis
+    keywords = "phishing-detection, machine learning, data analysis",
     license = BSD 3-Clause License
     
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
-        "Intended Audience :: Researchers",
         "Topic :: Software Development :: Build Tools",
         # Pick your license as you wish
         "License :: OSI Approved :: MIT License",
@@ -35,7 +34,7 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
     ]
 
-
+    package_dir={"": "src"}
 )
 # Setup.py file; initializes parsing of setup.cfg
 if __name__ == "__main__":
