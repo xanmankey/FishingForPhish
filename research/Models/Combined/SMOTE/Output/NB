@@ -1,0 +1,225 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.bayes.NaiveBayes -D
+Relation:     Combined page and image based data-weka.filters.unsupervised.attribute.Remove-R1-weka.filters.supervised.instance.SMOTE-C0-K5-P336.0-S1
+Instances:    374
+Attributes:   27
+              PctExtHyperlinks
+              PctNullSelfRedirectHyperlinks
+              FrequentDomainNameMismatch
+              NumDash
+              SubmitInfoToEmail
+              NumDots
+              FCTH18
+              FCTH24
+              FCTH25
+              FCTH42
+              FCTH43
+              Spatial Pyramid of Local Binary Patterns0
+              Spatial Pyramid of Local Binary Patterns1
+              Spatial Pyramid of Local Binary Patterns34
+              Spatial Pyramid of Local Binary Patterns36
+              Spatial Pyramid of Local Binary Patterns37
+              MPEG-7 Edge Histogram17
+              MPEG-7 Edge Histogram20
+              MPEG-7 Edge Histogram37
+              MPEG-7 Edge Histogram39
+              MPEG-7 Edge Histogram42
+              MPEG-7 Color Layout1
+              MPEG-7 Color Layout3
+              MPEG-7 Color Layout4
+              MPEG-7 Color Layout5
+              MPEG-7 Color Layout8
+              nom
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+Naive Bayes Classifier
+
+                                             Class
+Attribute                                        0     1
+                                             (0.5) (0.5)
+=========================================================
+PctExtHyperlinks
+  '(-inf-0.687706]'                            41.0 117.0
+  '(0.687706-0.786434]'                        24.0  21.0
+  '(0.786434-0.986989]'                       125.0  18.0
+  '(0.986989-inf)'                              1.0  35.0
+  [total]                                     191.0 191.0
+
+PctNullSelfRedirectHyperlinks
+  'All'                                       188.0 188.0
+  [total]                                     188.0 188.0
+
+FrequentDomainNameMismatch
+  '(-inf-0.001511]'                            25.0  79.0
+  '(0.001511-0.119155]'                       160.0  62.0
+  '(0.119155-inf)'                              5.0  49.0
+  [total]                                     190.0 190.0
+
+NumDash
+  '(-inf-0.00753]'                            177.0  60.0
+  '(0.00753-1.974731]'                          6.0 122.0
+  '(1.974731-inf)'                              7.0   8.0
+  [total]                                     190.0 190.0
+
+SubmitInfoToEmail
+  '(-inf-0.001628]'                           173.0  38.0
+  '(0.001628-inf)'                             16.0 151.0
+  [total]                                     189.0 189.0
+
+NumDots
+  '(-inf-2.024167]'                           177.0  58.0
+  '(2.024167-inf)'                             12.0 131.0
+  [total]                                     189.0 189.0
+
+FCTH18
+  '(-inf-0.003374]'                            81.0  79.0
+  '(0.003374-0.993793]'                         1.0  45.0
+  '(0.993793-inf)'                            108.0  66.0
+  [total]                                     190.0 190.0
+
+FCTH24
+  'All'                                       188.0 188.0
+  [total]                                     188.0 188.0
+
+FCTH25
+  '(-inf-0.013976]'                            40.0  97.0
+  '(0.013976-0.991723]'                         1.0  28.0
+  '(0.991723-inf)'                            149.0  65.0
+  [total]                                     190.0 190.0
+
+FCTH42
+  'All'                                       188.0 188.0
+  [total]                                     188.0 188.0
+
+FCTH43
+  'All'                                       188.0 188.0
+  [total]                                     188.0 188.0
+
+Spatial Pyramid of Local Binary Patterns0
+  '(-inf-0.987016]'                             9.0 172.0
+  '(0.987016-2.5]'                             81.0  17.0
+  '(2.5-inf)'                                 100.0   1.0
+  [total]                                     190.0 190.0
+
+Spatial Pyramid of Local Binary Patterns1
+  '(-inf-0.999885]'                             3.0 133.0
+  '(0.999885-1.027099]'                        16.0  19.0
+  '(1.027099-1.942805]'                         1.0  23.0
+  '(1.942805-3.078834]'                        53.0  10.0
+  '(3.078834-3.991645]'                         1.0   5.0
+  '(3.991645-inf)'                            119.0   3.0
+  [total]                                     193.0 193.0
+
+Spatial Pyramid of Local Binary Patterns34
+  '(-inf-2.975103]'                            16.0 160.0
+  '(2.975103-3.870758]'                        26.0  24.0
+  '(3.870758-inf)'                            148.0   6.0
+  [total]                                     190.0 190.0
+
+Spatial Pyramid of Local Binary Patterns36
+  '(-inf-0.962075]'                            22.0 176.0
+  '(0.962075-1.18526]'                         37.0   7.0
+  '(1.18526-1.939955]'                          1.0   5.0
+  '(1.939955-inf)'                            131.0   3.0
+  [total]                                     191.0 191.0
+
+Spatial Pyramid of Local Binary Patterns37
+  '(-inf-0.987785]'                             7.0 156.0
+  '(0.987785-3.889949]'                        83.0  28.0
+  '(3.889949-inf)'                            100.0   6.0
+  [total]                                     190.0 190.0
+
+MPEG-7 Edge Histogram17
+  '(-inf-15.007924]'                           88.0 114.0
+  '(15.007924-15.962125]'                       1.0  41.0
+  '(15.962125-inf)'                           101.0  35.0
+  [total]                                     190.0 190.0
+
+MPEG-7 Edge Histogram20
+  '(-inf-16.807394]'                          103.0 164.0
+  '(16.807394-inf)'                            86.0  25.0
+  [total]                                     189.0 189.0
+
+MPEG-7 Edge Histogram37
+  '(-inf-15.025867]'                           99.0  49.0
+  '(15.025867-15.995515]'                       1.0  43.0
+  '(15.995515-20.5]'                           80.0  98.0
+  '(20.5-inf)'                                 11.0   1.0
+  [total]                                     191.0 191.0
+
+MPEG-7 Edge Histogram39
+  '(-inf-14.008274]'                           60.0  40.0
+  '(14.008274-16.975604]'                      54.0 135.0
+  '(16.975604-inf)'                            76.0  15.0
+  [total]                                     190.0 190.0
+
+MPEG-7 Edge Histogram42
+  '(-inf-14.036617]'                           43.0   7.0
+  '(14.036617-16.008566]'                     107.0 150.0
+  '(16.008566-16.996429]'                       1.0  18.0
+  '(16.996429-inf)'                            40.0  16.0
+  [total]                                     191.0 191.0
+
+MPEG-7 Color Layout1
+  'All'                                       188.0 188.0
+  [total]                                     188.0 188.0
+
+MPEG-7 Color Layout3
+  'All'                                       188.0 188.0
+  [total]                                     188.0 188.0
+
+MPEG-7 Color Layout4
+  '(-inf-0.001874]'                            91.0 127.0
+  '(0.001874-0.973848]'                         1.0  24.0
+  '(0.973848-1.00029]'                         58.0   8.0
+  '(1.00029-1.982279]'                          1.0  16.0
+  '(1.982279-inf)'                             41.0  17.0
+  [total]                                     192.0 192.0
+
+MPEG-7 Color Layout5
+  '(-inf-0.032868]'                            79.0 122.0
+  '(0.032868-0.96114]'                          1.0  25.0
+  '(0.96114-inf)'                             110.0  43.0
+  [total]                                     190.0 190.0
+
+MPEG-7 Color Layout8
+  '(-inf-0.004059]'                            90.0  77.0
+  '(0.004059-0.987092]'                         1.0  41.0
+  '(0.987092-1.039627]'                        44.0  12.0
+  '(1.039627-1.988747]'                         1.0  28.0
+  '(1.988747-2.939706]'                        16.0  25.0
+  '(2.939706-inf)'                             41.0  10.0
+  [total]                                     193.0 193.0
+
+
+
+Time taken to build model: 0.02 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances         359               95.9893 %
+Incorrectly Classified Instances        15                4.0107 %
+Kappa statistic                          0.9198
+Mean absolute error                      0.038 
+Root mean squared error                  0.186 
+Relative absolute error                  7.5972 %
+Root relative squared error             37.1938 %
+Total Number of Instances              374     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.957    0.037    0.962      0.957    0.960      0.920    0.991     0.989     0
+                 0.963    0.043    0.957      0.963    0.960      0.920    0.991     0.992     1
+Weighted Avg.    0.960    0.040    0.960      0.960    0.960      0.920    0.991     0.991     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 179   8 |   a = 0
+   7 180 |   b = 1
+

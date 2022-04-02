@@ -1,0 +1,120 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.JRip -F 3 -N 2.0 -O 2 -S 1
+Relation:     feature_compiled_all-weka.filters.unsupervised.attribute.Remove-R46-50,53,56-60
+Instances:    10000
+Attributes:   49
+              NumDots
+              SubdomainLevel
+              PathLevel
+              UrlLength
+              NumDash
+              NumDashInHostname
+              AtSymbol
+              TildeSymbol
+              NumUnderscore
+              NumPercent
+              NumQueryComponents
+              NumAmpersand
+              NumHash
+              NumNumericChars
+              NoHttps
+              RandomString
+              IpAddress
+              DomainInSubdomains
+              DomainInPaths
+              HttpsInHostname
+              HostnameLength
+              PathLength
+              QueryLength
+              DoubleSlashInPath
+              NumSensitiveWords
+              EmbeddedBrandName
+              PctExtHyperlinks
+              PctExtResourceUrls
+              ExtFavicon
+              InsecureForms
+              RelativeFormAction
+              ExtFormAction
+              AbnormalFormAction
+              PctNullSelfRedirectHyperlinks
+              FrequentDomainNameMismatch
+              FakeLinkInStatusBar
+              RightClickDisabled
+              PopUpWindow
+              SubmitInfoToEmail
+              IframeOrFrame
+              MissingTitle
+              ImagesOnlyInForm
+              SubdomainLevelRT
+              UrlLengthRT
+              PctExtResourceUrlsRT
+              AbnormalExtFormActionR
+              ExtMetaScriptLinkRT
+              PctExtNullSelfRedirectHyperlinksRT
+              CLASS_LABEL
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+JRIP rules:
+===========
+
+(PctExtNullSelfRedirectHyperlinksRT <= -1) and (PctNullSelfRedirectHyperlinks >= 0.081633) => CLASS_LABEL=1 (1467.0/13.0)
+(FrequentDomainNameMismatch >= 1) and (NumDash <= 1) and (InsecureForms >= 1) and (PctExtHyperlinks >= 0.866667) and (PctExtResourceUrls >= 0.833333) => CLASS_LABEL=1 (904.0/0.0)
+(PctExtHyperlinks <= 0) and (InsecureForms >= 1) and (PctExtResourceUrls <= 0.008333) and (NumNumericChars <= 1) and (PctNullSelfRedirectHyperlinks <= 0) => CLASS_LABEL=1 (886.0/1.0)
+(PctExtNullSelfRedirectHyperlinksRT <= -1) and (NumNumericChars <= 2) and (NumDots >= 3) => CLASS_LABEL=1 (239.0/6.0)
+(PctExtHyperlinks <= 0) and (InsecureForms >= 1) and (PctNullSelfRedirectHyperlinks <= 0) and (PathLevel >= 5) => CLASS_LABEL=1 (301.0/5.0)
+(FrequentDomainNameMismatch >= 1) and (NumDots >= 4) => CLASS_LABEL=1 (211.0/5.0)
+(PctExtHyperlinks <= 0) and (InsecureForms >= 1) and (ExtFavicon >= 1) and (PctExtResourceUrls <= 0.833333) => CLASS_LABEL=1 (101.0/1.0)
+(PctExtNullSelfRedirectHyperlinksRT <= -1) and (NumDash <= 2) and (PctExtResourceUrls <= 0.320755) and (PathLevel >= 3) => CLASS_LABEL=1 (96.0/3.0)
+(PctExtHyperlinks <= 0) and (InsecureForms >= 1) and (PctNullSelfRedirectHyperlinks <= 0) and (QueryLength <= 2) and (ExtMetaScriptLinkRT >= 1) => CLASS_LABEL=1 (241.0/7.0)
+(FrequentDomainNameMismatch >= 1) and (IframeOrFrame <= 0) and (PctExtHyperlinks <= 0.615385) and (SubdomainLevel <= 0) and (NumDots >= 2) => CLASS_LABEL=1 (79.0/0.0)
+(PctExtHyperlinks <= 0) and (NumNumericChars >= 18) and (PathLength >= 25) => CLASS_LABEL=1 (87.0/12.0)
+(FrequentDomainNameMismatch >= 1) and (NumNumericChars <= 3) => CLASS_LABEL=1 (136.0/34.0)
+(PctExtHyperlinks <= 0) and (NumSensitiveWords >= 1) and (PathLength >= 16) => CLASS_LABEL=1 (33.0/2.0)
+(PctExtNullSelfRedirectHyperlinksRT <= -1) and (UrlLength <= 51) and (PctExtHyperlinks >= 0.74359) and (RelativeFormAction <= 0) => CLASS_LABEL=1 (27.0/0.0)
+(PctExtHyperlinks <= 0) and (ExtMetaScriptLinkRT <= -1) and (InsecureForms >= 1) and (ExtFavicon <= 0) and (PctExtResourceUrls >= 0.285714) => CLASS_LABEL=1 (43.0/1.0)
+(PctExtResourceUrls <= 0) and (PathLevel >= 3) and (PctExtNullSelfRedirectHyperlinksRT <= 0) and (HostnameLength >= 19) => CLASS_LABEL=1 (19.0/0.0)
+(PctExtHyperlinks <= 0) and (PctExtResourceUrls <= 0.0625) and (IframeOrFrame >= 1) and (PathLevel >= 2) and (NumUnderscore <= 0) => CLASS_LABEL=1 (28.0/0.0)
+(PctNullSelfRedirectHyperlinks <= 0) and (PctExtHyperlinks >= 0.256757) and (PctExtResourceUrls >= 0.866667) and (NumDots >= 3) and (PathLevel >= 4) => CLASS_LABEL=1 (28.0/2.0)
+(PctNullSelfRedirectHyperlinks <= 0) and (NumDashInHostname >= 1) and (HostnameLength >= 28) and (DomainInPaths >= 1) => CLASS_LABEL=1 (12.0/2.0)
+(IframeOrFrame <= 0) and (PctExtResourceUrls >= 1) and (PctExtHyperlinks >= 0.202381) and (DomainInPaths <= 0) and (InsecureForms >= 1) and (RelativeFormAction <= 0) => CLASS_LABEL=1 (22.0/1.0)
+(NumSensitiveWords >= 1) and (NumNumericChars >= 29) => CLASS_LABEL=1 (10.0/3.0)
+(NumDash <= 2) and (PctExtResourceUrls >= 0.846154) and (PathLength >= 44) and (NumDashInHostname >= 1) => CLASS_LABEL=1 (7.0/0.0)
+(PctExtResourceUrls <= 0.028571) and (PctExtHyperlinks >= 0.258741) and (PathLength <= 9) and (NumQueryComponents >= 1) => CLASS_LABEL=1 (10.0/1.0)
+(PctExtResourceUrls <= 0) and (NoHttps <= 0) => CLASS_LABEL=1 (9.0/2.0)
+(PctExtResourceUrls <= 0) and (PctExtHyperlinks >= 0.375) and (InsecureForms >= 1) and (PathLevel >= 3) => CLASS_LABEL=1 (5.0/0.0)
+(PctExtHyperlinks <= 0) and (ImagesOnlyInForm >= 1) and (RelativeFormAction >= 1) => CLASS_LABEL=1 (6.0/0.0)
+ => CLASS_LABEL=0 (4993.0/94.0)
+
+Number of Rules : 27
+
+
+Time taken to build model: 2.6 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances        9730               97.3    %
+Incorrectly Classified Instances       270                2.7    %
+Kappa statistic                          0.946 
+Mean absolute error                      0.0426
+Root mean squared error                  0.1585
+Relative absolute error                  8.5102 %
+Root relative squared error             31.6925 %
+Total Number of Instances            10000     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.971    0.025    0.975      0.971    0.973      0.946    0.984     0.981     0
+                 0.975    0.029    0.971      0.975    0.973      0.946    0.984     0.977     1
+Weighted Avg.    0.973    0.027    0.973      0.973    0.973      0.946    0.984     0.979     
+
+=== Confusion Matrix ===
+
+    a    b   <-- classified as
+ 4856  144 |    a = 0
+  126 4874 |    b = 1
+
