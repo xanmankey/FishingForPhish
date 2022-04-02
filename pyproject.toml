@@ -1,12 +1,3 @@
-[project]
-name = "FishingForPhish"
-authors = [
-    {name = "Xander Kutulas", email = "Xander.Kutulas@gmail.com"},
-]
-readme = "README.rst"
-classifiers = [
-    "License :: OSI Approved :: BSD 3-Clause License",
-]
-
-requires-python = ">=3.5"
-dynamic = ["version", "description"]
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
