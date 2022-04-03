@@ -105,4 +105,4 @@ on the datasets, and then the scraping session and machine learning wrapper are 
     
 ----
 
-Specifics regarding usage cases, classes, methods, and attributes can all be found in the API section of the documentation
+Specifics regarding usage cases, classes, methods, and attributes can all be found in the :doc:`API` section of the documentation
