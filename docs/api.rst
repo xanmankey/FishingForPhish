@@ -342,47 +342,48 @@ This example is the result of all the code snippets above, and is also included 
    
    from classes import startFishing, scrape, page, image, saveFish 
    
-    # Initialization
-    run = startFishing()
-    run.initializeAll()
+   def main():
+      # Initialization
+      run = startFishing()
+      run.initializeAll()
 
-    fisher = scrape(urlFile="data/urls.txt",
+      fisher = scrape(urlFile="data/urls.txt",
         dataDir="data",
         driver=run.driver,
         classVal=0)
 
-    # Initialization of the page analyzer
-    pageData = page()
-    fisher.addAnalyzer(pageData)
+      # Initialization of the page analyzer
+      pageData = page()
+      fisher.addAnalyzer(pageData)
 
-    # Initialization of the image analyzer
-    imageData = image()
-    fisher.addAnalyzer(imageData)
+      # Initialization of the image analyzer
+      imageData = image()
+      fisher.addAnalyzer(imageData)
 
-    # Once the analyzers have been added, it doesn't matter what
-    # instance the goFish method is called with
-    fisher.goFish()
-    print(pageData.features)
-    print(imageData.features)
+      # Once the analyzers have been added, it doesn't matter what
+      # instance the goFish method is called with
+      fisher.goFish()
+      print(pageData.features)
+      print(imageData.features)
 
-    # Data Combination
-    # The features generated from the other instances are then used
-    # when dealing with (creating datasets, classifying, ect.) data
-    # Takes the same arguments as the scrape class
-    DC = saveFish(urlFile="data/urls.txt",
+      # Data Combination
+      # The features generated from the other instances are then used
+      # when dealing with (creating datasets, classifying, ect.) data
+      # Takes the same arguments as the scrape class
+      DC = saveFish(urlFile="data/urls.txt",
         dataDir="data",
         driver=run.driver,
         classVal=0,
         analyzers=fisher.analyzers,
         allFeatures=fisher.allFeatures,
         allFeatureNames=fisher.allFeatureNames)
-    DC.createDatasets()
-    DC.classify()
-    print(DC.score)
-    print(DC.classifications)
+      DC.createDatasets()
+      DC.classify()
+      print(DC.score)
+      print(DC.classifications)
 
-    DC.closePWW3()
-    DC.closeSelenium()
+      DC.closePWW3()
+      DC.closeSelenium()
 
    if __name__ == "__main__":
       main()
