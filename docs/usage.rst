@@ -18,7 +18,7 @@ In order to setup java-17-orcacle, follow the steps listed below (please note th
 
 .. code-block:: console
 
-   $ export JAVA_HOME = "path/to/your/installation/here"
+   $ export JAVA_HOME="path/to/your/installation/here"
    
 The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper/install.html#ubuntu).
 
