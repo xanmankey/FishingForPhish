@@ -8,10 +8,9 @@ from weka.core.dataset import Attribute, Instance, Instances
 from weka.core.converters import Saver
 from weka.filters import Filter
 import weka.core.packages as packages
-from weka.core.classes import Random
 from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
-from weka.classifiers import Classifier, Evaluation
-# Optionally, for graphing purposes, pygraphviz and PIL can be installed and the 
+from weka.classifiers import Classifier
+# Optionally, for graphing purposes, pygraphviz and PIL can be installed and the
 # weka.plot.graph class can be imported
 # Check the installation process here for more details:
 # https://fracpete.github.io/python-weka-wrapper3/install.html
