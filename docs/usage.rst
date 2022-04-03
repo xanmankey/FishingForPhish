@@ -19,6 +19,8 @@ In order to use FishingForPhish, there are a few **recommendations**.
 Setup
 ^^^^^
 
+**TODO: in order to use this library, java needs to be setup; I have to figure out how to make this process consistent**
+
 To use FishingForPhish, first install it using pip:
 
 .. code-block:: console
