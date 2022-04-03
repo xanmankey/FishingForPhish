@@ -9,16 +9,18 @@ Installation
 Prerequisites
 ^^^^^^^^^^^^^
 
-**In order to use this library, a java deployment kit (JDK) needs to be installed, and the JAVA_HOME environmental variable needs to be set; note that java-17-oracle was used for the development of this library, and therefore is the recommended JDK version.**
+**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper/install.html, but the process for the installation of the java-17-oracle (the oracle version tested with this library) and initialization of JAVA_HOME can be found below.**
 
-In order to setup java-17-orcacle, follow the steps listed below (please note that the below only accounts for the linux (specifically WSL) installation of java-17-oracle, I haven't had time to test installation on other OS yet):
+In order to setup java-17-orcacle, follow the steps listed below (please note that the below only accounts for the linux (specifically a WSL-Ubuntu build) installation of java-17-oracle, I haven't had time to test installation on other OS yet):
 
-* Download and extract the OS-appropriate java development kit from https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (in the case of a WSL build, I downloaded the Linux x64 Compressed Archive)
+* Download and extract the OS-appropriate java development kit from https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
 * Set the JAVA_HOME environmental variable to the installation directory using the below command:
 
 .. code-block:: console
 
    $ export JAVA_HOME = "path/to/your/installation/here"
+   
+The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper/install.html#ubuntu).
 
 Additionally, the below is recommended:
 
