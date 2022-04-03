@@ -10,6 +10,7 @@ initialize
 
 In order to scrape, parse html, or work with datasets, you first have to initialize the library.
 You can do that by creating an instance of the class initialize and then calling the method initializeAll.
+**Note: whenever you initialize either a webdriver instance or start the JVM, the associated exit method should be run in order to exit properly**
 
 .. code-block:: python
 
@@ -17,9 +18,6 @@ You can do that by creating an instance of the class initialize and then calling
    
    run = startFishing(dataDir="data")
    run.initializeAll()
-   
-   # Additionally call .closeSelenium() to close and quit the webdriver process
-   run.closeSelenium()
 
 The initialize class has 4 attributes:
 
@@ -342,51 +340,49 @@ This example is the result of all the code snippets above, and is also included 
 
 .. code-block:: python
    
-   from classes import initialize, page, image, data 
+   from classes import startFishing, scrape, page, image, saveFish 
    
-   def main():
-      # Initialization
-      run = initialize()
-      run.initializeAll()
+    # Initialization
+    run = startFishing()
+    run.initializeAll()
 
-      # PageBased data generation + initialization
-      pageData = page(
-         urlFile="data/urls.txt",
-         dataDir="data",
-         driver=run.driver,
-         BS=run.BS)
-      pageData.pageScrape()
-      print(pageData.pageFeatures)
+    fisher = scrape(urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        classVal=0)
 
-      # ImageBased data generation
-      imageData = image(
-         urlFile="data/urls.txt",
-         dataDir="data",
-         driver=run.driver,
-         BS=run.BS)
-      imageData.imageScrape()
-      print(imageData.imageFeatures)
+    # Initialization of the page analyzer
+    pageData = page()
+    fisher.addAnalyzer(pageData)
 
-      # Data Combination
-      DC = data(
-         pageFeatures=pageData.pageFeatures,
-         imageFeatures=imageData.imageFeatures,
-         urlFile="data/urls.txt",
-         dataDir="data")
-      DC.createDatasets()
-      DC.classify()
+    # Initialization of the image analyzer
+    imageData = image()
+    fisher.addAnalyzer(imageData)
 
-      # Where FP stands for False Positive and FN for False Negative
-      print(DC.combinedBalancedAccuracy)
-      print(DC.combinedBalancedFP)
-      print(DC.combinedBalancedFN)
-      print(DC.fullAccuracy)
-      print(DC.fullFP)
-      print(DC.fullFN)
-      
-      DC.closePWW3()
-      run.closeSelenium()
+    # Once the analyzers have been added, it doesn't matter what
+    # instance the goFish method is called with
+    fisher.goFish()
+    print(pageData.features)
+    print(imageData.features)
 
+    # Data Combination
+    # The features generated from the other instances are then used
+    # when dealing with (creating datasets, classifying, ect.) data
+    # Takes the same arguments as the scrape class
+    DC = saveFish(urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        classVal=0,
+        analyzers=fisher.analyzers,
+        allFeatures=fisher.allFeatures,
+        allFeatureNames=fisher.allFeatureNames)
+    DC.createDatasets()
+    DC.classify()
+    print(DC.score)
+    print(DC.classifications)
+
+    DC.closePWW3()
+    DC.closeSelenium()
 
    if __name__ == "__main__":
       main()
