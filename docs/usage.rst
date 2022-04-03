@@ -9,7 +9,7 @@ Installation
 Prerequisites
 ^^^^^^^^^^^^^
 
-**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper/install.html, but the process for the installation of the java-17-oracle (the oracle version tested with this library) and initialization of JAVA_HOME can be found below.**
+**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-17-oracle (the oracle version tested with this library) and initialization of JAVA_HOME can be found below.**
 
 In order to setup java-17-orcacle, follow the steps listed below (please note that the below only accounts for the linux (specifically a WSL-Ubuntu build) installation of java-17-oracle, I haven't had time to test installation on other OS yet):
 
@@ -20,7 +20,7 @@ In order to setup java-17-orcacle, follow the steps listed below (please note th
 
    $ export JAVA_HOME="path/to/your/installation/here"
    
-The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper/install.html#ubuntu).
+The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper3/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper3/install.html#ubuntu).
 
 Additionally, the below is recommended:
 
