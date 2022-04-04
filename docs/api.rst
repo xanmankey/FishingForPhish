@@ -335,7 +335,7 @@ The data class also has 5 methods in addition to __init__() and createDatasets()
 * classify(self)
       A function for classifying the resulting datasets set to True in newDatasetOptions, in addition to the datasets from the analyzers attribute. Specifically the J48, Jrip, and Naive Bayes models were used for the purposes of this research, but many more can easily be added for customization. A model output file is saved in the output directory, and model percentage and confusion matrices are returned as output. Note that if there are NO non-null class instances, classification might not succeed.
 * createDatasets(self)
-      The createDatasets attribute .
+      The createDatasets method is a combination method that uses the list of analyzers, newDatasetOptions, and calls class methods to create datasets (a dataset for each analyzer, and a dataset for each newDatasetOption set to True if possible). Note that it doesn't call the classify class method, which needs to be called seperately after the createDatasets method is called.
       
 Example (FINALLY)
 -----------------
