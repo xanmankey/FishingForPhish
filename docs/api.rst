@@ -39,7 +39,7 @@ The startFishing class has 4 methods in addition to __init__():
 * initializePWW3(self, jvmOptions)
       Starts JVM with a list of optional parameters, jvmOptions (some default options, system_cp and packages, are passed with the initializeAll() method). The attribute jvmToggle is updated to be True.
 * initializeAll(self, jvmOptions=["system_cp", "packages"], add_ons=['wayback_machine-3.0-fx.xpi'])
-      As used in the example above, sequentially handles logging accordingly (to avoid console spam), calls initializePWW3 (with the default options, system_cp and packages. Packages must be True if you want to use any packages), installResources(), and then initializeSelenium using the specified add_ons, which defaults to the installed 'wayback_machine-3.0-fx.xpi' from the call to installResources. This method can be adapted, but currently defaults to using the settings used during the research at TODO. 
+      As used in the example above, sequentially handles logging accordingly (to avoid console spam), calls initializePWW3 (with the default options, system_cp and packages. Packages must be True if you want to use any packages), installResources(), and then initializeSelenium using the specified add_ons, which defaults to the installed 'wayback_machine-3.0-fx.xpi' from the call to installResources. This method can be adapted, but currently defaults to using the settings used during the research at https://github.com/xanmankey/FishingForPhish/tree/main/research. 
 
 analyzer
 --------
