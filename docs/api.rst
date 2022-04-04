@@ -238,10 +238,11 @@ An example of using the image class in tandem with the goFish() can be seen belo
    imageData = image(HASH=True)
    fisher.addAnalyzer(imageData)
 
-The image class inherits all attributes from the initialize and scrape classes and declares 1 more:
+The image class shares the same attributes as the page class. The features attribute (along with the features) for the class is defined below:
 
-* imageFeatures=None
-      A 2D list containing the values of each page feature for each url. The scraped features are defined below:
+* features=None
+      Same structure as the features attribute of the page class. Features can be found below:
+      
 |
 
 #. a
@@ -276,92 +277,50 @@ The image class inherits all attributes from the initialize and scrape classes a
 
 |
 
-The image class also has 3 other methods in addition to __init__() and imageScrape():
+The image class also has 3 other methods in addition to __init__() and analyze():
 
-* getImageFeatures(self, filename)
-      Searches through the html of a url to populate the pageFeatures list accordingly.
 * getImagemagickData(self, result)
       Runs the imagemagick identify -verbose <datadir>/screenshots/<filename> + .png as a subprocess, where color, brightness, and other resulting data is returned from the screenshot of the website.
 * imageHash(self, url, filename)
       Runs the perceptual and difference hash algorithms from the ImageHash library IF database functionality is enabled. Inserts resulting data into the hashes table, which couldbe used for future research once enough data has been collected.
+* analyze(self, url, filename, resources, HASH=False)
+      Similar to the page class, except uses the getImagemagickData function to get features from website screenshots (imagemagick is NOT a required dependency found in requirements-txt, which means that the image class will NOT be able to run without it, but it can be installed as a command-line tool; note that analyzers may rely on other software, so install as necessary) and has the imageHash function that can be called if the HASH parameter is set to True; updates the hashes table in the database (if enabled) with perceptual and differential hash values for possible use in future early detection.
       
-data
--------
+saveFish
+--------
 
-The data class helps tie the data together, with methods that create .arff files from the data, oversample the data, perform feature selection, and classify the data. 
-An example of using the data class to create and classify the ranked (selected feature) datasets is seen below
+The saveFish class helps tie the data together, with methods that create .arff files from the data, oversample the data, perform feature selection, and classify the data. 
+An example of using the data class to create the datasets (one dataset for each analyzer, in addition to a possible ranked dataset based on feature selection, a full dataset where all analyzer features are combined, and a rankedBalanced and fullBalanced dataset where a WEKA oversampler, SMOTE, is used to balance the classes) and classify the ranked datasets is seen below:
 
 .. code-block:: python
 
-   from classes import data
+   from classes import saveFish
    
     # Data Combination
-    DC = data(
-        pageFeatures=pageData.pageFeatures,
-        imageFeatures=imageData.imageFeatures,
-        urlFile="data/urls.txt",
-        dataDir="data")
+    DC = saveFish(urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        classVal=0,
+        analyzers=fisher.analyzers,
+        allFeatures=fisher.allFeatures,
+        allFeatureNames=fisher.allFeatureNames)
     DC.createDatasets()
     DC.classify()
+    print(DC.score)
+    print(DC.classifications)
 
-The data class inherits all attributes from all previously defined classes and declares 25 new ones, with each attribute falling into one of four categories (with the exception of the allFeatures attribute); dataset, accuracy, false positive, or false negatives (the attributes are grouped below into sets of 4 by their dataset attribute; note that all datasets are saved as <dataDir>/datasets/<filename> + ".arff".):
+The saveFish class inherits all attributes from the initialize and scrape classes, updates 3 attributes using values from the scrape class (specifically analyzers, allFeatures and allFeatureNames are initialized to fisher (the example name for the instance of the scrape class).analyzers, fisher.allFeatures, and fisher.allFeatureNames) and declares 5 new ones:
 
-* pageDataset
-      A dataset object (see python weka wrapper's documentation here for more information: https://fracpete.github.io/python-weka-wrapper/weka.core.html#module-weka.core.dataset) created from the pageFeatures array.
-      
-      * pageAccuracy
-         The classification accuracy of the pageDataset.
-      * pageFP
-         The false positive percentage of the pageDataset.
-      * pageFN
-         The false negative percentage of the pageDataset.
-* imageDataset
-      A dataset object created from the imageFeatures array.
-      
-      * imageAccuracy
-         The classification accuracy of the imageDataset.
-      * imageFP
-         The false positive percentage of the imageDataset.
-      * imageFN
-         The false negative percentage of the imageDataset.
-* combinedDataset
-      A dataset object created from both the top ranked (in regards to feature selection) pageDataset and imageDataset. 
-      
-      * combinedAccuracy
-         The classification accuracy of the combinedDataset.
-      * combinedFP
-         The false positive percentage of the combinedDataset.
-      * combinedFN
-         The false negative percentage of the combinedDataset.
-* combinedBalancedDataset
-      A resulting dataset object from oversampling performed on the combinedDataset (in order to balance the classes).
-      
-      * combinedBalancedAccuracy
-         The classification accuracy of the combinedBalancedDataset.
-      * combinedBalancedFP
-         The false positive percentage of the combinedBalancedDataset.
-      * combinedBalancedFN
-         The false negative percentage of the combinedBalancedDataset.
-* fullDataset
-      A dataset object created from all the pageDataset and imageDataset attributes and instances. 
-      
-      * fullAccuracy
-         The classification accuracy of the fullDataset.
-      * fullAccuracyFP
-         The false positive percentage of the fullDataset.
-      * fullAccuracyFN
-         The false negative percentage of the fullDataset.
-* fullBalancedDataset
-      A resulting dataset object from oversampling performed on the fullDataset.
-      
-      * fullBalancedAccuracy
-         The classification accuracy of the fullBalancedDataset.
-      * fullBalancedAccuracyFP
-         The false positive percentage of the fullBalancedDataset.
-      * fullBalancedAccuracyFN
-         The false negative percentage of the fullBalancedDataset.
-* allFeatures
+* datasets={}
+   
+* analyzers=[]
+
+* newDatasetOptions={"full":True, "ranked":True, "fullBalanced":True, "rankedBalanced":True}
+   
+* allFeatures=None (but in order for the class to operate correctly, the allFeatures attribute of the scrape class should be passed as a value)
    A combination list composed of the pageFeature + imageFeature values.
+
+* allFeatureNames=None (similarily, in order for the class to operate correctly, the allFeatureNames attribute of the scrape class should be passed as a value)
       
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
