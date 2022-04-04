@@ -9,11 +9,11 @@ Installation
 Prerequisites
 ^^^^^^^^^^^^^
 
-**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-17-oracle (the oracle version tested with this library) and initialization of JAVA_HOME can be found below.**
+**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below.**
 
-In order to setup java-17-orcacle, follow the steps listed below (please note that the below only accounts for the linux (specifically a WSL-Ubuntu build) installation of java-17-oracle, I haven't had time to test installation on other OS yet):
+In order to setup java-11-orcacle, follow the steps listed below (please note that the below only accounts for the linux (specifically a WSL-Ubuntu build) installation of java-11-oracle, I haven't had time to test installation on other OS yet):
 
-* Download and extract the OS-appropriate java development kit from https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
+* Download and extract the OS-appropriate java development kit from https://adoptopenjdk.net/ (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
 * Set the JAVA_HOME environmental variable to the installation directory using the below command:
 
 .. code-block:: console
@@ -48,16 +48,6 @@ Alternatively, the library can be installed from source by cloning the github re
 .. code-block:: console
 
    $ git clone https://github.com/xanmankey/FishingForPhish.git
-   
-Additionally, once python-weka-wrapper3 has been successfully installed, it is important to run 2 commands to ensure that the jvm runs smoothly:
-
-.. code-block:: console
-
-   $ export WEKA_JAR_PATH="path/to/your/weka.jar/file"
-
-.. code-block:: console
-
-   $ export WEKA_HOME="path/to/the/installed/weka/directory"
 
 How to use it?
 --------------
