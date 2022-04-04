@@ -436,7 +436,7 @@ class scrape(startFishing):
         return time
 
     def goFish(self):
-            '''Automates the page-based scraping process by reading from the url file, validating the url,
+            '''Automates the scraping process by reading from the url file, validating the url,
             taking a screenshot (if necessary), saving html and css (if necessary), and then generating
             features by using Selenium and Beautiful Soup analysis using created analyzers'''
             if not self.driver:
