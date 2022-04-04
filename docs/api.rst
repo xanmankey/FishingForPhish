@@ -3,7 +3,7 @@ API
 
 The following section provides examples and goes into more depth about using FishingForPhish.
 More examples and documentation will be added when time allows. 
-The API examples are currently broken down into example code snippets (*which won't always be able to stand alone*) and a simple combined example at the end of the documentation.
+The API examples are currently broken down into example code snippets (*which unfortunately aren't always  able to stand alone due to the reliance on other sections of the code, for example initialization*) and a simple combined example at the end of the documentation.
 
 startFishing
 ----------
@@ -33,9 +33,9 @@ The startFishing class has 3 attributes:
 The startFishing class has 4 methods in addition to __init__():
 
 * installResources(self)
-      Installs potentially-useful resources used during the methodology of the research here: TODO. This includes the chiSquaredAttributeEval feature selector for WEKA, the SMOTE oversampler for WEKA, and the Wayback Machine add-on for Firefox.
+      Installs potentially-useful resources used during the methodology of the research here: https://github.com/xanmankey/FishingForPhish/tree/main/research. This includes the chiSquaredAttributeEval feature selector for WEKA, the SMOTE oversampler for WEKA, and the Wayback Machine add-on for Firefox, and has a commented out option for installing a popup blocker to remove popups in screenshots. If WEKA packages are installed, **note that they won't be activate until the NEXT startup of the JVM**.
 * initializeSelenium(self, add_ons=None)
-      Creates the Selenium instance. A list of paths to add_ons (.xpi files) can be passed to enhance the scraping experience. The wayback_machine add-on is added to the webdriver instance with the method initializeAll().
+      Creates the Selenium instance. A list of paths to add_ons (.xpi files) can be passed to enhance the scraping experience. The wayback_machine add-on is added to the webdriver instance with the method initializeAll(). Selenium is initialized in headless mode, with a disabled-gpu and hidden scrollbars, and also doesn't store any cookie, cache, or session data for security reasons. Unfortunately, javascript does need to be enabled due to the reliance of the DOM on JS for some dynamic websites, and in the context of scraping phishing websites could be a potential safety-flaw, so VPN and VM usage are strongly recommended.
 * initializePWW3(self, jvmOptions)
       Starts JVM with a list of optional parameters, jvmOptions (some default options, system_cp and packages, are passed with the initializeAll() method). The attribute jvmToggle is updated to be True.
 * initializeAll(self, jvmOptions=["system_cp", "packages"], add_ons=['wayback_machine-3.0-fx.xpi'])
