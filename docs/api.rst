@@ -314,15 +314,15 @@ The saveFish class inherits all attributes from the initialize and scrape classe
 * datasets={}
       Where datasets is a dictionary of stringDatasetName:datasetObject that is updated throughout and many methods rely on.
 * analyzers=[] (see above; the value of analyzers should be passed from your created instance of the scrape class)
-      Where analyzers is a list of created analyzers objects
+      Where analyzers is a list of created analyzers objects.
 * newDatasetOptions={"full":True, "ranked":True, "fullBalanced":True, "rankedBalanced":True}
+      A list of options for the datasets that you want to create; initializes all values to True.
 * allFeatures=None (see above)
-      A combination list composed of the pageFeature + imageFeature values.
+      A combination list composed of dictionaries with the pageFeature + imageFeature values.
 * allFeatureNames=None (see above)
+      A dictionary composed of allFeatureNames in the featureName:stringWekaDatatype. 
       
-   
-      
-The data class also has 5 methods in addition to __init__() and createDatasets():
+The data class also has 5 methods in addition to __init__() and createDatasets() LEFT OFF:
 
 * FS(self, page=True, image=True)
       Uses the feature selection process followed in the research at https://github.com/xanmankey/FishingForPhish/tree/main/research to select the top ranked features (the correlational, information gain, and chiSquared ranked feature selection methods are run and the output is stored in arrays, of which the index values are then used (with 0 being the highest value and len(array - 1) being the lowest value) to calculate the top overall ranked features). Parameters for selecting page and/or image features are available, and defaults to returning a length 2 array of the top ranked page and then image features respectively (the numerical index of the attribute is returned).
