@@ -65,7 +65,7 @@ The analyzer class has 1 inheritible method and 1 **required** method:
 scrape
 ------
 
-The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. There is no encompassing method (such as initializeAll()) in the scrape class, but the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality. You will probably not want to create an instance of the scrape class, as it serves as a base initialization class to be inherited from, and cannot be used effectively standalone.
+The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. The goFish() method is used to encompass the majority of the scrape class's functionality, providing a method for iterating and validating urls, in addition to parsing html, css, and taking a screenshot for analysis, and the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality.
 
 The scrape class inherits all attributes from the initialize class and declares 8 new ones:
 
@@ -100,6 +100,8 @@ The scrape class inherits all attributes from the initialize class and declares 
       An sqlite3 cursor attribute; if you pass a database object, a cursor object will be initialized with an associated database, so no need to pass a preexisting one.
 * conn=None
       An sqlite3 connection attribute; similar to the cursor attribute, where if you pass a database object, a connection object will be initialized with an associated database, so no need to pass a preexisting one.
+* BS=None
+      An object representing an instance of Beautiful Soup; an html parser useful for web scraping and analysis. Updated using the initializeBS() method for every url in urlFile (if validated).
 * id=0
       Used for naming filenames, databases, and selecting urls. Defaults to 0, but if you are resuming the script from where you left off (existing files/database) the script will attempt to determine the id for you (alternatively you can manually pass a value as well).
 * classVal=Instance.missing_value()
@@ -115,20 +117,22 @@ The scrape class also has 7 methods in addition to __init__():
 
 * closeSelenium(self)
       Calls self.driver.close() and self.driver.quit(). Should be called once the scraping process has finished.
+* initializeBS(self, html)
+      Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
 * shorten(self, url)
       Uses pyshorteners to create a shortened version of the url with 5 unique characters at the end; those characters are then incorporated into the filename in a _<self.id>_<5 characters>.png filename that can be reverse engineered to get the url from a filename with a specific id (database functionality makes this process even easier, and is recommended).
 * expand(self, urlID)
       Takes the 5 characters used at the end of a filename (excluding .png) as input, and expands and returns the original url.
 * generateFilename(self, url)
       A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
-* initializeBS(self, html)
-      Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
-* saveScreenshot(self, url)
-      Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
 * siteValidation(self, url)
       Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
+* saveScreenshot(self, url)
+      Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
 * getTime(self)
       Gets the current time based on time zone; only called if database functionality is enabled.
+* goFish(self)
+      Automates the scraping process; iterates over the provided urlFile, validates the url (based on checks from Selenium and Requests), and parses html, css, and screenshots, initializes BS and the database, gets the time, and passes all the initialized data (dataDir, driver, database, BS, cursor, connection, id, classVal, and errors) in a dictionary, resources.
       
 page
 ----
