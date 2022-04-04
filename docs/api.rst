@@ -137,76 +137,87 @@ The scrape class also has 7 methods in addition to __init__():
 page
 ----
 
-The page class is for scraping the page-based features outlined by the research here: TODO. It relies on many of the methods provided by the scrape class.
+The page class is an example class that inherits from the base analyzer class, with the purpose of scraping the page-based features outlined by the research here: TODO (research link here). It recieves the resources dictionary from the goFish() method of the scrape class, uses the information to scrape the necessary features, and returns the updated resources objects in addition to the new attributes, features and featureNames
 An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping, and remember to close it AFTER scraping!**).
 
 .. code-block:: python
 
    from classes import page
    
-   pageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
-   pageData.pageScrape()
-   print(pageData.pageFeatures)
+   # Instance of the scrape class, where class value is equal to the 0-indexed class value
+   # In the context of this research, "Legitimate"
+   fisher = scrape(urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        classVal=0)
+        
+   # Initialization of the page analyzer
+   pageData = page()
+   fisher.addAnalyzer(pageData)
 
-The page class inherits all attributes from the initialize and scrape classes and declares 1 more:
+The page class creates 3 attributes:
 
-* pageFeatures=None
+* features=None
+      A list of dictionaries, with each dictionary containing the featureNames and scraped values of each page feature for each url. The features scraped by this example class are defined below:
+|
+
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+#. a
+
+|
+
+* featureNames=None
       A 2D list containing the values of each page feature for each url. The scraped features are defined below:
-|
-
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-
-|
-
-The page class also has 1 other method in addition to __init__() and pageScrape():
+* classVal=Instance.missing_value()
+      A 2D list containing the values of each page feature for each url. The scraped features are defined below:
+The page class inherits inherits the name method (and **requires** the creation of the analyze method) from the analyzer class:
 
 * getPageFeatures(self, url)
       Searches through the html of a url to populate the paegFeatures list accordingly.
