@@ -46,14 +46,21 @@ analyzer
 
 The analyzer class is a base class, inherited by all analyzers (which in this context refers to feature selection classes with an **analyze** function that returns appropriate features: more on this below). 
 
-The analyzer class has NO attributes
+The analyzer class has NO attributes. However, 3 attributes are **required** (where required implies that the user creates their own code that follows these guidelines):
+
+* self.features
+   An array of dictionaries, where each dictionary is composed of a key-value pair of featureName:value
+* self.featureNames
+   A dictionary where each key-value pair follows the featureName:stringWekaDatasetType (more informat regarding weka dataset types can be found at https://waikato.github.io/weka-wiki/formats_and_processing/arff_stable/)
+* self.classVal
+   The class value of the scraped instances used in the Weka dataset. The value of self.classVal is used in the goFish() method via passing of the resources dictionary.
 
 The analyzer class has 1 inheritible method and 1 **required** method:
 
 * name
    A convenience method for getting the analyzer name, or the name of the class.
 * analyzer
-   The analyzer function is a user created function; it is not inherited via code, and needs to be made by hand.
+   The analyzer function is a user created function; it is not inherited via code, and needs to be made by hand. The analyzer functions work in tandem with the goFish() method of the scrape class, which iterates through the provided urlFile and scrapes necessary data, whereas the analyzer functions analyze this data by taking a dictionary of resources resources (this includes the driver, database, BS instance, ect.; update this list if you need to access another resource from the scrape class), using them for analysis accordingly, and then returning the updated features, along with new key-value pairs, including "classVal":self.classVal, "features":features, and "featureNames":self.featureNames. Once these values are passed back to the goFish() method, it updates accordingly, and then the process either repeats for the next url in the urlFile or completes. 
 
 scrape
 ------
@@ -91,10 +98,18 @@ The scrape class inherits all attributes from the initialize class and declares 
       cssDir also has a similar function, and is a path to a directory with css files and can be passed as an argument to minimize scraping as long as the url file passed relates to the ids of the files.
 * cursor=None
       An sqlite3 cursor attribute; if you pass a database object, a cursor object will be initialized with an associated database, so no need to pass a preexisting one.
+* conn=None
+      An sqlite3 connection attribute; similar to the cursor attribute, where if you pass a database object, a connection object will be initialized with an associated database, so no need to pass a preexisting one.
 * id=0
       Used for naming filenames, databases, and selecting urls. Defaults to 0, but if you are resuming the script from where you left off (existing files/database) the script will attempt to determine the id for you (alternatively you can manually pass a value as well).
+* classVal=Instance.missing_value()
+      By default, the classVal attribute (which is used for dataset creation and therefore classification) is set to Instance.missing_value(), but it can be changed by updating it accordingly in your analyzer() function (you just have to know your class values, as well as when to update them in regards to the current file position in the open url file).
 * errors={}
       A dictionary that stores urls and errors as key value pairs. Updates the errors sqlite3 table if database functionality is enabled.
+* allFeatures=[]
+      An array of dictionaries composed of ALL features (all name:value pairs generated from all analyzers).
+* allFeatureNames={}
+      A dictionary that stores the combined featureNames of ALL analyzers (in name:stringWekaDataType format).
       
 The scrape class also has 7 methods in addition to __init__():
 
