@@ -3,6 +3,8 @@
 # Current TODO list:
 # Documentation + Figuring out necessary python version (setup.cfg)
 # Implementation of Dr. Tan's scraping method into the page class
+# TODO: I'm planning on taking the page and image classes out of the FFP.py file,
+# where each class instance has a seperate file that gets imported
 # RUN
 # WRITE
 # website?
@@ -844,7 +846,7 @@ class image(analyzer):
         totalTags = resources["BS"].find_all()
         selTotalTags = resources["driver"].find_elements(By.XPATH, "//*")
         linkTags = resources["driver"].find_elements(By.TAG_NAME, "link")
-        
+
         if HASH:
             # Optionally, update the hashes table if database functionality is enabled
             self.imageHash(url, filename)
@@ -1248,7 +1250,7 @@ class saveFish(scrape):
         jvm.stop()
 
     # Returns a list of all the dataset attributes
-    def attributeCreation(self, featureNames, class1="Legitimate", class2="Phishing"):
+    def attributeCreation(self, featureNames, class1="legit", class2="phish"):
         '''A convenience function to create the attributes
         for a specific dataset based off of the featureName
         class attributes.'''
@@ -1286,7 +1288,7 @@ class saveFish(scrape):
                 for classifierName, classifier in classifiers.items():
                     try:
                         classifier.build_classifier(dataset)
-                        # The graphs generated can be varied if you so choose; I just decided to graph after 
+                        # The graphs generated can be varied if you so choose; I just decided to graph after
                         # first building the classifier
                         if self.graph:
                             graph.plot_dot_graph(cls.graph, self.dataDir + "/graph/" + analyzer.name() + "Graph.png")
@@ -1473,7 +1475,7 @@ def main():
     DC.classify()
     print(DC.score)
     print(DC.classifications)
-    
+
     DC.closePWW3()
     DC.closeSelenium()
 
