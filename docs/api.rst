@@ -195,7 +195,7 @@ The page class also has 1 other method in addition to __init__() and pageScrape(
 image
 -----
 
-The image class is similar to the page class, where it's primary use is for scraping image-based features (the justification for feature selection can be found in the research at TODO; each feature can be categorized under the layout, style, or other category).
+The image class is similar to the page class, where it's primary use is for scraping image-based features (the justification for feature selection can be found in the research at https://github.com/xanmankey/FishingForPhish/tree/main/research; each feature can be categorized under the layout, style, or other category).
 An example of using the image class to print a set of full imageFeatures can be seen below (**Again, don't forget about initialization and shutdown!**).
 
 .. code-block:: python
@@ -337,7 +337,7 @@ The data class inherits all attributes from all previously defined classes and d
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
 * FS(self, page=True, image=True)
-      Uses the feature selection process followed in the research at TODO to select the top ranked features (the correlational, information gain, and chiSquared ranked feature selection methods are run and the output is stored in arrays, of which the index values are then used (with 0 being the highest value and len(array - 1) being the lowest value) to calculate the top overall ranked features). Parameters for selecting page and/or image features are available, and defaults to returning a length 2 array of the top ranked page and then image features respectively (the numerical index of the attribute is returned).
+      Uses the feature selection process followed in the research at https://github.com/xanmankey/FishingForPhish/tree/main/research to select the top ranked features (the correlational, information gain, and chiSquared ranked feature selection methods are run and the output is stored in arrays, of which the index values are then used (with 0 being the highest value and len(array - 1) being the lowest value) to calculate the top overall ranked features). Parameters for selecting page and/or image features are available, and defaults to returning a length 2 array of the top ranked page and then image features respectively (the numerical index of the attribute is returned).
 * generateInstances(self, combined=True, full=True)
       Uses the SMOTE weka filter to oversample the minority class. 2 optional parameters default to True, combined and full, each of which represent the dataset that you want to oversample (note that oversampling does not edit a dataset, but rather generates a new one).
 * closePWW3(self, image=True, page=True, combined=True, combinedBalanced=True, full=True, fullBalanced=True)
