@@ -565,7 +565,7 @@ class page(analyzer):
     def analyze(self, url, filename, resources):
         '''Searches through the html of a url to get the specified page-features.
         These features are defined in the research paper at
-        https://github.com/xanmankey/FishingForPhish.git.'''
+        https://github.com/xanmankey/FishingForPhish/tree/main/research'''
         # If you want to update class value mid-goFish(), two things are required:
         # Knowledge of when your urlFile shifts from 1 class to another
         # And an associated change of the class value in resources
@@ -700,7 +700,7 @@ class image(analyzer):
         '''Analyses the results of the imageMagick command:
         identify -verbose (screenshot) to store imageFeatures. Definitions and
         justification for scraping these features can be found in the research at
-        https://github.com/xanmankey/FishingForPhish.git.'''
+        https://github.com/xanmankey/FishingForPhish/tree/main/research'''
         CHANNEL = 0
         RED = 0
         GREEN = 0
@@ -832,7 +832,7 @@ class image(analyzer):
     def analyze(self, url, filename, resources):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
-        https://github.com/xanmankey/FishingForPhish.git and broken down
+        https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
         into the categories: layout, style, and other.'''
         features = {}
         totalTags = resources["BS"].find_all()
