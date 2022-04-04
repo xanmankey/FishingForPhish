@@ -1,5 +1,11 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
+# Current TODO list:
+# Documentation + Figuring out necessary python version (setup.cfg)
+# Implementation of Dr. Tan's scraping method into the page class
+# RUN
+# WRITE
+# website?
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
