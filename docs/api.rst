@@ -214,13 +214,14 @@ The page class creates 3 attributes:
 |
 
 * featureNames=None
-      A 2D list containing the values of each page feature for each url. The scraped features are defined below:
+      A dictionary containing key-value pairs of name:stringWekaDataType (remember that weka data types can be found here: https://waikato.github.io/weka-wiki/formats_and_processing/arff_stable/) for the scraped features of the class. Only initialized once.
 * classVal=Instance.missing_value()
-      A 2D list containing the values of each page feature for each url. The scraped features are defined below:
+      The classVal regarding the url. Defaults to nan, or a "?" value in a .arff file. If you want to update the classVal, you NEED to know the class value of each url so you can update the value accordingly and pass it back to goFish() using the resources dictionary. 
+      
 The page class inherits inherits the name method (and **requires** the creation of the analyze method) from the analyzer class:
 
-* getPageFeatures(self, url)
-      Searches through the html of a url to populate the paegFeatures list accordingly.
+* analyze(self, url, filename, resources)
+      Searches through the html of a url to populate the features list accordingly; uses and updates the values in the resources array. The filename value is passed, as it may be used in other analyzer classes (for example in the image class), but it isn't used in the page class.
 
 image
 -----
