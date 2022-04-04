@@ -530,7 +530,7 @@ class scrape(startFishing):
                             if urlNum <= len(self.analyzers):
                                 self.allFeatureNames = self.allFeatureNames | newFeatureNames
                         if self.database:
-                            self.cursor.execute("""INSERT INTO {} ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(analyzer.__class__.__name__,
+                            self.cursor.execute("""INSERT INTO {} ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(analyzer.name(),
                                 ",".join(name for name in newFeatureNames.keys())), (value for value in newFeatures[self.id].values()))
                         classCheck += 1
                     if self.database:
@@ -1049,7 +1049,7 @@ class saveFish(scrape):
         if len(datasets) != 0:
             analyzerNames = []
             for analyzer in self.analyzers:
-                analyzerNames.append(analyzer.__class__.__name__)
+                analyzerNames.append(analyzer.name())
             for datasetName in self.datasets.keys():
                 if datasetName in analyzerNames or datasetName in self.newDatasetOptions.keys():
                     try:
@@ -1163,7 +1163,7 @@ class saveFish(scrape):
         to oversample (you will still have access to the original dataset even if you choose
         to oversample).'''
         for analyzer in self.analyzers:
-            dataset = self.datasets[analyzer.__class__.__name__]
+            dataset = self.datasets[analyzer.name()]
             class1 = 0
             class2 = 0
             for instance in dataset:
@@ -1189,7 +1189,7 @@ class saveFish(scrape):
             for instance in newInstances:
                 dataset.add_instance(instance)
             dataset.sort(index)
-            self.datasets.update({analyzer.__class__.__name__ + "Balanced":dataset})
+            self.datasets.update({analyzer.name() + "Balanced":dataset})
 
         for option in self.newDatasetOptions.keys():
             if self.newDatasetOptions[option] and "Balanced" in option:
@@ -1270,8 +1270,8 @@ class saveFish(scrape):
         classifiers = {"NaiveBayes":NaiveBayes, "J48":J48, "Jrip":Jrip}
         for analyzer in self.analyzers:
             classifications = []
-            if self.datasets[analyzer.__class__.__name__]:
-                dataset = self.datasets[analyzer.__class__.__name__]
+            if self.datasets[analyzer.name()]:
+                dataset = self.datasets[analyzer.name()]
                 dataset.class_is_last()
                 for classifierName, classifier in classifiers.items():
                     try:
@@ -1279,7 +1279,7 @@ class saveFish(scrape):
                         # The graphs generated can be varied if you so choose; I just decided to graph after 
                         # first building the classifier
                         if self.graph:
-                            graph.plot_dot_graph(cls.graph, self.dataDir + "/graph/" + analyzer.__clas__.__name__ + "Graph.png")
+                            graph.plot_dot_graph(cls.graph, self.dataDir + "/graph/" + analyzer.name() + "Graph.png")
                         for instance in dataset:
                             classifications.append(classifier.classify_instance(instance))
                     except Exception as e:
@@ -1290,8 +1290,8 @@ class saveFish(scrape):
                     counting = Counter(classifications)
                     prediction = str(counting.most_common(1)[0][0]) + ":" + str(counting.most_common(2)[0][0])
                     classification = counting.most_common(1)[0][0]
-                    self.classifications.update({analyzer.__class__.__name__:classification})
-                    self.score.update({analyzer.__class__.__name__:prediction})
+                    self.classifications.update({analyzer.name():classification})
+                    self.score.update({analyzer.name():prediction})
         for name, value in self.newDatasetOptions.items():
             if value:
                 classifications = []
@@ -1331,11 +1331,11 @@ class saveFish(scrape):
             atts = self.attributeCreation(analyzer.featureNames)
             datasetAtts = [att for att in atts]
             values = []
-            if analyzer.__class__.__name__ in self.datasets.keys():
-                dataset = self.datasets[analyzer.__class__.__name__]
+            if analyzer.name() in self.datasets.keys():
+                dataset = self.datasets[analyzer.name()]
             else:
                 dataset = Instances.create_instances(
-                    analyzer.__class__.__name__ + "Dataset", [att for att in datasetAtts], 0)
+                    analyzer.name() + "Dataset", [att for att in datasetAtts], 0)
             for instance in analyzer.features:
                 values = []
                 attNum = 0
@@ -1350,8 +1350,8 @@ class saveFish(scrape):
                 dataset.add_instance(inst)
             stringToNom.inputformat(dataset)
             dataset = stringToNom.filter(dataset)
-            if analyzer.__class__.__name__ not in self.datasets.keys():
-                self.datasets.update({analyzer.__class__.__name__:dataset})
+            if analyzer.name() not in self.datasets.keys():
+                self.datasets.update({analyzer.name():dataset})
 
         # I feel like there's probably a way to avoid (or minimize) all this iteration here and below
         # But because the datasets have different creation processes, I haven't figured out how yet
