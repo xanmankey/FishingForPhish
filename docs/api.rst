@@ -312,15 +312,15 @@ An example of using the data class to create the datasets (one dataset for each 
 The saveFish class inherits all attributes from the initialize and scrape classes, updates 3 attributes using values from the scrape class (specifically analyzers, allFeatures and allFeatureNames are initialized to fisher (the example name for the instance of the scrape class).analyzers, fisher.allFeatures, and fisher.allFeatureNames) and declares 5 new ones:
 
 * datasets={}
-   
-* analyzers=[]
-
+      Where datasets is a dictionary of stringDatasetName:datasetObject that is updated throughout and many methods rely on.
+* analyzers=[] (see above; the value of analyzers should be passed from your created instance of the scrape class)
+      Where analyzers is a list of created analyzers objects
 * newDatasetOptions={"full":True, "ranked":True, "fullBalanced":True, "rankedBalanced":True}
+* allFeatures=None (see above)
+      A combination list composed of the pageFeature + imageFeature values.
+* allFeatureNames=None (see above)
+      
    
-* allFeatures=None (but in order for the class to operate correctly, the allFeatures attribute of the scrape class should be passed as a value)
-   A combination list composed of the pageFeature + imageFeature values.
-
-* allFeatureNames=None (similarily, in order for the class to operate correctly, the allFeatureNames attribute of the scrape class should be passed as a value)
       
 The data class also has 5 methods in addition to __init__() and createDatasets():
 
