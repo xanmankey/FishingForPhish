@@ -835,7 +835,7 @@ class image(analyzer):
                 dHash,
                 url)
 
-    def analyze(self, url, filename, resources):
+    def analyze(self, url, filename, resources, HASH=False):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
@@ -844,6 +844,10 @@ class image(analyzer):
         totalTags = resources["BS"].find_all()
         selTotalTags = resources["driver"].find_elements(By.XPATH, "//*")
         linkTags = resources["driver"].find_elements(By.TAG_NAME, "link")
+        
+        if HASH:
+            # Optionally, update the hashes table if database functionality is enabled
+            self.imageHash(url, filename)
 
         # LAYOUT
         # Get the total number of tags DIRECTLY in the HTML tag using Beautiful
