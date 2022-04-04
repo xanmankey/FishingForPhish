@@ -2,6 +2,7 @@ beautifulsoup4==4.10.0
 cssutils==2.4.0
 filetype==1.0.10
 ImageHash==4.2.1
+numpy==1.22.3
 Pillow==9.1.0
 pyshorteners==1.0.1
 python_weka_wrapper3==0.2.6
