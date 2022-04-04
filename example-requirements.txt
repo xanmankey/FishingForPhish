@@ -1,3 +1,8 @@
 # Here's where I'm putting the requirements to run the page and image class (I might want to turn this into a setup file instead, I'm not sure yet)
-# My image method: imagemagick (ubuntu; no python version), imagehash
-# Dr. Tan's page method: tldextract, chardet, IPy
+# My image method: 
+# imagemagick (ubuntu; no python version, not sure what version I'm using yet)
+# imagehash==4.2.1
+# Dr. Tan's page method 
+# tldextract==3.2.0
+# chardet==4.0.0
+# IPy==1.1.0
