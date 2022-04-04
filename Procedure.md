@@ -1,4 +1,4 @@
-## PREFACE
+## PREFACE (as my methodology is still evolving, this is still changing, TODO)
 This is the procedure that I followed, for those that want to attempt to replicate my experiment. 
 It's important to understand that due to the number of differences between computer builds and setups, exact replication will be difficult, but I went into as much detail as possible here to help with replicability as much as I could. This meant including a detailed methodology file (right here), 
 as well as including datasets (images and .arff files), my .model files (which can be used to load up a WEKA classification algorithm; in regards to feature selection, 
