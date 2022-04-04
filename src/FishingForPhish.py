@@ -463,8 +463,8 @@ class scrape(startFishing):
                         self.initializeBS(html)
                         prettyHTML = self.BS.prettify()
                         if not os.path.isfile(
-                                self.dataDir + "/html" + filename + ".html"):
-                            with open(self.dataDir + "/html" + filename + ".html", "w") as f:
+                                self.dataDir + "/html/" + filename + ".html"):
+                            with open(self.dataDir + "/html/" + filename + ".html", "w") as f:
                                 f.write(prettyHTML)
                         else:
                             pass
@@ -491,8 +491,8 @@ class scrape(startFishing):
                                 sheet = cssutils.parseUrl(cssFile)
                                 break
                         if not os.path.isfile(
-                                self.dataDir + "/css" + filename + ".css"):
-                            with open(self.dataDir + "/css" + filename + ".css", "w") as f:
+                                self.dataDir + "/css/" + filename + ".css"):
+                            with open(self.dataDir + "/css/" + filename + ".css", "w") as f:
                                 f.write(sheet.cssText.decode())
                     features = {}
                     classCheck = 1
