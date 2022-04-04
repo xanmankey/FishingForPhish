@@ -48,6 +48,15 @@ Alternatively, the library can be installed from source by cloning the github re
 .. code-block:: console
 
    $ git clone https://github.com/xanmankey/FishingForPhish.git
+   
+Errors (at least that I know about)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you get an error regarding python-javabridge and numpy when trying to install from requirements or requirements-dev.txt, specifically:
+..warning:
+   ModuleNotFoundError: No module named 'numpy'
+   
+The setup.py of python-javabridge requires numpy, so install numpy first.
 
 How to use it?
 --------------
