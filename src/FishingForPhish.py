@@ -954,7 +954,10 @@ class image(analyzer):
                 continue
             fonts.append(family[0])
         occurences = Counter(fonts)
-        font = occurences.most_common(1)[0][0]
+        try:
+            font = occurences.most_common(1)[0][0]
+        except IndexError:
+            font = Instance.missing_value()
         features.update({"mostUsedFont":font})
 
         # Get the average font-size (in pixels)
@@ -997,7 +1000,10 @@ class image(analyzer):
                 decorations.append(style)
 
         occurences = Counter(decorations)
-        fontStyle = occurences.most_common(1)[0][0]
+        try:
+            fontStyle = occurences.most_common(1)[0][0]
+        except IndexError:
+            fontStyle = Instance.missing_value()
         features.update({"numStyles":numStyles})
         features.update({"mostUsedStyle":fontStyle})
         features.update({"pctItalics":numItalics / len(styles)})
