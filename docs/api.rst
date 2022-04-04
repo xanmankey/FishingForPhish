@@ -226,19 +226,17 @@ The page class inherits inherits the name method (and **requires** the creation 
 image
 -----
 
-The image class is similar to the page class, where it's primary use is for scraping image-based features (the justification for feature selection can be found in the research at https://github.com/xanmankey/FishingForPhish/tree/main/research; each feature can be categorized under the layout, style, or other category).
-An example of using the image class to print a set of full imageFeatures can be seen below (**Again, don't forget about initialization and shutdown!**).
+The image class is an example class that inherits from the base analyzer class, with the purpose of scraping the page-based features outlined by the research at https://github.com/xanmankey/FishingForPhish/tree/main/research; each feature can be categorized under the layout, style, or other category).
+An example of using the image class in tandem with the goFish() can be seen below (**Again, don't forget about initialization and shutdown!**).
 
 .. code-block:: python
 
    from classes import image
    
-   imageData = page(urlFile="data/urls.txt", dataDir="data", driver=run.driver, BS=run.BS)
-   # If imageScrape is run with the HASH=True parameter then the phash and dhash ImageHash algorithms will be run
-   # and the resulting hashes will be inserted in the hashes table for future use
-   imageData.imageScrape(HASH=True)
-   print(pageData.imageFeatures)
-   
+   # Initialization of the image analyzer
+   # If imageData is run with the HASH=True parameter then the phash and dhash ImageHash algorithms will be run and the hashes table will be updated
+   imageData = image(HASH=True)
+   fisher.addAnalyzer(imageData)
 
 The image class inherits all attributes from the initialize and scrape classes and declares 1 more:
 
