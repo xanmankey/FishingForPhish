@@ -5,11 +5,11 @@ The following section provides examples and goes into more depth about using Fis
 More examples and documentation will be added when time allows. 
 The API examples are currently broken down into example code snippets (*which won't always be able to stand alone*) and a simple combined example at the end of the documentation.
 
-initialize
+startFishing
 ----------
 
 In order to scrape, parse html, or work with datasets, you first have to initialize the library.
-You can do that by creating an instance of the class initialize and then calling the method initializeAll.
+You can do that by creating an instance of the class startFishing and then calling the method initializeAll.
 **Note: whenever you initialize either a webdriver instance or start the JVM, the associated exit method should be run in order to exit properly**
 
 .. code-block:: python
@@ -19,7 +19,7 @@ You can do that by creating an instance of the class initialize and then calling
    run = startFishing(dataDir="data")
    run.initializeAll()
 
-The initialize class has 4 attributes:
+The startFishing class has 3 attributes:
 
 * dataDir=None
       The home directory for the scraped files. This includes a screenshots, html, css, and datasets directory. If left None, an empty
@@ -29,10 +29,8 @@ The initialize class has 4 attributes:
       the initialization process for it can be skipped).
 * jvmToggle=False
       A toggle attribute that follows the state of the jvm (as python weka wrapper currently doesn't support checking the current run state of the jvm). A value should **NOT** be passed for this variable, otherwise functions reliant on the jvm can be called before the jvm's initialization.
-* BS=None
-      The instance of Beautiful Soup. In most cases, this will also be None (unless a Beautiful Soup object has been created). For the purposes of this library,       initializing a Beautiful Soup instance requires html, which is why the initializeBS() method of the initialize class is not included in the                     initializeAll() method.
       
-The initialize class has 5 methods in addition to __init__():
+The startFishing class has 4 methods in addition to __init__():
 
 * installResources(self)
       Installs potentially-useful resources used during the methodology of the research here: TODO. This includes the chiSquaredAttributeEval feature selector for WEKA, the SMOTE oversampler for WEKA, and the Wayback Machine add-on for Firefox.
@@ -40,10 +38,22 @@ The initialize class has 5 methods in addition to __init__():
       Creates the Selenium instance. A list of paths to add_ons (.xpi files) can be passed to enhance the scraping experience. The wayback_machine add-on is added to the webdriver instance with the method initializeAll().
 * initializePWW3(self, jvmOptions)
       Starts JVM with a list of optional parameters, jvmOptions (some default options, system_cp and packages, are passed with the initializeAll() method). The attribute jvmToggle is updated to be True.
-* initializeBS(self, html)
-      Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
 * initializeAll(self, jvmOptions=["system_cp", "packages"], add_ons=['wayback_machine-3.0-fx.xpi'])
       As used in the example above, sequentially handles logging accordingly (to avoid console spam), calls initializePWW3 (with the default options, system_cp and packages. Packages must be True if you want to use any packages), installResources(), and then initializeSelenium using the specified add_ons, which defaults to the installed 'wayback_machine-3.0-fx.xpi' from the call to installResources. This method can be adapted, but currently defaults to using the settings used during the research at TODO. 
+
+analyzer
+--------
+
+The analyzer class is a base class, inherited by all analyzers (which in this context refers to feature selection classes with an **analyze** function that returns appropriate features: more on this below). 
+
+The analyzer class has NO attributes
+
+The analyzer class has 1 inheritible method and 1 **required** method:
+
+* name
+   A convenience method for getting the analyzer name, or the name of the class.
+* analyzer
+   The analyzer function is a user created function; it is not inherited via code, and needs to be made by hand.
 
 scrape
 ------
@@ -59,7 +69,7 @@ The scrape class inherits all attributes from the initialize class and declares 
 |
 #. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
       
-#. pageData: TODO ALL OF THIS
+#. pageData: TODO ALL OF THIS (+ update after response from Dr. Tan)
       
 #. errors:
       
@@ -96,6 +106,8 @@ The scrape class also has 7 methods in addition to __init__():
       Takes the 5 characters used at the end of a filename (excluding .png) as input, and expands and returns the original url.
 * generateFilename(self, url)
       A convenience method for generating a filename to name all the files associated with a website (returns a filename structured as _<self.id>_<5 characters>).
+* initializeBS(self, html)
+      Creates a Beautiful Soup instance BS. Not called with initializeAll() as it cannot parse html without having any html as input. Typically called after storing the driver.page_source in an html variable.
 * saveScreenshot(self, url)
       Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
 * siteValidation(self, url)
