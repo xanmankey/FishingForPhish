@@ -110,13 +110,14 @@ class startFishing():
         options.set_preference("Browser.sessionstore.privacy", 2)
         options.set_preference("Browser.cache.disk.enable", False)
         driver = webdriver.Firefox(options=options)
-        for add_on in add_ons:
-            if add_on[len(add_on) - 4:len(add_on)].upper() == ".XPI":
-                try:
-                    driver.install_addon(os.path.abspath(self.dataDir + add_on), temporary=True)
-                except Exception:
-                    logging.warning(" " + self.dataDir + add_on + " is not a valid Firefox addon!")
-                    continue
+        if add_ons:
+            for add_on in add_ons:
+                if add_on[len(add_on) - 4:len(add_on)].upper() == ".XPI":
+                    try:
+                        driver.install_addon(os.path.abspath(self.dataDir + add_on), temporary=True)
+                    except Exception:
+                        logging.warning(" " + self.dataDir + add_on + " is not a valid Firefox addon!")
+                        continue
         self.driver = driver
         self.driver.implicitly_wait(20)
 
