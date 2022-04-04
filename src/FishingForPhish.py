@@ -69,9 +69,9 @@ class startFishing():
         (the resources I used for this project that required download)'''
         if not self.jvmToggle:
             logging.warning(" Are you sure the jvm has been activated?")
-            return
-        packages.install_package('chiSquaredAttributeEval')
-        packages.install_package('SMOTE')
+        else:
+            packages.install_package('chiSquaredAttributeEval')
+            packages.install_package('SMOTE')
         wayback_machine = requests.get(
             'https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi',
             allow_redirects=True)
