@@ -48,6 +48,16 @@ Alternatively, the library can be installed from source by cloning the github re
 .. code-block:: console
 
    $ git clone https://github.com/xanmankey/FishingForPhish.git
+   
+Additionally, once python-weka-wrapper3 has been successfully installed, it is important to run 2 commands to ensure that the jvm runs smoothly:
+
+.. code-block:: console
+
+   $ export WEKA_JAR_PATH="path/to/your/weka.jar/file"
+
+.. code-block:: console
+
+   $ export WEKA_HOME="path/to/the/installed/weka/directory"
 
 How to use it?
 --------------
