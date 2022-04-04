@@ -552,7 +552,7 @@ class scrape(startFishing):
 class page(analyzer):
     '''A class for scraping page-based features'''
 
-    def __init__(self, pageFeatures=[], pageFeatureNames={"externalURL":"numeric", "hostnameMismatch":"numeric",
+    def __init__(self, features=[], featureNames={"externalURL":"numeric", "hostnameMismatch":"numeric",
         "redirectURL":"numeric", "numEmail":"numeric", "numDash":"numeric", "numDots":"numeric", "classVal":"nominal"}, **kwargs):
         '''Inherits all previous attributes, adds an optional attribute called pageFeatures
         (although the purpose of the function is to populate the pageFeatures list, so there
@@ -562,8 +562,8 @@ class page(analyzer):
         super().__init__(**kwargs)
         # For each analyzer, it is recommended that you create attributes for features and featureNames
         # You can return them as values instead in the analyze function, but it may be useful for convenience purposes
-        self.features = pageFeatures
-        self.featureNames = pageFeatureNames
+        self.features = features
+        self.featureNames = featureNames
         self.classVal = Instance.missing_value()
 
     # Where resources is a dictionary of all scrape elements
@@ -685,7 +685,7 @@ class page(analyzer):
 class image(analyzer):
     '''A class for scraping image-based features'''
 
-    def __init__(self, imageFeatures=[], imageFeatureNames={"numTagsIn<html>":"numeric", "numTagsIn<head>":"numeric",
+    def __init__(self, features=[], featureNames={"numTagsIn<html>":"numeric", "numTagsIn<head>":"numeric",
         "numTagsIn<main>":"numeric", "numTagsIn<body>":"numeric", "pct<img>Tags":"numeric", "totalWidth":"numeric",
         "totalHeight":"numeric", "IMredMean":"numeric", "IMredStdDev":"numeric", "IMgreenMean":"numeric",
         "IMgreenStdDev":"numeric", "IMblueMean":"numeric", "IMblueStdDev":"numeric", "IMalphaChannel":"numeric",
@@ -695,8 +695,8 @@ class image(analyzer):
         '''Similarily to the pageBased class, inherits all attributes from the initialize and scape classes,
         (not pageFeatures) and adds an optional attribute called imageFeatures'''
         super().__init__(**kwargs)
-        self.features = imageFeatures
-        self.featureNames = imageFeatureNames
+        self.features = features
+        self.featureNames = featureNames
         self.classVal = Instance.missing_value()
 
     def getImagemagickData(self, result):
