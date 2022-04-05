@@ -158,62 +158,7 @@ An example of using the page class to print a set of full pageFeatures can be se
 The page class creates 3 attributes:
 
 * features=None
-      A list of dictionaries, with each dictionary containing the featureNames and scraped values of each page feature for each url. The features scraped by this example class are defined below:
-      
-|
-
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-
-|
-
+      A list of dictionaries, with each dictionary containing the featureNames and scraped values of each page feature for each url. The features scraped by this example class are defined at (https://thesai.org/Downloads/Volume11No1/Paper_19-Malicious_URL_Detection_based_on_Machine_Learning.pdf) and the related research can be found at (https://www.sciencedirect.com/science/article/abs/pii/S0957417418302070).
 * featureNames=None
       A dictionary containing key-value pairs of name:stringWekaDataType (remember that weka data types can be found here: https://waikato.github.io/weka-wiki/formats_and_processing/arff_stable/) for the scraped features of the class. Only initialized once.
 * classVal=Instance.missing_value()
@@ -246,7 +191,7 @@ The image class shares the same attributes as the page class. The features attri
       
 |
 
-#. numTagsIn<html>
+#. numTagsInHtml
 #. a
 #. a
 #. a
