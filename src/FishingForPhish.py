@@ -874,8 +874,8 @@ class image(analyzer):
                     ".png"))
             self.cursor.execute(
                 "INSERT INTO hashes (pHash, dHash, url) VALUES (?, ?, ?)",
-                pHash,
-                dHash,
+                int(pHash),
+                int(dHash),
                 url)
 
     def analyze(self, url, filename, resources, HASH=False):
