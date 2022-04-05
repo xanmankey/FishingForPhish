@@ -2,6 +2,6 @@
 # My image method: 
 # imagemagick (ubuntu; version 8:6.9.10.23+dfsg-2.1ubuntu11.4)
 # imagehash==4.2.1
-# Dr. Tan's page method 
+# An adaption of Dr. Tan's et. all. page method 
 # tldextract==3.2.0
 # IPy==1.1.0
