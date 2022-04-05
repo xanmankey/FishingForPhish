@@ -187,7 +187,7 @@ An example of using the image class in tandem with the goFish() can be seen belo
 The image class shares the same attributes as the page class. The features attribute (along with the features) for the class is defined below:
 
 * features=None
-      Same structure as the features attribute of the page class. Features can be found below:
+      Same structure as the features attribute of the page class. Features can be found below (where RGB color values are used, and IM indicates a feature that imagemagick was used to collect):
       
 |
 
@@ -198,14 +198,14 @@ The image class shares the same attributes as the page class. The features attri
 #. pctImgTags: Percentage of all tags that are image tags
 #. totalWidth: Total width of the website (in px)
 #. totalHeight: Total height of the website (in px)
-#. IMredMean: 
-#. IMredStdDev: 
-#. IMgreenMean: 
-#. IMgreenStdDev: 
-#. IMblueMean: 
-#. IMblueStdDev: 
-#. IMalphaChannel: 
-#. IMgamma: 
+#. IMredMean: The mean red value of the full website screenshot
+#. IMredStdDev: The mean red standard deviation of the full website screenshot
+#. IMgreenMean: The mean green value of the full website screenshot
+#. IMgreenStdDev: The mean green standard deviation of the full website screenshot
+#. IMblueMean: The mean blue value of the full website screenshot
+#. IMblueStdDev: The mean blue value of the full website screenshot
+#. IMalphaChannel: A binary; checking if imagemagick identified an alpha channel or not from the full website screenshot.
+#. IMgamma: The gamma value of the full website screenshot.
 #. numBoldTags: 
 #. averageFontWeight: 
 #. mostUsedFont: 
