@@ -191,25 +191,25 @@ The image class shares the same attributes as the page class. The features attri
       
 |
 
-#. numTagsInHtml
-#. numTagsInHead
-#. numTagsInMain
-#. numTagsInBody
-#. pctImgTags
-#. totalWidth
-#. totalHeight
-#. IMredMean
-#. IMredStdDev
-#. IMgreenMean
-#. IMgreenStdDev
-#. IMblueMean
-#. IMblueStdDev
-#. IMalphaChannel
-#. IMgamma
-#. numBoldTags
-#. averageFontWeight
-#. mostUsedFont
-#. averageFontSize
+#. numTagsInHtml: 
+#. numTagsInHead: 
+#. numTagsInMain: 
+#. numTagsInBody: 
+#. pctImgTags: 
+#. totalWidth: 
+#. totalHeight: 
+#. IMredMean: 
+#. IMredStdDev: 
+#. IMgreenMean: 
+#. IMgreenStdDev: 
+#. IMblueMean: 
+#. IMblueStdDev: 
+#. IMalphaChannel: 
+#. IMgamma: 
+#. numBoldTags: 
+#. averageFontWeight: 
+#. mostUsedFont: 
+#. averageFontSize: 
 #. numStyles: 
 #. mostUsedStyle: 
 #. pctItalics: 
