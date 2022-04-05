@@ -73,20 +73,20 @@ The scrape class inherits all attributes from the initialize class and declares 
       A required argument; the path to a .txt file with a url on each line.
 * database=None
       An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
+      
 |
-#. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, time INT, classification TEXT)
+
+#. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, UTCtime INT, classification TEXT)
       
-#. pageData: TODO ALL OF THIS (+ update after response from Dr. Tan)
+#. page: CREATE TABLE page (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol BOOLEAN, TildeSymbol BOOLEAN, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps BOOLEAN, RandomString BOOLEAN, IpAddress BOOLEAN, DomainInSubdomains BOOLEAN, DomainInPaths BOOLEAN, HttpsInHostname BOOLEAN, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath BOOLEAN, NumSensitiveWords INT, EmbeddedBrandName BOOLEAN, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon BOOLEAN, InsecureForms BOOLEAN, RelativeFormAction BOOLEAN, ExtFormAction BOOLEAN, AbnormalFormAction BOOLEAN, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch BOOLEAN, FakeLinkInStatusBar BOOLEAN, RightClickDisabled BOOLEAN, PopUpWindow BOOLEAN, SubmitInfoToEmail BOOLEAN, IframeOrFrame BOOLEAN, MissingTitle BOOLEAN, ImagesOnlyInForm BOOLEAN, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT)
       
-#. errors:
+#. errors: CREATE TABLE errors (error TEXT)
       
-#. imageData:
+#. image: CREATE TABLE image (id INTEGER PRIMARY KEY, totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)
+            
+#. all: CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol BOOLEAN, TildeSymbol BOOLEAN, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps BOOLEAN, RandomString BOOLEAN, IpAddress BOOLEAN, DomainInSubdomains BOOLEAN, DomainInPaths BOOLEAN, HttpsInHostname BOOLEAN, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath BOOLEAN, NumSensitiveWords INT, EmbeddedBrandName BOOLEAN, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon BOOLEAN, InsecureForms BOOLEAN, RelativeFormAction BOOLEAN, ExtFormAction BOOLEAN, AbnormalFormAction BOOLEAN, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch BOOLEAN, FakeLinkInStatusBar BOOLEAN, RightClickDisabled BOOLEAN, PopUpWindow BOOLEAN, SubmitInfoToEmail BOOLEAN, IframeOrFrame BOOLEAN, MissingTitle BOOLEAN, ImagesOnlyInForm BOOLEAN, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT, totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN, numLinks INT, urlLength INT, mostUsedStyle TEXT, mostUsedFont TEXT)
       
-#. otherData:
-      
-#. allFeatures:
-      
-#. hashes:
+#. hashes: CREATE TABLE hashes (phash INT, dhash INT, url TEXT)
 
 |
 
@@ -159,6 +159,7 @@ The page class creates 3 attributes:
 
 * features=None
       A list of dictionaries, with each dictionary containing the featureNames and scraped values of each page feature for each url. The features scraped by this example class are defined below:
+      
 |
 
 #. a
