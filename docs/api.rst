@@ -191,13 +191,13 @@ The image class shares the same attributes as the page class. The features attri
       
 |
 
-#. numTagsInHtml: 
-#. numTagsInHead: 
-#. numTagsInMain: 
-#. numTagsInBody: 
-#. pctImgTags: 
-#. totalWidth: 
-#. totalHeight: 
+#. numTagsInHtml: Number of tags inside the HTML tag
+#. numTagsInHead: Number of tags inside the Head tag
+#. numTagsInMain: Number of tags inside the Main tag
+#. numTagsInBody: Number of tags inside the Body tag
+#. pctImgTags: Percentage of all tags that are image tags
+#. totalWidth: Total width of the website (in px)
+#. totalHeight: Total height of the website (in px)
 #. IMredMean: 
 #. IMredStdDev: 
 #. IMgreenMean: 
