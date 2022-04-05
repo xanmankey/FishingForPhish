@@ -72,7 +72,7 @@ The scrape class inherits all attributes from the initialize class and declares 
 * urlFile
       A required argument; the path to a .txt file with a url on each line.
 * database=None
-      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
+      An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. The database (along with the WEKA datasets) should reflect the datatypes of your features if you create a new table or dataset. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
       
 |
 
@@ -192,34 +192,30 @@ The image class shares the same attributes as the page class. The features attri
 |
 
 #. numTagsInHtml
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
-#. a
+#. numTagsInHead
+#. numTagsInMain
+#. numTagsInBody
+#. pctImgTags
+#. totalWidth
+#. totalHeight
+#. IMredMean
+#. IMredStdDev
+#. IMgreenMean
+#. IMgreenStdDev
+#. IMblueMean
+#. IMblueStdDev
+#. IMalphaChannel
+#. IMgamma
+#. numBoldTags
+#. averageFontWeight
+#. mostUsedFont
+#. averageFontSize
+#. numStyles: 
+#. mostUsedStyle: 
+#. pctItalics: 
+#. pctUnderline: 
+#. imageOverlappingTop: 
+#. favicon: 
 
 |
 
