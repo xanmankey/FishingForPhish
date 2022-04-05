@@ -2,10 +2,10 @@
 # I used throughout this research
 # Current TODO list:
 # Documentation + Figuring out necessary python version (setup.cfg)
-# Implementation of Dr. Tan's scraping method into the page class
+# Implementation of Dr. Tan's scraping method into the page class + Rework doc strings
 # TODO: I'm planning on taking the page and image classes out of the FFP.py file,
 # where each class instance has a seperate file that gets imported
-# RUN
+# RUN + UPLOAD
 # WRITE
 # website?
 from selenium import webdriver
@@ -201,6 +201,7 @@ class scrape(startFishing):
         imageData, otherData, and allFeatures tables... the rest can be joined if necessary)'''
         super().__init__(**kwargs)
         self.urlFile = urlFile
+        self.urlNum = 0
         # Still need to find a way to have analyzers as an attribute, rather than a global variable
         self.screenshotDir = screenshotDir
         self.htmlDir = htmlDir
@@ -280,9 +281,18 @@ class scrape(startFishing):
                 tables = {
                     "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                    "page": """CREATE TABLE page (id INTEGER PRIMARY KEY, externalURL FLOAT,
-                    redirectURL FLOAT, hostnameMismatch BINARY,
-                    numDash INT, numEmail INT, numDots INT)""",
+                    "page": """CREATE TABLE page (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
+                    PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
+                    TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
+                    NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT,
+                    DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT,
+                    PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT,
+                    EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT,
+                    InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT,
+                    PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT,
+                    RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT,
+                    ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT,
+                    AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT)""",
                     "errors": """CREATE TABLE errors (error TEXT)""",
                     "image": """CREATE TABLE image (id INTEGER PRIMARY KEY, totalWidth FLOAT,
                     totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
@@ -291,12 +301,22 @@ class scrape(startFishing):
                     IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT,
                     mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT,
                     pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
-                    "all": """CREATE TABLE all (id INTEGER PRIMARY KEY, externalURL FLOAT, redirectURL FLOAT,
-                    hostnameMismatch BINARY, numDash INT, numEmail INT, numDots INT, totalWidth FLOAT,
-                    totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT,
-                    pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT,
-                    IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT,
-                    averageFontWeight FLOAT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT,
+                    "all": """CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
+                    PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
+                    TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
+                    NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT,
+                    DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT,
+                    PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT,
+                    EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT,
+                    InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT,
+                    PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT,
+                    RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT,
+                    ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT,
+                    AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT,
+                    totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
+                    numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT,
+                    IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT,
+                    numBoldTags INT, averageFontWeight FLOAT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT,
                     pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN, numLinks INT, urlLength INT,
                     mostUsedStyle TEXT, mostUsedFont TEXT)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
@@ -445,7 +465,6 @@ class scrape(startFishing):
             if not self.driver:
                 raise ReferenceError("Cannot scrape without a valid driver instance")
             with open(self.urlFile, "r") as f:
-                urlNum = 0
                 for line in f:
                     url = line.strip()
                     if not self.siteValidation(url):
@@ -459,8 +478,8 @@ class scrape(startFishing):
                             try:
                                 time = self.getTime()
                                 self.cursor.execute(
-                                    "INSERT INTO metadata (id, url, time) VALUES (?, ?, ?)",
-                                    self.id, url, time)
+                                    "INSERT INTO metadata (id, url, time, classification) VALUES (?, ?, ?, ?)",
+                                    self.id, url, time, self.classVal)
                             except Exception:
                                 self.id = self.cursor.execute(
                                     "SELECT id FROM metadata WHERE url = ?", url)
@@ -536,7 +555,7 @@ class scrape(startFishing):
                             self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
                         else:
                             features = features | newFeatures
-                            if urlNum <= len(self.analyzers):
+                            if self.urlNum <= len(self.analyzers):
                                 self.allFeatureNames = self.allFeatureNames | newFeatureNames
                         if self.database:
                             self.cursor.execute("""INSERT INTO {} ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(analyzer.name(),
@@ -549,7 +568,7 @@ class scrape(startFishing):
                     if self.database:
                         self.conn.commit()
                     self.id += 1
-                    urlNum += 1
+                    self.urlNum += 1
 
 
 class page(analyzer):
@@ -688,13 +707,34 @@ class page(analyzer):
 class image(analyzer):
     '''A class for scraping image-based features'''
 
-    def __init__(self, features=[], featureNames={"numTagsIn<html>":"numeric", "numTagsIn<head>":"numeric",
-        "numTagsIn<main>":"numeric", "numTagsIn<body>":"numeric", "pct<img>Tags":"numeric", "totalWidth":"numeric",
-        "totalHeight":"numeric", "IMredMean":"numeric", "IMredStdDev":"numeric", "IMgreenMean":"numeric",
-        "IMgreenStdDev":"numeric", "IMblueMean":"numeric", "IMblueStdDev":"numeric", "IMalphaChannel":"numeric",
-        "IMgamma":"numeric", "numBoldTags":"numeric", "averageFontWeight":"numeric", "mostUsedFont":"string",
-        "averageFontSize":"numeric", "numStyles":"numeric", "mostUsedStyle":"string", "pctItalics":"numeric",
-        "pctUnderline":"numeric", "imageOverlappingTop":"numeric", "favicon":"numeric", "classVal":"nominal"}, **kwargs):
+    def __init__(self, features=[], featureNames={
+        "numTagsIn<html>":"numeric",
+        "numTagsIn<head>":"numeric",
+        "numTagsIn<main>":"numeric",
+        "numTagsIn<body>":"numeric",
+        "pct<img>Tags":"numeric",
+        "totalWidth":"numeric",
+        "totalHeight":"numeric",
+        "IMredMean":"numeric",
+        "IMredStdDev":"numeric",
+        "IMgreenMean":"numeric",
+        "IMgreenStdDev":"numeric",
+        "IMblueMean":"numeric",
+        "IMblueStdDev":"numeric",
+        "IMalphaChannel":"numeric",
+        "IMgamma":"numeric",
+        "numBoldTags":"numeric",
+        "averageFontWeight":"numeric",
+        "mostUsedFont":"string",
+        "averageFontSize":"numeric",
+        "numStyles":"numeric",
+        "mostUsedStyle":"string",
+        "pctItalics":"numeric",
+        "pctUnderline":"numeric",
+        "imageOverlappingTop":"numeric",
+        "favicon":"numeric",
+        "classVal":"nominal"
+    }, **kwargs):
         '''Similarily to the pageBased class, inherits all attributes from the initialize and scape classes,
         (not pageFeatures) and adds an optional attribute called imageFeatures'''
         super().__init__(**kwargs)
@@ -954,10 +994,7 @@ class image(analyzer):
                 continue
             fonts.append(family[0])
         occurences = Counter(fonts)
-        try:
-            font = occurences.most_common(1)[0][0]
-        except IndexError:
-            font = Instance.missing_value()
+        font = occurences.most_common(1)[0][0]
         features.update({"mostUsedFont":font})
 
         # Get the average font-size (in pixels)
@@ -1000,10 +1037,7 @@ class image(analyzer):
                 decorations.append(style)
 
         occurences = Counter(decorations)
-        try:
-            fontStyle = occurences.most_common(1)[0][0]
-        except IndexError:
-            fontStyle = Instance.missing_value()
+        fontStyle = occurences.most_common(1)[0][0]
         features.update({"numStyles":numStyles})
         features.update({"mostUsedStyle":fontStyle})
         features.update({"pctItalics":numItalics / len(styles)})
@@ -1311,6 +1345,14 @@ class saveFish(scrape):
                     classification = counting.most_common(1)[0][0]
                     self.classifications.update({analyzer.name():classification})
                     self.score.update({analyzer.name():prediction})
+                    if self.database:
+                        for num in range(self.urlNum):
+                            classification = [classifications[0], classifications[num], classifications[num * 2]]
+                            counting = Counter(classification)
+                            classification = counting.most_common(1)[0][0]
+                            self.cursor.execute(
+                                "UPDATE metadata SET classification = ? WHERE id = ?",
+                                classification, num)
         for name, value in self.newDatasetOptions.items():
             if value:
                 classifications = []
