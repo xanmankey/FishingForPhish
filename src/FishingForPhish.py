@@ -150,7 +150,7 @@ class analyzer():
     def __init__(self):
         pass
 
-    def name():
+    def name(self):
       return analyzer.__class__.__name__
 
     # Shell function
