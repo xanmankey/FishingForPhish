@@ -4,5 +4,4 @@
 # imagehash==4.2.1
 # Dr. Tan's page method 
 # tldextract==3.2.0
-# chardet==4.0.0
 # IPy==1.1.0
