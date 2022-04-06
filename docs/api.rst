@@ -73,9 +73,7 @@ The scrape class inherits all attributes from the initialize class and declares 
       A required argument; the path to a .txt file with a url on each line.
 * database=None
       An optional (but recommended) argument; database functionality (especially with a filesystem mirroring that of integer primary keys) is useful for carrying results over, storing and accessing data, and provides more opportunities (for example hash storage) for future classification. The database (along with the WEKA datasets) should reflect the datatypes of your features if you create a new table or dataset. If you input a valid database (even if empty), 7 tables are created (unless they already exist) including:
-      
 |
-
 #. metadata: CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE, UTCtime INT, classification TEXT)
       
 #. page: CREATE TABLE page (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol BOOLEAN, TildeSymbol BOOLEAN, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps BOOLEAN, RandomString BOOLEAN, IpAddress BOOLEAN, DomainInSubdomains BOOLEAN, DomainInPaths BOOLEAN, HttpsInHostname BOOLEAN, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath BOOLEAN, NumSensitiveWords INT, EmbeddedBrandName BOOLEAN, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon BOOLEAN, InsecureForms BOOLEAN, RelativeFormAction BOOLEAN, ExtFormAction BOOLEAN, AbnormalFormAction BOOLEAN, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch BOOLEAN, FakeLinkInStatusBar BOOLEAN, RightClickDisabled BOOLEAN, PopUpWindow BOOLEAN, SubmitInfoToEmail BOOLEAN, IframeOrFrame BOOLEAN, MissingTitle BOOLEAN, ImagesOnlyInForm BOOLEAN, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT)
@@ -87,9 +85,7 @@ The scrape class inherits all attributes from the initialize class and declares 
 #. all: CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT, TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT, DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT, EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT, InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT, RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT, ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT, CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, favicon BOOLEAN)
       
 #. hashes: CREATE TABLE hashes (phash INT, dhash INT, url TEXT)
-
 |
-
 * screenshotDir=None
       A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
 * htmlDir=None
@@ -187,10 +183,8 @@ An example of using the image class in tandem with the goFish() can be seen belo
 The image class shares the same attributes as the page class. The features attribute (along with the features) for the class is defined below:
 
 * features=None
-      Same structure as the features attribute of the page class. Features can be found below (where RGB color values are used, and IM indicates a feature that imagemagick was used to collect):
-      
+      Same structure as the features attribute of the page class. Features can be found below (where RGB color values are used, and IM indicates a feature that imagemagick was used to collect):      
 |
-
 #. numTagsInHtml: Number of tags inside the HTML tag
 #. numTagsInHead: Number of tags inside the Head tag
 #. numTagsInMain: Number of tags inside the Main tag
@@ -215,9 +209,7 @@ The image class shares the same attributes as the page class. The features attri
 #. pctItalics: The percentage of style tags that have the italic property set.
 #. pctUnderline: The percentage of style tags that have the underline property set.
 #. favicon: Checks whether a link tag with the rel="icon" property exists
-
 |
-
 The image class also has 3 other methods in addition to __init__() and analyze():
 
 * getImagemagickData(self, result)
