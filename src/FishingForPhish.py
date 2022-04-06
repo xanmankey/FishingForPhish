@@ -1322,7 +1322,7 @@ class saveFish(scrape):
                         # The graphs generated can be varied if you so choose; I just decided to graph after
                         # first building the classifier
                         if self.graph:
-                            graph.plot_dot_graph(cls.graph, self.dataDir + "/graph/" + analyzer.name() + "Graph.png")
+                            graph.plot_dot_graph(classifier.graph, self.dataDir + "/graph/" + analyzer.name() + "Graph.png")
                         for instance in dataset:
                             classifications.append(classifier.classify_instance(instance))
                     except Exception as e:
@@ -1354,7 +1354,7 @@ class saveFish(scrape):
                             try:
                                 classifier.build_classifier(dataset)
                                 if self.graph:
-                                    graph.plot_dot_graph(cls.graph, self.dataDir + "/graph/" + name + "Graph.png")
+                                    graph.plot_dot_graph(classifier.graph, self.dataDir + "/graph/" + name + "Graph.png")
                                 for instance in dataset:
                                     classifications.append(classifier.classify_instance(instance))
                             except Exception as e:
