@@ -299,7 +299,7 @@ class scrape(startFishing):
                     IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT,
                     IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT,
                     mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT,
-                    pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
+                    pctItalics FLOAT, pctUnderline FLOAT, favicon BOOLEAN)""",
                     "all": """CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
                     PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
                     TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
@@ -317,7 +317,7 @@ class scrape(startFishing):
                     IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT,
                     IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT,
                     averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT,
-                    imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
+                    favicon BOOLEAN)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
                 for tableName, creation in tables.items():
                     if tableName in self.cursor.fetchall():
@@ -730,7 +730,6 @@ class image(analyzer):
         "mostUsedStyle":"string",
         "pctItalics":"numeric",
         "pctUnderline":"numeric",
-        "imageOverlappingTop":"numeric",
         "favicon":"numeric",
         "classVal":"nominal"
     }, **kwargs):
@@ -1043,15 +1042,9 @@ class image(analyzer):
         features.update({"pctUnderline":numUnderlines / len(styles)})
 
         # OTHER
-        # Check for an image overlapping the address bar
-        overlapping = 0
-        for img in imgTags:
-            location = img.location
-            y = location["y"]
-            if y < 0:
-                overlapping = 1
-                break
-        features.update({"imageOverlappingTop":overlapping})
+        # I still want to test more features when time allows
+        # For example, more work with location, size, and overlap could be effective
+        # in regards to page layout
 
         # Check if there is a rel=icon attribute in a link tag (check for a
         # favicon image)
