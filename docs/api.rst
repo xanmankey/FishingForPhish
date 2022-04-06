@@ -82,9 +82,9 @@ The scrape class inherits all attributes from the initialize class and declares 
       
 #. errors: CREATE TABLE errors (error TEXT)
       
-#. image: CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)
+#. image: CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, favicon BOOLEAN)
             
-#. all: CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT, TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT, DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT, EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT, InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT, RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT, ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT, CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)
+#. all: CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT, TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT, DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT, EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT, InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT, RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT, ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT, CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, favicon BOOLEAN)
       
 #. hashes: CREATE TABLE hashes (phash INT, dhash INT, url TEXT)
 
@@ -206,16 +206,15 @@ The image class shares the same attributes as the page class. The features attri
 #. IMblueStdDev: The mean blue value of the full website screenshot
 #. IMalphaChannel: A binary; checking if imagemagick identified an alpha channel or not from the full website screenshot.
 #. IMgamma: The gamma value of the full website screenshot.
-#. numBoldTags: 
-#. averageFontWeight: 
-#. mostUsedFont: 
-#. averageFontSize: 
-#. numStyles: 
-#. mostUsedStyle: 
-#. pctItalics: 
-#. pctUnderline: 
-#. imageOverlappingTop: 
-#. favicon: 
+#. numBoldTags: The number of tags that have a font-weight property greater than the normal, 400.
+#. averageFontWeight: The total font-weight divided by the number of tags with a font-weight (so all with text).
+#. mostUsedFont: The most common font used throughout all tags with the font-family property.
+#. averageFontSize: The total font size (in px) divided by the number of tags with the font-size property.
+#. numStyles: The number of tags with a font-style or text-decoration value that isn't equal to normal or none.
+#. mostUsedStyle: The most common style through all tags with a font-style or text-decoration value that isn't equal to normal or none.
+#. pctItalics: The percentage of style tags that have the italic property set.
+#. pctUnderline: The percentage of style tags that have the underline property set.
+#. favicon: Checks whether a link tag with the rel="icon" property exists
 
 |
 
