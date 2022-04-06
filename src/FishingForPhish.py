@@ -1480,10 +1480,12 @@ def main():
     run = startFishing()
     run.initializeAll()
 
-    fisher = scrape(urlFile="data/urls.txt",
+    fisher = scrape(
+        urlFile="data/urls.txt",
         dataDir="data",
         driver=run.driver,
-        classVal=0)
+        classVal=0
+    )
 
     # Initialization of the page analyzer
     pageData = page()
@@ -1503,13 +1505,15 @@ def main():
     # The features generated from the other instances are then used
     # when dealing with (creating datasets, classifying, ect.) data
     # Takes the same arguments as the scrape class
-    DC = saveFish(urlFile="data/urls.txt",
+    DC = saveFish(
+        urlFile="data/urls.txt",
         dataDir="data",
         driver=run.driver,
         classVal=0,
         analyzers=fisher.analyzers,
         allFeatures=fisher.allFeatures,
-        allFeatureNames=fisher.allFeatureNames)
+        allFeatureNames=fisher.allFeatureNames
+    )
     DC.createDatasets()
     DC.classify()
     print(DC.score)
