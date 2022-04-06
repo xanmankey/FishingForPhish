@@ -276,8 +276,6 @@ class scrape(startFishing):
                 self.cursor.execute(
                     'SELECT name FROM sqlite_master WHERE TYPE = "table"')
                 # Verifying db by using table names; efficient, but not thorough
-                # TODO: update table creation accordingly IF I get public access to all feature-scraping
-                # methods (referring to those found at https://data.mendeley.com/datasets/h3cgnj8hft/1)
                 tables = {
                     "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT,
                     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
