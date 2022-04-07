@@ -162,7 +162,7 @@ The page class creates 3 attributes:
       
 The page class inherits inherits the name method (and **requires** the creation of the analyze method) from the analyzer class:
 
-* analyze(self, url, filename, resources)
+* analyze(self, url, filename, urlNum, resources)
       Searches through the html of a url to populate the features list accordingly; uses and updates the values in the resources array. The filename value is passed, as it may be used in other analyzer classes (for example in the image class), but it isn't used in the page class.
 
 image
@@ -223,7 +223,7 @@ The image class also has 3 other methods in addition to __init__() and analyze()
       Runs the imagemagick identify -verbose <datadir>/screenshots/<filename> + .png as a subprocess, where color, brightness, and other resulting data is returned from the screenshot of the website.
 * imageHash(self, url, filename)
       Runs the perceptual and difference hash algorithms from the ImageHash library IF database functionality is enabled. Inserts resulting data into the hashes table, which couldbe used for future research once enough data has been collected.
-* analyze(self, url, filename, resources, HASH=False)
+* analyze(self, url, filename, urlNum, resources, HASH=self.HASH)
       Similar to the page class, except uses the getImagemagickData function to get features from website screenshots (imagemagick is NOT a required dependency found in requirements-txt, which means that the image class will NOT be able to run without it, but it can be installed as a command-line tool; note that analyzers may rely on other software, so install as necessary) and has the imageHash function that can be called if the HASH parameter is set to True; updates the hashes table in the database (if enabled) with perceptual and differential hash values for possible use in future early detection.
       
 saveFish
