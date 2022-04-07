@@ -133,7 +133,7 @@ The scrape class also has 7 methods in addition to __init__():
 page
 ----
 
-The page class is an example class that inherits from the base analyzer class, with the purpose of scraping the page-based features outlined by the research here: TODO (research link here). It recieves the resources dictionary from the goFish() method of the scrape class, uses the information to scrape the necessary features, and returns the updated resources objects in addition to the new attributes, features and featureNames
+The page class is an example class that inherits from the base analyzer class, with the purpose of scraping the page-based features outlined by the research here: https://github.com/xanmankey/FishingForPhish/blob/main/research/FishingForPhish.md. It recieves the resources dictionary from the goFish() method of the scrape class, uses the information to scrape the necessary features, and returns the updated resources objects in addition to the new attributes, features and featureNames
 An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping, and remember to close it AFTER scraping!**).
 
 .. code-block:: python
@@ -155,7 +155,7 @@ The page class creates 3 attributes:
 
 * features=None
       A list of dictionaries, with each dictionary containing the featureNames and scraped values of each page feature for each url. The features scraped by this example class are defined at (https://thesai.org/Downloads/Volume11No1/Paper_19-Malicious_URL_Detection_based_on_Machine_Learning.pdf) and the related research can be found at (https://www.sciencedirect.com/science/article/abs/pii/S0957417418302070).
-* featureNames=None
+* featureNames=A long dictionary; can be found at the link above
       A dictionary containing key-value pairs of name:stringWekaDataType (remember that weka data types can be found here: https://waikato.github.io/weka-wiki/formats_and_processing/arff_stable/) for the scraped features of the class. Only initialized once.
 * classVal=Instance.missing_value()
       The classVal regarding the url. Defaults to nan, or a "?" value in a .arff file. If you want to update the classVal, you NEED to know the class value of each url so you can update the value accordingly and pass it back to goFish() using the resources dictionary. 
@@ -210,6 +210,13 @@ The image class shares the same attributes as the page class. The features attri
 #. pctUnderline: The percentage of style tags that have the underline property set.
 #. favicon: Checks whether a link tag with the rel="icon" property exists
 |
+* featureNames=A long dictionary; can be found at the link above
+      The featureNames can be found above as the keys for the features array; the featureNames dictionary follows the featureName:stringWekaDataType structure.
+* classVal=Instance.missing_value()
+      The classVal regarding the url. Defaults to nan, or a "?" value in a .arff file. If you want to update the classVal, you NEED to know the class value of each url so you can update the value accordingly and pass it back to goFish() using the resources dictionary. 
+* HASH=False
+      A binary value that indicates whether you want to store hash values or not in the hashes table; elaborated upon more below with the imageHash function.
+
 The image class also has 3 other methods in addition to __init__() and analyze():
 
 * getImagemagickData(self, result)
