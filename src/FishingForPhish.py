@@ -1780,7 +1780,7 @@ class imageAnalyzer(analyzer):
                 dHash,
                 url)
 
-    def analyze(self, url, filename, resources, urlNum, HASH=self.HASH):
+    def analyze(self, url, filename, resources, urlNum):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
@@ -1790,7 +1790,7 @@ class imageAnalyzer(analyzer):
         selTotalTags = resources["driver"].find_elements(By.XPATH, "//*")
         linkTags = resources["driver"].find_elements(By.TAG_NAME, "link")
 
-        if HASH:
+        if self.HASH:
             # Optionally, update the hashes table if database functionality is enabled
             self.imageHash(url, filename)
 
