@@ -2358,7 +2358,6 @@ class saveFish(scrape):
                     self.datasets.update({"ranked":rankedDataset})
 
         if self.newDatasetOptions["full"]:
-            values = []
             atts = [att for att in self.attributeCreation(self.allFeatureNames)]
             print(atts)
             if "full" in self.datasets.keys():
@@ -2367,6 +2366,7 @@ class saveFish(scrape):
                 fullDataset = Instances.create_instances(
                     "fullDataset", [att for att in atts], 0)
             for instance in self.allFeatures:
+                values = []
                 attNum = 0
                 for value in instance.values():
                     try:
