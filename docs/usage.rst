@@ -29,6 +29,15 @@ Additionally, the below is recommended:
 * A positive mindset (yeah, it's kinda hard to do data analysis without one)
 * Knowledge of positive web-scraping practices (try not to consume too many server resources; know website policies beforehand if possible)
 
+In regards to accessing the mongodb database (which stores the data from the website at ), some great tutorials can be found below:
+
+* Installation: https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
+* Usage: https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
+
+Necessary Info: 
+
+* 
+
 Installation (via pip)
 ^^^^^^^^^^^^^^^^^^^^^^
 
