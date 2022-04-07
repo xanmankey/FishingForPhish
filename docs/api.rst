@@ -185,10 +185,10 @@ The image class shares the same attributes as the page class. The features attri
 * features=None
       Same structure as the features attribute of the page class. Features can be found below (where RGB color values are used, and IM indicates a feature that imagemagick was used to collect):      
 |
-#. numTagsInHtml: Number of tags inside the HTML tag
-#. numTagsInHead: Number of tags inside the Head tag
-#. numTagsInMain: Number of tags inside the Main tag
-#. numTagsInBody: Number of tags inside the Body tag
+#. numTagsInHtml: Number of tags DIRECTLY (does not include nested tags) inside the HTML tag
+#. numTagsInHead: Number of tags directly inside the Head tag
+#. numTagsInMain: Number of tags directly inside the Main tag
+#. numTagsInBody: Number of tags directly inside the Body tag
 #. pctImgTags: Percentage of all tags that are image tags
 #. totalWidth: Total width of the website (in px)
 #. totalHeight: Total height of the website (in px)
