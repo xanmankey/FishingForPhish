@@ -1,16 +1,11 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
-# Current TODO list:
-# Documentation + Figuring out necessary python version (setup.cfg)
-# Implementation of Dr. Tan's scraping method into the page class + Rework doc strings
-# TODO: I'm planning on taking the page and image classes out of the FFP.py file,
-# where each class instance has a seperate file that gets imported
-# RUN + UPLOAD
-# WRITE
-# website?
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions
 import weka.core.jvm as jvm
 from weka.core.dataset import Attribute, Instance, Instances
 from weka.core.converters import Saver
@@ -26,7 +21,6 @@ import weka.plot.graph as graph
 import time
 import pyshorteners
 from bs4 import BeautifulSoup
-import subprocess
 from collections import Counter
 import requests
 import os
@@ -35,9 +29,14 @@ import sqlite3 as SQL
 import cssutils
 import logging
 from datetime import datetime
-from urllib import parse
 from urllib3.exceptions import InsecureRequestWarning
 import validators
+import operator
+import urllib
+from urllib.parse import urlparse
+import tldextract
+from IPy import IP
+import subprocess
 from PIL import Image
 import imagehash
 
@@ -161,6 +160,7 @@ class analyzer():
         # These classes are not standalone
         # But can function with a self.addAnalyzer(analyzer)
         # and self.goFish() call from the scrape class
+
 
 # The scrape class; inherits from the startFishing initialization class.
 # Provides many useful scraping methods and initializes file system and variables
@@ -292,12 +292,13 @@ class scrape(startFishing):
                     ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT,
                     AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT)""",
                     "errors": """CREATE TABLE errors (error TEXT)""",
-                    "image": """CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT,
-                    numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT,
-                    IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT,
+                    "image": """CREATE TABLE image (id INTEGER PRIMARY KEY, totalWidth FLOAT,
+                    totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
+                    numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT,
+                    IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT,
                     IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT,
                     mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT,
-                    pctItalics FLOAT, pctUnderline FLOAT, favicon BOOLEAN)""",
+                    pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
                     "all": """CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
                     PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
                     TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
@@ -310,12 +311,12 @@ class scrape(startFishing):
                     RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT,
                     ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT,
                     AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT,
-                    CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
-                    numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT,
-                    IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT,
-                    IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT,
-                    averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT,
-                    favicon BOOLEAN)""",
+                    totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
+                    numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT,
+                    IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT,
+                    numBoldTags INT, averageFontWeight FLOAT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT,
+                    pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN, numLinks INT, urlLength INT,
+                    mostUsedStyle TEXT, mostUsedFont TEXT)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
                 for tableName, creation in tables.items():
                     if tableName in self.cursor.fetchall():
@@ -456,123 +457,172 @@ class scrape(startFishing):
         return time
 
     def goFish(self):
-            '''Automates the scraping process by reading from the url file, validating the url,
-            taking a screenshot (if necessary), saving html and css (if necessary), and then generating
-            features by using Selenium and Beautiful Soup analysis using created analyzers'''
-            if not self.driver:
-                raise ReferenceError("Cannot scrape without a valid driver instance")
-            with open(self.urlFile, "r") as f:
-                for line in f:
-                    url = line.strip()
-                    if not self.siteValidation(url):
-                        if self.database:
-                            self.cursor.execute(
-                                "INSERT INTO errors (error) VALUES (?)", self.errors[url])
-                        continue
-                    url = self.driver.current_url
-                    if not self.screenshotDir:
-                        if self.database:
-                            try:
-                                time = self.getTime()
-                                self.cursor.execute(
-                                    "INSERT INTO metadata (id, url, time, classification) VALUES (?, ?, ?, ?)",
-                                    self.id, url, time, self.classVal)
-                            except Exception:
-                                self.id = self.cursor.execute(
-                                    "SELECT id FROM metadata WHERE url = ?", url)
-                                self.id = int(self.id[0]["id"])
-                        self.saveScreenshot(url, validated=True)
-                    filename = self.generateFilename(url)
-                    if not self.htmlDir:
-                        html = self.driver.page_source
-                        self.initializeBS(html)
-                        prettyHTML = self.BS.prettify()
-                        if not os.path.isfile(
-                                self.dataDir + "/html/" + filename + ".html"):
-                            with open(self.dataDir + "/html/" + filename + ".html", "w") as f:
-                                f.write(prettyHTML)
-                        else:
-                            pass
-                        del html
-                    else:
-                        # Assumes that the filenames follow the naming conventions
-                        # used throughout this code
+        '''Automates the scraping process by reading from the url file, validating the url,
+        taking a screenshot (if necessary), saving html and css (if necessary), and then generating
+        features by using Selenium and Beautiful Soup analysis using created analyzers'''
+        if not self.driver:
+            raise ReferenceError("Cannot scrape without a valid driver instance")
+        with open(self.urlFile, "r") as f:
+            for line in f:
+                url = line.strip()
+                if not self.siteValidation(url):
+                    if self.database:
+                        self.cursor.execute(
+                            "INSERT INTO errors (error) VALUES (?)", self.errors[url])
+                    continue
+                url = self.driver.current_url
+                if not self.screenshotDir:
+                    if self.database:
                         try:
-                            with open(self.htmlDir + "/" + filename + ".html", "r") as f:
-                                html = f.read()
-                                self.initializeBS(html)
+                            time = self.getTime()
+                            self.cursor.execute(
+                                "INSERT INTO metadata (id, url, time, classification) VALUES (?, ?, ?, ?)",
+                                self.id, url, time, self.classVal)
                         except Exception:
-                            raise FileNotFoundError(
-                                """Are you sure the html files in htmlDir follow the
-                                naming conventions used in this code?""")
-                    # I never actually read the css, but it's still useful to have
-                    # for future research
-                    if not self.cssDir:
-                        linkTags = self.driver.find_elements(By.TAG_NAME, "link")
-                        for tag in linkTags:
-                            css = tag.get_attribute("rel")
-                            if css == "stylesheet":
-                                cssFile = tag.get_attribute("href")
-                                sheet = cssutils.parseUrl(cssFile)
-                                break
-                        if not os.path.isfile(
-                                self.dataDir + "/css/" + filename + ".css"):
-                            with open(self.dataDir + "/css/" + filename + ".css", "w") as f:
-                                f.write(sheet.cssText.decode())
-                    features = {}
-                    classCheck = 1
-                    for analyzer in self.analyzers:
-                        # features: {name:value}
-                        # featureNames: {name:PWW3Type}
-                        # The resources below can be expanded on if necessary for the analyzers being used
-                        resources = {
-                            "dataDir":self.dataDir,
-                            "driver":self.driver,
-                            "database":self.database,
-                            "BS":self.BS,
-                            "cursor":self.cursor,
-                            "connection":self.conn,
-                            "id":self.id,
-                            "classVal":self.classVal,
-                            "errors":self.errors
-                        }
-                        # updating resources accordingly
-                        filename = self.generateFilename(url)
-                        updatedResources = analyzer.analyze(url, filename, resources)
-                        for resource, value in updatedResources.items():
-                            if resource in resources.keys():
-                                if resource == "features":
-                                    newFeatures = value
-                                elif resource == "featureNames":
-                                    newFeatureNames = value
-                                else:
-                                    self.resource = value
-                        if classCheck != len(self.analyzers):
-                            features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
-                            self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
-                        else:
-                            features = features | newFeatures
-                            if self.urlNum <= len(self.analyzers):
-                                self.allFeatureNames = self.allFeatureNames | newFeatureNames
-                        if self.database:
-                            self.cursor.execute("""INSERT INTO {} ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(analyzer.name(),
-                                ",".join(name for name in newFeatureNames.keys())), (value for value in newFeatures[self.id].values()))
-                        classCheck += 1
+                            self.id = self.cursor.execute(
+                                "SELECT id FROM metadata WHERE url = ?", url)
+                            self.id = int(self.id[0]["id"])
+                    self.saveScreenshot(url, validated=True)
+                filename = self.generateFilename(url)
+                if not self.htmlDir:
+                    html = self.driver.page_source
+                    self.initializeBS(html)
+                    prettyHTML = self.BS.prettify()
+                    if not os.path.isfile(
+                            self.dataDir + "/html/" + filename + ".html"):
+                        with open(self.dataDir + "/html/" + filename + ".html", "w") as f:
+                            f.write(prettyHTML)
+                    else:
+                        pass
+                    del html
+                else:
+                    # Assumes that the filenames follow the naming conventions
+                    # used throughout this code
+                    try:
+                        with open(self.htmlDir + "/" + filename + ".html", "r") as f:
+                            html = f.read()
+                            self.initializeBS(html)
+                    except Exception:
+                        raise FileNotFoundError(
+                            """Are you sure the html files in htmlDir follow the
+                            naming conventions used in this code?""")
+                # I never actually read the css, but it's still useful to have
+                # for future research
+                if not self.cssDir:
+                    linkTags = self.driver.find_elements(By.TAG_NAME, "link")
+                    for tag in linkTags:
+                        css = tag.get_attribute("rel")
+                        if css == "stylesheet":
+                            cssFile = tag.get_attribute("href")
+                            sheet = cssutils.parseUrl(cssFile)
+                            break
+                    if not os.path.isfile(
+                            self.dataDir + "/css/" + filename + ".css"):
+                        with open(self.dataDir + "/css/" + filename + ".css", "w") as f:
+                            f.write(sheet.cssText.decode())
+                features = {}
+                classCheck = 1
+                for analyzer in self.analyzers:
+                    # features: {name:value}
+                    # featureNames: {name:PWW3Type}
+                    # The resources below can be expanded on if necessary for the analyzers being used
+                    resources = {
+                        "dataDir":self.dataDir,
+                        "driver":self.driver,
+                        "database":self.database,
+                        "BS":self.BS,
+                        "cursor":self.cursor,
+                        "connection":self.conn,
+                        "id":self.id,
+                        "classVal":self.classVal,
+                        "errors":self.errors
+                    }
+                    # updating resources accordingly
+                    filename = self.generateFilename(url)
+                    updatedResources = analyzer.analyze(url, filename, resources, self.urlNum)
+                    for resource, value in updatedResources.items():
+                        if resource in resources.keys():
+                            if resource == "features":
+                                newFeatures = value
+                            elif resource == "featureNames":
+                                newFeatureNames = value
+                            else:
+                                self.resource = value
+                    if classCheck != len(self.analyzers):
+                        features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
+                        self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
+                    else:
+                        features = features | newFeatures
+                        if self.urlNum <= len(self.analyzers):
+                            self.allFeatureNames = self.allFeatureNames | newFeatureNames
                     if self.database:
-                        self.cursor.execute("""INSERT INTO full ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(
-                            ",".join(name for name in self.allFeatureNames.keys())), (value for value in features.values()))
-                    self.allFeatures.append(features)
-                    if self.database:
-                        self.conn.commit()
-                    self.id += 1
-                    self.urlNum += 1
+                        self.cursor.execute("""INSERT INTO {} ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(analyzer.name(),
+                            ",".join(name for name in newFeatureNames.keys())), (value for value in newFeatures[self.id].values()))
+                    classCheck += 1
+                if self.database:
+                    self.cursor.execute("""INSERT INTO full ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(
+                        ",".join(name for name in self.allFeatureNames.keys())), (value for value in features.values()))
+                self.allFeatures.append(features)
+                if self.database:
+                    self.conn.commit()
+                self.id += 1
+                self.urlNum += 1
 
 
-class page(analyzer):
+class pageAnalyzer(analyzer):
     '''A class for scraping page-based features'''
 
-    def __init__(self, features=[], featureNames={"externalURL":"numeric", "hostnameMismatch":"numeric",
-        "redirectURL":"numeric", "numEmail":"numeric", "numDash":"numeric", "numDots":"numeric", "classVal":"nominal"}, **kwargs):
+    def __init__(self, features=[], featureNames={
+        'NumDots':"numeric",
+        'SubdomainLevel':"numeric",
+        'PathLevel':"numeric",
+        'UrlLength':"numeric",
+        'NumDash':"numeric",
+        'NumDashInHostname':"numeric",
+        'AtSymbol':"numeric",
+        'TildeSymbol':"numeric",
+        'NumUnderscore':"numeric",
+        'NumPercent':"numeric",
+        'NumQueryComponents':"numeric",
+        'NumAmpersand':"numeric",
+        'NumHash':"numeric",
+        'NumNumericChars':"numeric",
+        'NoHttps':"numeric",
+        'RandomString':"numeric",
+        'IpAddress':"numeric",
+        'DomainInSubdomains':"numeric",
+        'DomainInPaths':"numeric",
+        'HttpsInHostname':"numeric",
+        'HostnameLength':"numeric",
+        'PathLength':"numeric",
+        'QueryLength':"numeric",
+        'DoubleSlashInPath':"numeric",
+        'NumSensitiveWords':"numeric",
+        'EmbeddedBrandName':"numeric",
+        'PctExtHyperlinks':"numeric",
+        'PctExtResourceUrls':"numeric",
+        'ExtFavicon':"numeric",
+        'InsecureForms':"numeric",
+        'RelativeFormAction':"numeric",
+        'ExtFormAction':"numeric",
+        'AbnormalFormAction':"numeric",
+        'PctNullSelfRedirectHyperlinks':"numeric",
+        'FrequentDomainNameMismatch':"numeric",
+        'FakeLinkInStatusBar':"numeric",
+        'RightClickDisabled':"numeric",
+        'PopUpWindow':"numeric",
+        'SubmitInfoToEmail':"numeric",
+        'IframeOrFrame':"numeric",
+        'MissingTitle':"numeric",
+        'ImagesOnlyInForm':"numeric",
+        'SubdomainLevelRT':"numeric",
+        'UrlLengthRT':"numeric",
+        'PctExtResourceUrlsRT':"numeric",
+        'AbnormalExtFormActionR':"numeric",
+        'ExtMetaScriptLinkRT':"numeric",
+        'PctExtNullSelfRedirectHyperlinksRT':"numeric",
+        "classVal":"nominal"
+    }, **kwargs):
         '''Inherits all previous attributes, adds an optional attribute called pageFeatures
         (although the purpose of the function is to populate the pageFeatures list, so there
         isn't much of a point in passing in a value pageFeatures. If you already have a value,
@@ -585,114 +635,967 @@ class page(analyzer):
         self.featureNames = featureNames
         self.classVal = Instance.missing_value()
 
-    # Where resources is a dictionary of all scrape elements
-    # That gets returned and updated accordingly in the goFish method
-    def analyze(self, url, filename, resources):
-        '''Searches through the html of a url to get the specified page-features.
-        These features are defined in the research paper at
-        https://github.com/xanmankey/FishingForPhish/tree/main/research'''
-        # If you want to update class value mid-goFish(), two things are required:
-        # Knowledge of when your urlFile shifts from 1 class to another
-        # And an associated change of the class value in resources
-        features = {}
-        # Search for elements with links
-        aTags = resources["driver"].find_elements(By.TAG_NAME, "a")
-        numLinks = len(aTags)
+    def get_complete_webpage_url(self, saved_actual_url):
+        parsed = urlparse(saved_actual_url)
 
-        # Initialize arrays for storing the top 4 HTML-scraped features
-        redirect = []
-        mailTo = []
-        external = []
-        notHostname = []
+        if saved_actual_url.endswith('/') and '?' not in saved_actual_url:
 
-        # The search is on!
-        # Iterate through <a> tags, and check for link attributes
-        if len(aTags) != 0:
-            tagCount = 0
-            for element in aTags:
-                # A time.sleep is added so the webdriver can process the element accordingly.
-                # In addition to a limit of 1000 <a> tags
-                time.sleep(0.01)
-                if tagCount >= 1000:
-                    break
-                # Check all <a> for the href element
-                try:
-                    href = element.get_attribute("href")
-                except Exception as e:
-                    resources["errors"].update(url=e)
-                    continue
-                checkRequest = 0
-                # Ignoring JS redirect urls
-                if href:
-                    if 'javascript:' not in href:
-                        try:
-                            parsed = parse.urlparse(url)
-                        except Exception as e:
-                            resources["errors"].update(url=e)
-                            continue
-                        try:
-                            response = requests.head(
-                                href, verify=False, timeout=10)
-                        except Exception:
-                            checkRequest = 1
-                    if "mailto:" in href:
-                        mailTo.append(href)
-                    if checkRequest == 0:
-                        if response.url == url:
-                            redirect.append(href)
-                    if checkRequest == 0:
-                        if parsed.netloc != url:
-                            external.append(href)
-                    notHostname.append(parsed.netloc)
-                else:
-                    continue
-                tagCount += 1
+            complete_webpage_url = saved_actual_url + 'index.html'
 
-        # Store totals for table iteration
-        numExternal = len(external)
-        numMail = len(mailTo)
-        numRedirects = len(redirect)
+        elif parsed.netloc != '' and parsed.path == '':
 
-        if len(notHostname) != 1 and notHostname[0] != 0:
-            hostname = parse.urlparse(url)
-            numHostname = Counter(notHostname)
-            freqHostname = numHostname.most_common(1)[0][0]
-            if freqHostname == hostname.netloc:
-                numNotHostname = 0
+            complete_webpage_url = saved_actual_url + '/index.html'
+
+        # parsed.path has some string but no filename extension
+        elif not saved_actual_url.endswith('/') and parsed.path != '':
+
+            if not saved_actual_url.endswith('.htm') and not saved_actual_url.endswith('.html'):
+
+                complete_webpage_url = saved_actual_url + '.html'
             else:
-                numNotHostname = 1
+                complete_webpage_url = saved_actual_url
+
+        return complete_webpage_url
+
+    def analyze(self, url, filename, resources, urlNum):
+
+        # Initialize feature dictionary
+        features = {}
+
+        for name in self.featureNames.keys():
+            features.update({name:0})
+
+        parsed = urlparse(url)
+
+        # Count number of dots in full URL
+        features.update({'NumDots':url.count('.')})
+
+        # Count path level
+        if parsed.path != '':
+
+            if parsed.path == '/':
+                features.update({'PathLevel':0})
+            else:
+                parsed_path_list = parsed.path.split('/')
+                features.update({'PathLevel':len(parsed_path_list) - 1})
+
+        # no path
         else:
-            numNotHostname = 1
+            features.update({'PathLevel':0})
 
-        # check and store number of dashes and number of periods in the URL
-        numDashes = 0
-        numPeriods = 0
-        for char in url:
-            if char == '-':
-                numDashes += 1
-            if char == '.':
-                numPeriods += 1
+        # Count total characters in URL
+        features.update({'UrlLength':len(url)})
 
-        # Store the data in a double array so it can be iterated over
-        try:
-            features.update({"externalURL":numExternal / numLinks})
-        except ZeroDivisionError:
-            features.update({"externalURL":0})
+        # Count total characters in URL (RT)
+        if len(url) < 54:
+            features.update({'UrlLengthRT':1})
+        elif len(url) >= 54 and len(url) <= 75:
+            features.update({'UrlLengthRT':0})
+        else:
+            features.update({'UrlLengthRT':-1})
 
-        # domain-name mismatch is a binary (adds up the most frequent hostname,
-        # and compares it to the domain name; 0 is False, 1 is True)
-        features.update({"hostnameMismatch":numNotHostname})
+        # Count dash symbol in full URL
+        features.update({'NumDash':url.count('-')})
 
-        # numRedirects is a percent
-        try:
-            features.update({"redirectURL":numRedirects / numLinks})
-        except ZeroDivisionError:
-            features.update({"redirectURL":0})
+        # Count dash symbol in hostname
+        features.update({'numDashInHostname':parsed.netloc.count('-')})
 
-        # numMail, numDashes, and numPeriods are numeric
-        features.update({"numEmail":numMail})
-        features.update({"numDash":numDashes})
-        features.update({"numDots":numPeriods})
+        # Check @ symbol in URL
+        if '@' in url:
+            features.update({'AtSymbol':1})
+        else:
+            features.update({'AtSymbol':0})
+
+        # Check tilde symbol in URL
+        if '~' in url:
+            features.update({'TildeSymbol':1})
+        else:
+            features.update({'TildeSymbol':0})
+
+        # Count underscore symbol in URL
+        features.update({'NumUnderscore':url.count('_')})
+
+        # Count percent symbol in URL
+        features.update({'NumPercent':url.count('%')})
+
+        # Count number of query components in URL
+        features.update({'NumQueryComponents':parsed.query.count('=')})
+
+        # Count ampersand symbol in URL
+        features.update({'NumAmpersand':url.count('&')})
+
+        # Count hash symbol in URL
+        features.update({'NumHash':url.count('#')})
+
+        # Count numeric characters in URL
+        features.update({'NumNumericChars':sum(char.isdigit() for char in url)})
+
+        # Check no HTTPS
+        if parsed.scheme == 'http':
+            features.update({'NoHttps':1})
+        elif parsed.scheme == 'https':
+            features.update({'NoHttps':0})
+
+        # Check random string in URL
+        parsed_netloc_str = parsed.netloc
+
+        # check for hostname part
+        for token in parsed_netloc_str.replace(
+                '.', ' ').replace('-', ' ').split(' '):
+            consonant_count = 0
+
+            for char in token.lower():
+                if (char != 'a' and char != 'e' and char != 'i' and char != 'o' and char != 'u'):
+                    consonant_count += 1
+                else:
+                    # reset consonant count
+                    consonant_count = 0
+
+                # assume 4 consonants is not pronounciable
+                if consonant_count == 4:
+                    features.update({'RandomString':1})
+                    break
+                else:
+                    features.update({'RandomString':0})
+
+        # continue checking path if no random string found previously
+        if features['RandomString'] != 1:
+
+            # check for path part
+            for token in parsed.path.replace(
+                    '/',
+                    ' ').strip().replace(
+                    '-',
+                    ' ').replace(
+                    '_',
+                    ' ').replace(
+                        '.',
+                    ' ').split(' '):
+                consonant_count = 0
+                possible_random_str = ''
+
+                for char in token.lower():
+                    if (char != 'a' and char != 'e' and char !=
+                            'i' and char != 'o' and char != 'u'):
+                        consonant_count += 1
+                        possible_random_str += char
+                    else:
+                        # reset consonant count
+                        consonant_count = 0
+
+                    if consonant_count == 4 and possible_random_str not in [
+                            'html', 'xhtml']:
+                        features.update({'RandomString':1})
+                        break
+
+        base_url_to_be_replaced = 'file:' + urllib.request.pathname2url(resources["dataDir"]) + str(urlNum) + '/'
+
+        url_scheme = parsed.scheme + '://'
+
+        # ext = tldextract.TLDExtract(suffix_list_urls=None, fallback_to_snapshot=False)
+        ext = tldextract.TLDExtract(suffix_list_urls=None)
+        ext1 = ext(url)
+        domain_query = ext1.domain + '.' + ext1.suffix
+
+        if ext1.suffix == '':
+            try:
+                IP(ext1.domain)
+                domain_query = ext1.domain
+
+                features.update({'IpAddress':1})
+
+            except BaseException:
+                pass
+                features.update({'IpAddress':0})
+
+        # Count level of subdomains
+        if ext1.subdomain == '':
+            features.update({'SubdomainLevel':0})
+        else:
+            subdomain_list = ext1.subdomain.split('.')
+            features.update({'SubdomainLevel':len(subdomain_list)})
+
+        # Check multiple subdomains (RT)
+        if ext1.subdomain == '':
+            features.update({'SubdomainLevelRT':1})
+        else:
+            subdomain_domain_str = ext1.subdomain + '.' + ext1.domain
+
+            if subdomain_domain_str.lower().startswith('www.'):
+                # discard 'www.' string
+                subdomain_domain_str = subdomain_domain_str[4:]
+
+            if subdomain_domain_str.count('.') <= 1:
+                features.update({'SubdomainLevelRT':1})
+
+            elif subdomain_domain_str.count('.') == 2:
+                features.update({'SubdomainLevelRT':0})
+
+            else:
+                features.update({'SubdomainLevelRT':-1})
+
+        extraction = tldextract.extract(url)
+        urlSuffix = extraction.suffix
+
+        # Check TLD or ccTLD used in subdomain part
+        if ext1.subdomain == '':
+            features.update({'DomainInSubdomains':0})
+        else:
+            for token in urlSuffix:
+                # if token in ext1.subdomain.lower():
+                token_location = ext1.subdomain.lower().find(token)
+                if token_location != -1:
+
+                    if ext1.subdomain.lower().startswith(token):
+                        pass
+
+                    elif ext1.subdomain.lower().endswith(token):
+                        if not ext1.subdomain[token_location - 1].isalnum():
+
+                            features.update({'DomainInSubdomains':1})
+                            break
+
+                    elif not ext1.subdomain[token_location - 1].isalnum() and not ext1.subdomain[token_location + len(token)].isalnum():
+
+                        features.update({'DomainInSubdomains':1})
+                        break
+
+        # Check TLD or ccTLD used in path part
+        if parsed.path == '':
+            features.update({'DomainInPaths':0})
+        else:
+            for token in urlSuffix:
+                token_location = parsed.path.lower().find(token)
+
+                if token_location != -1:
+
+                    if parsed.path.lower().startswith(token):
+                        pass
+
+                    elif parsed.path.lower().endswith(token):
+                        if not parsed.path[token_location - 1].isalnum():
+
+                            features.update({'DomainInPaths':1})
+                            break
+
+                    elif not parsed.path[token_location - 1].isalnum() and not parsed.path[token_location + len(token)].isalnum():
+
+                        features.update({'DomainInPaths':1})
+                        break
+
+        # Check https is obfuscated in hostname
+        if 'https' in parsed.netloc.lower():
+            features.update({'HttpsInHostname':1})
+        else:
+            features.update({'HttpsInHostname':0})
+
+        # Count length of hostname
+        features.update({'HostnameLength':len(parsed.netloc)})
+
+        # Count length of path
+        features.update({'PathLength':len(parsed.path)})
+
+        # Count length of query
+        features.update({'QueryLength':len(parsed.query)})
+
+        # Check double slash exist in path
+        if '//' in parsed.path:
+            features.update({'DoubleSlashInPath':1})
+
+        else:
+            features.update({'DoubleSlashInPath':0})
+
+        # Check how many sensitive words occur in URL
+        sensitive_word_list = [
+            'secure',
+            'account',
+            'webscr',
+            'login',
+            'ebayisapi',
+            'signin',
+            'banking',
+            'confirm']
+        features.update({'NumSensitiveWords':0})
+        for word in sensitive_word_list:
+            if word in url.lower():
+                features['NumSensitiveWords'] += 1
+
+        caching = False
+
+        if not caching:
+            resources["driver"].set_page_load_timeout(120)
+
+            try:
+                resources["driver"].get(url)
+            except BaseException:
+                pass
+
+            # SWITCH OFF ALERTS
+            while True:
+                try:
+                    WebDriverWait(
+                        resources["driver"], 3).until(
+                        expected_conditions.alert_is_present())
+
+                    # alert = resources["driver"].switch_to_alert()
+                    alert = resources["driver"].switch_to.alert
+                    alert.dismiss()
+
+                except TimeoutException:
+                    break
+
+            total_input_field = 0
+
+            captured_domains = []
+
+            resource_URLs = []
+            hyperlink_URLs = []
+            meta_script_link_URLs = []
+            request_URLs = []
+            null_link_count = 0
+            original_link_count = 0
+
+            # Extracts main visible text from HTML
+            iframe_frame_elems = ''
+            iframe_frame_elems = resources["driver"].find_elements(By.TAG_NAME, 'iframe')
+            iframe_frame_elems.extend(
+                resources["driver"].find_elements(
+                    By.TAG_NAME, 'frame'))
+
+            # Check iframe or frame exist
+            if len(iframe_frame_elems) > 0:
+                features.update({'IframeOrFrame':1})
+            else:
+                features.update({'IframeOrFrame':0})
+
+            for iframe_frame_elem in iframe_frame_elems:
+                iframe_frame_style = iframe_frame_elem.get_attribute(
+                    'style').replace(' ', '')
+                if iframe_frame_style.find(
+                        "visibility:hidden") == -1 and iframe_frame_style.find("display:none") == -1:
+
+                    try:
+                        resources["driver"].switch_to.frame(iframe_frame_elem)
+                    except BaseException:
+                        continue
+
+                    try:
+                        input_field_list = resources["driver"].find_elements(
+                            By.XPATH, '//input')
+                    except BaseException:
+                        input_field_list = []
+
+                    total_input_field += len(input_field_list)
+
+                    tag_attrib = ['src', 'href']
+                    tag_count = 0
+                    link_count = 0
+
+                    # Extract all URLs
+                    while tag_count <= 1:
+                        elements = resources["driver"].find_elements(
+                            By.XPATH, '//*[@' + tag_attrib[tag_count] + ']')
+                        if elements:
+                            for elem in elements:
+                                try:
+                                    link = ''
+                                    link = elem.get_attribute(
+                                        tag_attrib[tag_count])
+
+                                    # Check null link
+                                    null_link_detected = False
+                                    if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and (
+                                        link.startswith('#') or link == '' or link.lower().replace(
+                                            ' ', '').startswith('javascript::void(0)')):
+                                        null_link_count += 1
+                                        null_link_detected = True
+
+                                    # Construct full URL from relative URL (if
+                                    # webpage sample is processed offline)
+                                    if not link.startswith('http') and not link.startswith(
+                                            "javascript"):
+                                        # link = base_url + '/' + link    # this is
+                                        # for live relative URLs
+
+                                        # link = link.replace(base_url_to_be_replaced, url)
+
+                                        link = link.replace(
+                                            base_url_to_be_replaced, url_scheme)
+                                        link = link.replace('///', '//')
+                                        link = link.replace(
+                                            'file://C:/', url)
+                                        # link = link.replace('file:///', url_scheme)
+                                        link = link.replace(
+                                            'file://', url_scheme)
+
+                                        # pass
+
+                                    link_count += 1
+                                    original_link_count += 1
+
+                                    # Check null link after constructing full URL
+                                    # from local URL (if webpage sample is
+                                    # processed offline)
+                                    if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and not null_link_detected and (
+                                            link == self.get_complete_webpage_url(url, urlNum) or link == self.get_complete_webpage_url(url, urlNum) + '#'):
+                                        null_link_count += 1
+
+                                    # print link
+                                    # if link not in captured_domains and link !=
+                                    # "":
+                                    if link != '' and link.startswith('http'):
+
+                                        captured_domains.append(link)
+
+                                        if tag_count == 0:
+                                            resource_URLs.append(link)
+                                        elif tag_count == 1:
+                                            # TODO: missing one hyperlink_URL
+                                            if not elem.get_attribute('outerHTML').lower(
+                                            ).startswith('<link'):
+                                                hyperlink_URLs.append(link)
+                                            else:
+                                                if elem.get_attribute('rel') in [
+                                                'stylesheet', 'shortcut icon', 'icon']:
+                                                    resource_URLs.append(link)
+
+                                        # RT
+                                        if elem.get_attribute('outerHTML').lower().startswith('<meta') or \
+                                                elem.get_attribute('outerHTML').lower().startswith('<script') or \
+                                                elem.get_attribute('outerHTML').lower().startswith('<link'):
+
+                                            meta_script_link_URLs.append(link)
+
+                                        elif elem.get_attribute('outerHTML').lower().startswith('<a'):
+                                            pass
+                                        else:
+                                            request_URLs.append(link)
+
+                                except BaseException:
+                                    pass
+
+                        tag_count += 1
+
+                    resources["driver"].switch_to.default_content()
+
+            resources["driver"].switch_to.default_content()
+
+            try:
+                input_field_list = resources["driver"].find_elements(By.XPATH, '//input')
+            except BaseException:
+                pass
+
+            total_input_field += len(input_field_list)
+
+            tag_attrib = ['src', 'href']
+            tag_count = 0
+            link_count = 0
+
+            # Extract all URLs
+            while tag_count <= 1:
+                elements = ''
+                elements = resources["driver"].find_elements(
+                    By.XPATH, '//*[@' + tag_attrib[tag_count] + ']')
+
+                for elem in elements:
+
+                    try:
+                        link = ''
+                        link = elem.get_attribute(tag_attrib[tag_count])
+
+                        # Check null links
+                        null_link_detected = False
+                        # if tag_count == 1 and (link.startswith('#') or link ==
+                        # ''):
+                        if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and (
+                            link.startswith('#') or link == '' or link.lower().replace(
+                                ' ', '').startswith('javascript::void(0)')):
+                            null_link_count += 1
+                            null_link_detected = True
+
+                        # Construct full URL from relative URL (if webpage sample
+                        # is processed offline)
+                        if not link.startswith('http') and not link.startswith(
+                                "javascript"):
+                            # link = base_url + '/' + link
+
+                            # link = link.replace(base_url_to_be_replaced, url)
+
+                            link = link.replace(
+                                base_url_to_be_replaced, url_scheme)
+                            link = link.replace('///', '//')
+                            link = link.replace('file://C:/', url)
+
+                            link = link.replace('file://', url_scheme)
+
+                        link_count += 1
+                        original_link_count += 1
+
+                        # Check null links after constructing full URL from local
+                        # URL (if webpage sample is processed offline)
+                        if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and not null_link_detected and (
+                                link == self.get_complete_webpage_url(url) or link == self.get_complete_webpage_url(url) + '#'):
+                            null_link_count += 1
+                            null_link_detected = True
+
+                        if link != '' and link.startswith('http'):
+
+                            captured_domains.append(link)
+
+                            if tag_count == 0:
+                                resource_URLs.append(link)
+                            elif tag_count == 1:
+                                if not elem.get_attribute('outerHTML').lower(
+                                ).startswith('<link'):
+                                    hyperlink_URLs.append(link)
+                                else:
+                                    if elem.get_attribute('rel') in [
+                                    'stylesheet', 'shortcut icon', 'icon']:
+                                        resource_URLs.append(link)
+
+                            if elem.get_attribute('outerHTML').lower().startswith('<meta') or \
+                                    elem.get_attribute('outerHTML').lower().startswith('<script') or \
+                                    elem.get_attribute('outerHTML').lower().startswith('<link'):
+
+                                meta_script_link_URLs.append(link)
+
+                            elif elem.get_attribute('outerHTML').lower().startswith('<a'):
+                                pass
+                            else:
+                                request_URLs.append(link)
+
+                    except BaseException:
+                        pass
+
+                tag_count += 1
+
+            # Calculate null or self redirecct hyperlinks
+
+            # feature['PctNullSelfRedirectHyperlinks'] =
+            # float('{:.6f}'.format(float(null_link_count)/float(original_link_count)))
+            # fixed to 10 decimal places
+            if len(hyperlink_URLs) > 0:
+                features.update({'PctNullSelfRedirectHyperlinks':'{:.10f}'.format(float(
+                    null_link_count) / float(len(hyperlink_URLs)))})
+            else:
+                features.update({'PctNullSelfRedirectHyperlinks':'{:.10f}'.format(
+                    0)})
+
+        # Check whether brand name appears in subdomains and paths
+
+        # domain_tokens = tldextract.TLDExtract(suffix_list_urls=None, fallback_to_snapshot=False)
+        domain_tokens = tldextract.TLDExtract(suffix_list_urls=None)
+        domains = []
+        domains_freq = {}
+
+        # create dictionary of domain frequencies
+        # (I think iterating over captured_domains is fine;
+        # I had to refactor the code slightly)
+        for url in captured_domains:
+            domain_str = domain_tokens(url).domain + '.' + domain_tokens(url).suffix
+
+            if url.startswith('http') and domain_str not in domains:
+
+                domains.append(domain_str)
+
+            if url.startswith('http'):
+                if domain_str not in domains_freq:
+                    domains_freq[domain_str] = 1
+                else:
+                    domains_freq[domain_str] += 1
+
+            if len(url) > 0:
+                max_freq_domain = max(
+                    domains_freq.items(),
+                    key=operator.itemgetter(1))[0]
+            else:
+                max_freq_domain = ''
+
+            try:
+                # is IP
+                IP(max_freq_domain)
+                brand_name = max_freq_domain
+
+            # not IP, extract first dot separated token
+            except BaseException:
+                pass
+                brand_name = max_freq_domain.split('.')[0]
+
+        parsed = urlparse(url)
+        # ext = tldextract.TLDExtract(suffix_list_urls=None, fallback_to_snapshot=False)
+        ext = tldextract.TLDExtract(suffix_list_urls=None)
+        ext1 = ext(url)
+        if brand_name.lower() in ext1.subdomain.lower(
+        ) or brand_name.lower() in parsed.path.lower():
+            if brand_name != '':
+                features.update({'EmbeddedBrandName':1})
+            else:
+                features.update({'EmbeddedBrandName':0})
+        else:
+            features.update({'EmbeddedBrandName':0})
+
+        # Check frequent domain name in HTML matches with webpage domain name
+        if max_freq_domain != domain_query:
+            features.update({'FrequentDomainNameMismatch':1})
+        else:
+            features.update({'FrequentDomainNameMismatch':0})
+
+        # Count percentage of external hyperlinks
+        external_hyperlink_count = 0
+
+        for link in hyperlink_URLs:
+
+            ext2 = ext(link)
+
+            domain_str_ext2 = ext2.domain + '.' + ext2.suffix
+            if ext2.suffix == '':
+                try:
+                    IP(ext2.domain)
+                    domain_str_ext2 = ext2.domain
+
+                except BaseException:
+                    pass
+
+            if domain_str_ext2 != domain_query:
+                external_hyperlink_count += 1
+
+        # print 'len(hyperlink_URLs) = ' + str(len(hyperlink_URLs))
+        # feature['PctExtHyperlinks'] =
+        # float('{:.6f}'.format(float(external_hyperlink_count)/float(len(hyperlink_URLs))))
+        # fixed to 10 decimal places
+        if len(hyperlink_URLs) > 0:
+            features.update({'PctExtHyperlinks':'{:.10f}'.format(
+                float(external_hyperlink_count) /
+                float(
+                    len(hyperlink_URLs)))})
+        else:
+            features.update({'PctExtHyperlinks':'{:.10f}'.format(0)})
+
+        # Calculate URL of anchor (RT)
+        percent_external_or_null_hyperlinks = float(
+            features['PctExtHyperlinks']) + float(features['PctNullSelfRedirectHyperlinks'])
+
+        if percent_external_or_null_hyperlinks < 0.31:
+            features.update({'PctExtNullSelfRedirectHyperlinksRT':1})
+        elif percent_external_or_null_hyperlinks >= 0.31 and percent_external_or_null_hyperlinks <= 0.67:
+            features.update({'PctExtNullSelfRedirectHyperlinksRT':0})
+        else:
+            features.update({'PctExtNullSelfRedirectHyperlinksRT':-1})
+
+        # Count percentage of external resources
+        external_resource_count = 0
+
+        for url in resource_URLs:
+
+            ext2 = ext(url)
+
+            domain_str_ext2 = ext2.domain + '.' + ext2.suffix
+            if ext2.suffix == '':
+                try:
+                    IP(ext2.domain)
+                    domain_str_ext2 = ext2.domain
+
+                except BaseException:
+                    pass
+
+            if domain_str_ext2 != domain_query:
+                external_resource_count += 1
+
+        if len(resource_URLs) > 0:
+            # fix to 10 decimal places
+            features.update({'PctExtResourceUrls':'{:.10f}'.format(
+                float(external_resource_count) /
+                float(
+                    len(resource_URLs)))})
+        else:
+            # fix to 10 decimal places
+            features.update({'PctExtResourceUrls':'{:.10f}'.format(
+                0)})
+
+        # Count percentage of external request URLs (RT)
+        external_request_URLs = 0
+        for url in request_URLs:
+
+            ext2 = ext(url)
+
+            domain_str_ext2 = ext2.domain + '.' + ext2.suffix
+            if ext2.suffix == '':
+                try:
+                    IP(ext2.domain)
+                    domain_str_ext2 = ext2.domain
+
+                except BaseException:
+                    pass
+
+            if domain_str_ext2 != domain_query:
+                external_request_URLs += 1
+
+        # print 'len(request_URLs) = ' + str(len(request_URLs))
+
+        if len(request_URLs) > 0:
+            if float(external_request_URLs) / float(len(request_URLs)) < 0.22:
+                features.update({'PctExtResourceUrlsRT':1})
+            elif float(external_request_URLs) / float(len(request_URLs)) >= 0.22 and float(external_request_URLs) / float(len(request_URLs)) <= 0.61:
+                features.update({'PctExtResourceUrlsRT':0})
+            else:
+                features.update({'PctExtResourceUrlsRT':-1})
+        else:
+            features.update({'PctExtResourceUrlsRT':1})
+
+        # Count percentage external meta script link (RT)
+        external_meta_script_link_count = 0
+        for meta_script_link_URL in meta_script_link_URLs:
+
+            ext_meta_script_link = ext(meta_script_link_URL)
+
+            domain_str_ext_meta_script_link = ext_meta_script_link.domain + \
+                '.' + ext_meta_script_link.suffix
+            if ext_meta_script_link.suffix == '':
+                try:
+                    IP(ext_meta_script_link.domain)
+                    domain_str_ext_meta_script_link = ext_meta_script_link.domain
+
+                except BaseException:
+                    pass
+
+            if domain_str_ext_meta_script_link != domain_query:
+                external_meta_script_link_count += 1
+
+        # print 'len(meta_script_link_URLs) = ' + str(len(meta_script_link_URLs))
+        if len(meta_script_link_URLs) > 0:
+            if float(external_meta_script_link_count) / \
+                    float(len(meta_script_link_URLs)) < 0.17:
+                features.update({'ExtMetaScriptLinkRT':1})
+            elif float(external_meta_script_link_count) / float(len(meta_script_link_URLs)) >= 0.17 and float(external_meta_script_link_count) / float(len(meta_script_link_URLs)) <= 0.81:
+                features.update({'ExtMetaScriptLinkRT':0})
+            else:
+                features.update({'ExtMetaScriptLinkRT':-1})
+        else:
+            features.update({'ExtMetaScriptLinkRT':1})
+
+        # Check whether favicon is external
+        # <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+
+        link_elems = resources["driver"].find_elements(By.XPATH, 'link')
+        favicon_URL = ''
+
+        for link_elem in link_elems:
+            if link_elem.get_attribute(
+                    'rel') == 'shortcut icon' or link_elem.get_attribute('rel') == 'icon':
+                favicon_URL = link_elem.get_attribute('href')
+                break
+
+        if favicon_URL != '':
+            # if favicon_URL.startswith('http'):
+            ext_fav = ext(favicon_URL)
+
+            domain_str_ext_fav = ext_fav.domain + '.' + ext_fav.suffix
+            if ext_fav.suffix == '':
+                try:
+                    IP(ext_fav.domain)
+                    domain_str_ext_fav = ext_fav.domain
+
+                except BaseException:
+                    pass
+
+            if domain_str_ext_fav != domain_query:
+                features.update({'ExtFavicon':1})
+            else:
+                features.update({'ExtFavicon':0})
+
+        else:
+            features.update({'ExtFavicon':0})
+
+        form_elems = resources["driver"].find_elements(By.TAG_NAME, 'form')
+
+        # Check for external form action
+        for form_elem in form_elems:
+
+            if form_elem.get_attribute('action') is not None:
+                if form_elem.get_attribute('action').startswith('http'):
+
+                    # check internal or external form
+                    ext_form = ext(form_elem.get_attribute('action'))
+
+                    domain_str_ext_form = ext_form.domain + '.' + ext_form.suffix
+                    if ext_form.suffix == '':
+                        try:
+                            IP(ext_form.domain)
+                            domain_str_ext_form = ext_form.domain
+
+                        except BaseException:
+                            pass
+
+                    if domain_str_ext_form != domain_query:
+                        features.update({'ExtFormAction':1})
+                        break
+
+        # Check for insecure form action
+        for form_elem in form_elems:
+
+            if form_elem.get_attribute('action') is not None:
+
+                if form_elem.get_attribute('action').startswith('http'):
+
+                    if form_elem.get_attribute('action').startswith('https'):
+                        pass
+                    else:
+                        features.update({'InsecureForms':1})
+                        break
+
+                else:
+                    # look at page URL
+                    if parsed.scheme == 'https':
+                        pass
+                    else:
+                        features.update({'InsecureForms':1})
+                        break
+
+        # Check for relative form action
+        for form_elem in form_elems:
+
+            if form_elem.get_attribute('action') is not None:
+
+                if form_elem.get_attribute('action').startswith('http'):
+                    pass
+
+                else:
+                    features.update({'RelativeFormAction':1})
+                    break
+
+        # Check for abnormal form action
+        for form_elem in form_elems:
+
+            if form_elem.get_attribute('action') is not None:
+                # if normal form
+                if form_elem.get_attribute('action').startswith('http'):
+                    pass
+                else:
+
+                    if form_elem.get_attribute('action').lower().replace(' ', '') in [
+                            '', '#', 'about:blank', 'javascript:true']:
+                        features.update({'AbnormalFormAction':1})
+                        break
+
+        # Check server form handler (R)
+        # otherwise legitimate state
+        features.update({'AbnormalExtFormActionR':1})
+        for form_elem in form_elems:
+
+            if form_elem.get_attribute('action') is not None:
+                # check link to external domain
+                if form_elem.get_attribute('action').startswith(
+                        'http'):
+                    # pass
+
+                    ext_form = ext(form_elem.get_attribute('action'))
+
+                    domain_str_form = ext_form.domain + '.' + ext_form.suffix
+                    if ext_form.suffix == '':
+                        try:
+                            IP(ext_form.domain)
+                            domain_str_form = ext_form.domain
+
+                        except BaseException:
+                            pass
+
+                    if domain_str_form != domain_query:
+                        features.update({'AbnormalExtFormActionR':0})
+                        break
+
+                else:
+
+                    if form_elem.get_attribute('action').lower().replace(
+                            ' ', '') in ['', 'about:blank']:
+                        features.update({'AbnormalExtFormActionR':-1})
+                        break
+
+        # Check for right click disabled
+        page_src_str = resources["driver"].page_source
+        page_src_no_space_lower_str = page_src_str.replace(' ', '').lower()
+
+        # document.addEventListener('contextmenu', event =>
+        # event.preventDefault());
+
+        if 'addEventListener'.lower() in page_src_no_space_lower_str and 'contextmenu' in page_src_no_space_lower_str and 'preventDefault' in page_src_no_space_lower_str:
+            features.update({"RightClickDisabled":1})
+
+        elif 'event.button==2' in page_src_no_space_lower_str:
+            features.update({'RightClickDisabled':1})
+
+        else:
+            disable_right_click_list = resources["driver"].find_elements(
+                By.XPATH, '//*[@oncontextmenu="return false"]')
+            disable_right_click_list.extend(resources["driver"].find_elements(
+                By.XPATH, '//*[@oncontextmenu="return false;"]'))
+
+            if len(disable_right_click_list) > 0:
+                features.update({'RightClickDisabled':1})
+
+        # Check for pop-up
+
+            # if 'window.open(' in page_src_no_space_lower_str and
+            # ('onLoad="'.lower() in page_src_no_space_lower_str or
+            # 'onClick="'.lower() in page_src_no_space_lower_str):
+
+        onload_count = len(resources["driver"].find_elements(By.XPATH, '//*[@onLoad]'))
+        onclick_count = len(resources["driver"].find_elements(By.XPATH, '//*[@onClick]'))
+
+        if 'window.open(' in page_src_no_space_lower_str and (
+                onload_count > 0 or onclick_count > 0):
+            features.update({'PopUpWindow':1})
+        else:
+            features.update({'PopUpWindow':0})
+
+        # Check mailto function exist
+        if 'mailto:' in page_src_no_space_lower_str:
+            features.update({'SubmitInfoToEmail':1})
+        else:
+            features.update({'SubmitInfoToEmail':0})
+
+        # Check for empty webpage title
+        if resources["driver"].title.strip() == '':
+            features.update({'MissingTitle':1})
+        else:
+            features.update({'MissingTitle':0})
+
+        # Check whether form contain only images without text
+        form_elems = resources["driver"].find_elements(By.TAG_NAME, 'form')
+        visible_text_in_form = ''
+        image_elems_in_form = []
+        for form_elem in form_elems:
+
+            # visible_text_in_form += form_elem.text.strip() + ' '
+            try:
+                visible_text_in_form += form_elem.text.strip() + ' '
+            except BaseException:
+                pass
+
+            image_elems_in_form.extend(form_elem.find_elements(By.XPATH, './/img'))
+
+        if visible_text_in_form.strip() == '' and len(image_elems_in_form) > 0:
+            features.update({'ImagesOnlyInForm':1})
+        else:
+            features.update({'ImagesOnlyInForm':0})
+
+        # Check for fake links in status bar
+
+        # case 1 - mentioned alot in literature
+        hyperlinks_case_1 = resources["driver"].find_elements(
+            By.XPATH, '//a[@onmouseover and @onmouseout]')
+        if 'window.status=' in page_src_no_space_lower_str and len(
+                hyperlinks_case_1) > 0:
+            features.update({'FakeLinkInStatusBar':1})
+
+        # #case2  - Google search result ads using this           # Disable this temporarily
+        # hyperlinks_case_2 = resources["driver"].find_elements_by_xpath('//a[@onclick]')
+        # if len(hyperlinks_case_2) > 0 and ('location.href=' in page_src_no_space_lower_str or 'document.location=' in page_src_no_space_lower_str or 'window.location=' in page_src_no_space_lower_str or 'this.href=' in page_src_no_space_lower_str):
+            # feature['FakeLinkInStatusBar'] = 1
+
+        # case 3
+        if 'onclick=' in page_src_no_space_lower_str and 'stopEvent'.lower() in page_src_no_space_lower_str and (
+                'location.href=' in page_src_no_space_lower_str or 'document.location=' in page_src_no_space_lower_str or 'window.location=' in page_src_no_space_lower_str or 'this.href=' in page_src_no_space_lower_str):
+            features.update({'FakeLinkInStatusBar':1})
 
         features.update({"classVal":self.classVal})
         self.features.append(features)
@@ -701,7 +1604,7 @@ class page(analyzer):
         return resources
 
 
-class image(analyzer):
+class imageAnalyzer(analyzer):
     '''A class for scraping image-based features'''
 
     def __init__(self, features=[], featureNames={
@@ -728,6 +1631,7 @@ class image(analyzer):
         "mostUsedStyle":"string",
         "pctItalics":"numeric",
         "pctUnderline":"numeric",
+        "imageOverlappingTop":"numeric",
         "favicon":"numeric",
         "classVal":"nominal"
     }, **kwargs):
@@ -874,7 +1778,7 @@ class image(analyzer):
                 dHash,
                 url)
 
-    def analyze(self, url, filename, resources, HASH=False):
+    def analyze(self, url, filename, resources, urlNum, HASH=False):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
@@ -895,7 +1799,7 @@ class image(analyzer):
         inHTML = 0
         for tag in htmlTag:
             inHTML += 1
-        features.update({"numTagsIn<html>":inHTML})
+        features.update({"numTagsInHtml":inHTML})
 
         # Get the total number of tags in the head tag using Beautiful Soup
         headTag = resources["BS"].find('head')
@@ -904,7 +1808,7 @@ class image(analyzer):
             headChildren = headTag.findChildren()
             for tag in headChildren:
                 inHead += 1
-        features.update({"numTagsIn<head>":inHead})
+        features.update({"numTagsInHead":inHead})
 
         # Get the total number of tags in the main tag using Beautiful Soup
         mainTag = resources["BS"].find('main')
@@ -913,7 +1817,7 @@ class image(analyzer):
             mainChildren = mainTag.findChildren()
             for tag in mainChildren:
                 inMain += 1
-        features.update({"numTagsIn<main>":inMain})
+        features.update({"numTagsInMain":inMain})
 
         # Get the total number of tags in the body tag using Beautiful Soup
         bodyTag = resources["BS"].find('body')
@@ -922,12 +1826,12 @@ class image(analyzer):
             bodyChildren = bodyTag.findChildren()
             for tag in bodyChildren:
                 inBody += 1
-        features.update({"numTagsIn<body>":inBody})
+        features.update({"numTagsInBody":inBody})
 
         # Get the percentage of img tags
         imgTags = resources["driver"].find_elements(By.TAG_NAME, "img")
         pctImgTags = len(imgTags) / len(totalTags)
-        features.update({"pct<img>Tags":pctImgTags})
+        features.update({"pctImgTags":pctImgTags})
 
         # Use imagemagick to get image-related information
         # STYLE
@@ -1040,9 +1944,15 @@ class image(analyzer):
         features.update({"pctUnderline":numUnderlines / len(styles)})
 
         # OTHER
-        # I still want to test more features when time allows
-        # For example, more work with location, size, and overlap could be effective
-        # in regards to page layout
+        # Check for an image overlapping the address bar
+        overlapping = 0
+        for img in imgTags:
+            location = img.location
+            y = location["y"]
+            if y < 0:
+                overlapping = 1
+                break
+        features.update({"imageOverlappingTop":overlapping})
 
         # Check if there is a rel=icon attribute in a link tag (check for a
         # favicon image)
@@ -1450,6 +2360,7 @@ class saveFish(scrape):
         if self.newDatasetOptions["full"]:
             values = []
             atts = [att for att in self.attributeCreation(self.allFeatureNames)]
+            print(atts)
             if "full" in self.datasets.keys():
                 fullDataset = self.datasets["full"]
             else:
@@ -1488,11 +2399,11 @@ def main():
     )
 
     # Initialization of the page analyzer
-    pageData = page()
+    pageData = pageAnalyzer()
     fisher.addAnalyzer(pageData)
 
     # Initialization of the image analyzer
-    imageData = image()
+    imageData = imageAnalyzer()
     fisher.addAnalyzer(imageData)
 
     # Once the analyzers have been added, it doesn't matter what
