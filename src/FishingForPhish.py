@@ -299,7 +299,7 @@ class scrape(startFishing):
                     IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT,
                     mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT,
                     pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
-                    "all": """CREATE TABLE all (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
+                    "allData": """CREATE TABLE allData (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
                     PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
                     TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
                     NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT,
