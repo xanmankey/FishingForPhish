@@ -314,9 +314,8 @@ class scrape(startFishing):
                     totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
                     numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT,
                     IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT,
-                    numBoldTags INT, averageFontWeight FLOAT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT,
-                    pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN, numLinks INT, urlLength INT,
-                    mostUsedStyle TEXT, mostUsedFont TEXT)""",
+                    numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT,
+                    mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
                 for tableName, creation in tables.items():
                     if tableName in self.cursor.fetchall():
