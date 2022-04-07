@@ -314,7 +314,7 @@ class scrape(startFishing):
                     totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
                     numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT,
                     IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT,
-                    numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, pctItalics FLOAT,
+                    numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT,
                     mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
                 for tableName, creation in tables.items():
@@ -551,6 +551,8 @@ class scrape(startFishing):
                         features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
                         self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
                     else:
+                        # TODO: figure out why there's a key:value discrepancy of 1
+                        # https://docs.google.com/spreadsheets/d/1LgxekvRc3Px-g2u2f3-wtQKn6CeIvVuLnX6spa7cacU/edit#gid=0
                         features = features | newFeatures
                         if self.urlNum <= len(self.analyzers):
                             self.allFeatureNames = self.allFeatureNames | newFeatureNames
@@ -1633,13 +1635,14 @@ class imageAnalyzer(analyzer):
         "imageOverlappingTop":"numeric",
         "favicon":"numeric",
         "classVal":"nominal"
-    }, **kwargs):
+    }, HASH=False, **kwargs):
         '''Similarily to the pageBased class, inherits all attributes from the initialize and scape classes,
         (not pageFeatures) and adds an optional attribute called imageFeatures'''
         super().__init__(**kwargs)
         self.features = features
         self.featureNames = featureNames
         self.classVal = Instance.missing_value()
+        self.HASH = HASH
 
     def getImagemagickData(self, result):
         if result[0:6] != "Image:":
@@ -1777,7 +1780,7 @@ class imageAnalyzer(analyzer):
                 dHash,
                 url)
 
-    def analyze(self, url, filename, resources, urlNum, HASH=False):
+    def analyze(self, url, filename, resources, urlNum, HASH=self.HASH):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
@@ -2358,12 +2361,12 @@ class saveFish(scrape):
 
         if self.newDatasetOptions["full"]:
             atts = [att for att in self.attributeCreation(self.allFeatureNames)]
-            print(atts)
             if "full" in self.datasets.keys():
                 fullDataset = self.datasets["full"]
             else:
                 fullDataset = Instances.create_instances(
                     "fullDataset", [att for att in atts], 0)
+            print(fullDataset)
             for instance in self.allFeatures:
                 values = []
                 attNum = 0
@@ -2375,7 +2378,12 @@ class saveFish(scrape):
                         values.append(atts[attNum].add_string_value(value))
                     attNum += 1
                 inst = Instance.create_instance(values)
+                # TODO: figure out error javabridge.jutil.JavaException: Index 400 out of bounds for length 0
+                # Then MongoDB + vercel hosting + debug app
+                # Then should be done so paper
+                print(inst)
                 fullDataset.add_instance(inst)
+                print(fullDataset)
             stringToNom.inputformat(fullDataset)
             fullDataset = stringToNom.filter(fullDataset)
             if "full" not in self.datasets.keys():
