@@ -1,13 +1,20 @@
-from FishingForPhish import analyzer
+# image.py: a python file showcasing the selected features
+# used as an example instance of the analyzer class
+# and bundled with the module
+# (the file itself is never called by FishingForPhish.py due to the possibility of a circular import)
+from FishingForPhish import startFishing, analyzer, scrape, saveFish
 from selenium.webdriver.common.by import By
 from weka.core.dataset import Instance
 import subprocess
 from collections import Counter
-import logging
 from PIL import Image
 import imagehash
+from urllib3.exceptions import InsecureRequestWarning
+import cssutils
+import requests
+import logging
 
-class image(analyzer):
+class imageAnalyzer(analyzer):
     '''A class for scraping image-based features'''
 
     def __init__(self, features=[], featureNames={
@@ -181,7 +188,7 @@ class image(analyzer):
                 dHash,
                 url)
 
-    def analyze(self, url, filename, resources, HASH=False):
+    def analyze(self, url, filename, resources, urlNum, HASH=False):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
@@ -371,3 +378,42 @@ class image(analyzer):
         resources.update({"features":features})
         resources.update({"featureNames":self.featureNames})
         return resources
+
+if __name__ == "__main__":
+    from FishingForPhish import startFishing, analyzer, scrape, saveFish
+    requests.packages.urllib3.disable_warnings(
+            category=InsecureRequestWarning)
+    cssutils.log.setLevel(logging.CRITICAL)
+    run = startFishing()
+    run.installResources()
+    run.initializeSelenium()
+
+    fisher = scrape(
+        urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        classVal=0
+    )
+
+    imageData = imageAnalyzer()
+    fisher.addAnalyzer(imageData)
+
+    fisher.goFish()
+    print(imageData.features)
+
+    DC = saveFish(
+        urlFile="data/urls.txt",
+        dataDir="data",
+        driver=run.driver,
+        classVal=0,
+        analyzers=fisher.analyzers,
+        allFeatures=fisher.allFeatures,
+        allFeatureNames=fisher.allFeatureNames
+    )
+    DC.createDatasets()
+    DC.classify()
+    print(DC.score)
+    print(DC.classifications)
+
+    DC.closePWW3()
+    DC.closeSelenium()
