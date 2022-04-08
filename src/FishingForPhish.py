@@ -699,7 +699,7 @@ class pageAnalyzer(analyzer):
         features.update({'NumDash':url.count('-')})
 
         # Count dash symbol in hostname
-        features.update({'numDashInHostname':parsed.netloc.count('-')})
+        features.update({'NumDashInHostname':parsed.netloc.count('-')})
 
         # Check @ symbol in URL
         if '@' in url:
