@@ -150,7 +150,7 @@ class analyzer():
         pass
 
     def name(self):
-      return analyzer.__class__.__name__
+      return self.__class__.__name__
 
     # Shell function
     # def analyze(self):
