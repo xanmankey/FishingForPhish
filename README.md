@@ -10,5 +10,4 @@ This project is currently under active development. Contributions and adaptation
 - Documentation: https://fishingforphish.readthedocs.io/en/latest/
 - Website: TODO (the server-side code still has to be finalized, and a plan needs to be figured out 
 regarding production deployment and hosting)
-- MongoDB Database: TODO (I still have to finish debugging the website and figuring out db access)
 - PyPi: TODO
