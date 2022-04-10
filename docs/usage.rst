@@ -20,7 +20,7 @@ In order to setup java-11-orcacle, follow the steps listed below (please note th
 
    $ export JAVA_HOME="path/to/your/installation/here"
    
-The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper3/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper3/install.html#ubuntu).
+The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper3/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper3/install.html#ubuntu; in order to get graphing functionality, there may be additional steps that you will need to take).
 
 Additionally, the below is recommended:
 
