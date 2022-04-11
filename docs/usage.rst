@@ -20,6 +20,8 @@ In order to setup java-11-orcacle, follow the steps listed below (please note th
 
    $ export JAVA_HOME="path/to/your/installation/here"
    
+Additionally, the imagemagick package is required to use the imageAnalyzer example analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
+   
 The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper3/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper3/install.html#ubuntu; in order to get graphing functionality, there may be additional steps that you will need to take).
 
 Additionally, the below is recommended:
@@ -29,14 +31,10 @@ Additionally, the below is recommended:
 * A positive mindset (yeah, it's kinda hard to do data analysis without one)
 * Knowledge of positive web-scraping practices (try not to consume too many server resources; know website policies beforehand if possible)
 
-In regards to accessing the mongodb database (which stores the data from the website at ), some great tutorials can be found below:
+In regards to accessing the mongodb database (which stores the data from the website at TODO), some great tutorials can be found below:
 
 * Installation: https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
 * Usage: https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
-
-Necessary Info: 
-
-* 
 
 Installation (via pip)
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -49,8 +47,8 @@ To use FishingForPhish, first install it using pip:
 
 Then you should have access to the API in classes.py. 
 
-Installation (from source)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installation from source (not recommended unless you want to download the initial research documents)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Alternatively, the library can be installed from source by cloning the github repository using the command
 
