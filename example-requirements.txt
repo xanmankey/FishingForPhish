@@ -1,7 +1,0 @@
-# Here's where I'm putting the requirements to run the page and image class (I might want to turn this into a setup file instead, I'm not sure yet)
-# My image method: 
-# imagemagick (ubuntu; version 8:6.9.10.23+dfsg-2.1ubuntu11.4)
-# imagehash==4.2.1
-# An adaption of Dr. Tan's et. all. page method 
-# tldextract==3.2.0
-# IPy==1.1.0
