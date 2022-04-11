@@ -1,5 +1,7 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
+# TODO: database func, debug saveFish class, run (CHECK THE DATABASE AFTER THIS CALL)
+# Make sure database doesn't add extra instances and functions accordingly
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -13,10 +15,13 @@ from weka.filters import Filter
 import weka.core.packages as packages
 from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
 from weka.classifiers import Classifier
+# TODO: still have to figure out graphing (can't do that on here though, installation instructions can be found in graph.py)
 # Optionally, for graphing purposes, pygraphviz and PIL can be installed and the
 # weka.plot.graph class can be imported
 # Check the installation process here for more details:
 # https://fracpete.github.io/python-weka-wrapper3/install.html
+# TODO: figure out classify results (why is full 4:4)?
+# Then set up on pypi, install, and run
 import weka.plot.graph as graph
 import time
 import pyshorteners
@@ -39,6 +44,8 @@ from IPy import IP
 import subprocess
 from PIL import Image
 import imagehash
+import copy
+from math import isnan
 
 
 class startFishing():
@@ -150,7 +157,7 @@ class analyzer():
         pass
 
     def name(self):
-      return self.__class__.__name__
+        return self.__class__.__name__
 
     # Shell function
     # def analyze(self):
@@ -273,52 +280,18 @@ class scrape(startFishing):
                         """Sorry, can't connect to that database!""")
                 self.cursor = db.cursor()
                 self.conn = db
-                self.cursor.execute(
-                    'SELECT name FROM sqlite_master WHERE TYPE = "table"')
                 # Verifying db by using table names; efficient, but not thorough
+                # TODO: build a semi-adaptive database system
                 tables = {
-                    "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
                     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                    "page": """CREATE TABLE page (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
-                    PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
-                    TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
-                    NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT,
-                    DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT,
-                    PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT,
-                    EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT,
-                    InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT,
-                    PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT,
-                    RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT,
-                    ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT,
-                    AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT)""",
                     "errors": """CREATE TABLE errors (error TEXT)""",
-                    "image": """CREATE TABLE image (id INTEGER PRIMARY KEY, totalWidth FLOAT,
-                    totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
-                    numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT,
-                    IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT,
-                    IMalphaChannel BOOLEAN, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT,
-                    mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT,
-                    pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
-                    "allData": """CREATE TABLE allData (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT,
-                    PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT,
-                    TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT,
-                    NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT,
-                    DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT,
-                    PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT,
-                    EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT,
-                    InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT,
-                    PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT,
-                    RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT,
-                    ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT,
-                    AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT,
-                    totalWidth FLOAT, totalHeight FLOAT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT,
-                    numTagsInBody INT, pctImgTags FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT,
-                    IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel BOOLEAN, IMgamma FLOAT,
-                    numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT,
-                    mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, imageOverlappingTop BOOLEAN, favicon BOOLEAN)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
+                self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+                currentTables = self.cursor.fetchall()
+                currentTables = [item for table in currentTables for item in table]
                 for tableName, creation in tables.items():
-                    if tableName in self.cursor.fetchall():
+                    if tableName in currentTables:
                         continue
                     else:
                         self.cursor.execute(creation)
@@ -331,12 +304,6 @@ class scrape(startFishing):
                 for creation in tables.values():
                     self.cursor.execute(creation)
                 self.conn.commit()
-                if self.id == 0:
-                    self.id = self.cursor.execute(
-                        "SELECT id FROM metadata ORDER BY DESC LIMIT 1")
-                    self.id = int(id[0]['id'])
-                    if self.id == '':
-                        self.id = 0
 
     def closeSelenium(self):
         '''Closes and quits Selenium using the Selenium.close() and Selenium.quit() methods.
@@ -360,7 +327,28 @@ class scrape(startFishing):
     # The addAnalyzer function should be called
     # With an instance of the analyzer itself
     def addAnalyzer(self, analyzer):
+        print(str(analyzer.name()) + " added!")
         self.analyzers.append(analyzer)
+        # A table is created for each added analyzer in this function
+        columns = []
+        if self.database:
+            self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+            currentTables = self.cursor.fetchall()
+            currentTables = [item for table in currentTables for item in table]
+            if analyzer.name() not in currentTables:
+                for name, datatype in analyzer.featureNames.items():
+                    # Still should add more support for different datatypes
+                    # in regards to autogenerating databases and datasets
+                    # and the relation between the two
+                    if datatype.lower() == "numeric":
+                        columns.append(name + " FLOAT")
+                    elif datatype.lower() == "string":
+                        columns.append(name + " TEXT")
+                    # classVal are not included in the solo dataset
+                    # elif datatype.lower() == "nominal":
+                    #     columns.append(name + " BOOLEAN")
+                self.cursor.execute("CREATE TABLE {} (id INTEGER PRIMARY KEY, {})".format(
+                    analyzer.name(), ",".join(name for name in columns)))
 
     def shorten(self, url, validate=False):
         '''Shortens the url using pyshorteners and the clckru shortener. 5 unique characters are
@@ -461,13 +449,39 @@ class scrape(startFishing):
         features by using Selenium and Beautiful Soup analysis using created analyzers'''
         if not self.driver:
             raise ReferenceError("Cannot scrape without a valid driver instance")
+        # Create the allData table
+        if self.database:
+            self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+            currentTables = self.cursor.fetchall()
+            currentTables = [item for table in currentTables for item in table]
+            if "allData" not in currentTables:
+                featureNames = []
+                analyzerNum = 1
+                for analyzer in self.analyzers:
+                    if analyzerNum != len(self.analyzers):
+                        features = {key:val for key, val in analyzer.featureNames.items() if key != 'classVal'}
+                    else:
+                        features = analyzer.featureNames
+                    for name, datatype in features.items():
+                        if datatype.lower() == "numeric":
+                            datatype = " FLOAT"
+                        elif datatype.lower() == "string":
+                            datatype = " TEXT"
+                        elif datatype.lower() == "nominal":
+                            datatype = " BOOLEAN"
+                        featureNames.append(name + datatype)
+                    analyzerNum += 1
+                self.cursor.execute("CREATE TABLE allData (id INTEGER PRIMARY KEY, {})".format(
+                    ",".join(name for name in featureNames)))
         with open(self.urlFile, "r") as f:
             for line in f:
+                print("url: " + str(line))
+                features = {}
                 url = line.strip()
                 if not self.siteValidation(url):
                     if self.database:
                         self.cursor.execute(
-                            "INSERT INTO errors (error) VALUES (?)", self.errors[url])
+                            "INSERT INTO errors (error) VALUES (?)", (self.errors[url],))
                     continue
                 url = self.driver.current_url
                 if not self.screenshotDir:
@@ -475,12 +489,65 @@ class scrape(startFishing):
                         try:
                             time = self.getTime()
                             self.cursor.execute(
-                                "INSERT INTO metadata (id, url, time, classification) VALUES (?, ?, ?, ?)",
-                                self.id, url, time, self.classVal)
+                                "INSERT INTO metadata (url, UTCtime, classification) VALUES (?, ?, ?)",
+                                (url, time, self.classVal))
                         except Exception:
+                            # Ensuring that the attribute values are caught up to the database values
+                            # This could be optimized; I'm currently relying on dictionary values
+                            # being replaced when identical keys-values are inserted
                             self.id = self.cursor.execute(
-                                "SELECT id FROM metadata WHERE url = ?", url)
-                            self.id = int(self.id[0]["id"])
+                                "SELECT id FROM metadata WHERE url = ?", (url,))
+                            try:
+                                self.id = list(self.id)[0][0]
+                                features = self.cursor.execute(
+                                    "SELECT * FROM allData WHERE id = ?",
+                                    (self.id,))
+                                allFeatures = {}
+                                allFeatureNames = {}
+                                for analyzer in self.analyzers:
+                                    analyzerFeatures = self.cursor.execute(
+                                    "SELECT * FROM {} WHERE id = ?".format(analyzer.name()),
+                                    (self.id,))
+                                    analyzerFeaturesIter = list(analyzerFeatures)[0]
+                                    newAnalyzerFeatures = {}
+                                    featureNum = 0
+                                    for column in analyzerFeatures.description:
+                                        if featureNum == 0:
+                                            featureNum += 1
+                                            continue
+                                        newAnalyzerFeatures.update({column[0]:analyzerFeaturesIter[featureNum]})
+                                        featureNum += 1
+                                    classVal = self.cursor.execute("SELECT classification FROM metadata WHERE id = ?", (self.id,))
+                                    classVal = list(classVal)[0]
+                                    allFeatures = allFeatures | copy.deepcopy(newAnalyzerFeatures)
+                                    newAnalyzerFeatures.update({'classVal':classVal[0]})
+                                    analyzer.features.append(newAnalyzerFeatures)
+                                    names = self.cursor.execute("""SELECT name, type FROM
+                                        pragma_table_info('{}')""".format(analyzer.name()))
+                                    names = dict(names)
+                                    featureNum = 0
+                                    for name, datatype in names.items():
+                                        if featureNum == 0:
+                                            featureNum += 1
+                                            continue
+                                        if datatype == "INTEGER" or datatype == "FLOAT" or datatype == "INT":
+                                            datatype = "numeric"
+                                        elif datatype == "TEXT":
+                                            datatype = "string"
+                                        elif datatype == "BOOLEAN":
+                                            datatype = "nominal"
+                                        analyzer.featureNames.update({name:datatype})
+                                    analyzerFeatureNames = copy.deepcopy(analyzer.featureNames)
+                                    analyzerFeatureNames.pop('classVal')
+                                    allFeatureNames = allFeatureNames | analyzerFeatureNames
+                                allFeatures.update({'classVal':classVal[0]})
+                                if len(self.allFeatureNames) == 0:
+                                    self.allFeatureNames = self.allFeatureNames | allFeatureNames
+                                    self.allFeatureNames.update({'classVal':'nominal'})
+                                self.allFeatures.append(allFeatures)
+                                continue
+                            except Exception:
+                                raise ValueError("""Could not select the features from the url: """ + url)
                     self.saveScreenshot(url, validated=True)
                 filename = self.generateFilename(url)
                 if not self.htmlDir:
@@ -519,7 +586,6 @@ class scrape(startFishing):
                             self.dataDir + "/css/" + filename + ".css"):
                         with open(self.dataDir + "/css/" + filename + ".css", "w") as f:
                             f.write(sheet.cssText.decode())
-                features = {}
                 classCheck = 1
                 for analyzer in self.analyzers:
                     # features: {name:value}
@@ -551,18 +617,23 @@ class scrape(startFishing):
                         features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
                         self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
                     else:
-                        # TODO: figure out why there's a key:value discrepancy of 1
-                        # https://docs.google.com/spreadsheets/d/1LgxekvRc3Px-g2u2f3-wtQKn6CeIvVuLnX6spa7cacU/edit#gid=0
                         features = features | newFeatures
                         if self.urlNum <= len(self.analyzers):
                             self.allFeatureNames = self.allFeatureNames | newFeatureNames
                     if self.database:
-                        self.cursor.execute("""INSERT INTO {} ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(analyzer.name(),
-                            ",".join(name for name in newFeatureNames.keys())), (value for value in newFeatures[self.id].values()))
+                        # TODO: newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
+                        newFeatures = {key:val for key, val in newFeatures.items() if key != 'classVal'}
+                        newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
+                        self.cursor.execute("""INSERT INTO {} ({}) VALUES ({})""".format(analyzer.name(),
+                            ",".join(name for name in newFeatureNames.keys()),
+                            ",".join("?" for i in range(len(newFeatureNames.keys())))),
+                            [value for value in newFeatures.values()])
                     classCheck += 1
                 if self.database:
-                    self.cursor.execute("""INSERT INTO full ({}) VALUES (?, ?, ?, ?, ?, ?)""".format(
-                        ",".join(name for name in self.allFeatureNames.keys())), (value for value in features.values()))
+                    self.cursor.execute("""INSERT INTO allData ({}) VALUES ({})""".format(
+                        ",".join(name for name in self.allFeatureNames.keys()),
+                        ",".join("?" for i in range(len(self.allFeatureNames.keys())))),
+                        [value for value in features.values()])
                 self.allFeatures.append(features)
                 if self.database:
                     self.conn.commit()
@@ -623,7 +694,7 @@ class pageAnalyzer(analyzer):
         'ExtMetaScriptLinkRT':"numeric",
         'PctExtNullSelfRedirectHyperlinksRT':"numeric",
         "classVal":"nominal"
-    }, **kwargs):
+    }, classVal=Instance.missing_value(), **kwargs):
         '''Inherits all previous attributes, adds an optional attribute called pageFeatures
         (although the purpose of the function is to populate the pageFeatures list, so there
         isn't much of a point in passing in a value pageFeatures. If you already have a value,
@@ -634,7 +705,7 @@ class pageAnalyzer(analyzer):
         # You can return them as values instead in the analyze function, but it may be useful for convenience purposes
         self.features = features
         self.featureNames = featureNames
-        self.classVal = Instance.missing_value()
+        self.classVal = classVal
 
     def get_complete_webpage_url(self, saved_actual_url):
         parsed = urlparse(saved_actual_url)
@@ -1051,7 +1122,6 @@ class pageAnalyzer(analyzer):
                                         if tag_count == 0:
                                             resource_URLs.append(link)
                                         elif tag_count == 1:
-                                            # TODO: missing one hyperlink_URL
                                             if not elem.get_attribute('outerHTML').lower(
                                             ).startswith('<link'):
                                                 hyperlink_URLs.append(link)
@@ -1635,13 +1705,13 @@ class imageAnalyzer(analyzer):
         "imageOverlappingTop":"numeric",
         "favicon":"numeric",
         "classVal":"nominal"
-    }, HASH=False, **kwargs):
+    }, HASH=False, classVal=Instance.missing_value(), **kwargs):
         '''Similarily to the pageBased class, inherits all attributes from the initialize and scape classes,
         (not pageFeatures) and adds an optional attribute called imageFeatures'''
         super().__init__(**kwargs)
         self.features = features
         self.featureNames = featureNames
-        self.classVal = Instance.missing_value()
+        self.classVal = classVal
         self.HASH = HASH
 
     def getImagemagickData(self, result):
@@ -1776,9 +1846,7 @@ class imageAnalyzer(analyzer):
                     ".png"))
             self.cursor.execute(
                 "INSERT INTO hashes (pHash, dHash, url) VALUES (?, ?, ?)",
-                pHash,
-                dHash,
-                url)
+                (pHash, dHash, url))
 
     def analyze(self, url, filename, resources, urlNum):
         '''Searches through the html of a url to get the specified image-features.
@@ -1939,7 +2007,10 @@ class imageAnalyzer(analyzer):
                 decorations.append(style)
 
         occurences = Counter(decorations)
-        fontStyle = occurences.most_common(1)[0][0]
+        if len(occurences) > 0:
+            fontStyle = occurences.most_common(1)[0][0]
+        else:
+            fontStyle = Instance.missing_value()
         features.update({"numStyles":numStyles})
         features.update({"mostUsedStyle":fontStyle})
         features.update({"pctItalics":numItalics / len(styles)})
@@ -2015,10 +2086,10 @@ class saveFish(scrape):
         self.allFeatureNames = allFeatureNames
         if not allFeatures:
             raise ValueError("""No features were passed; remember to pass the
-            allFeatures attribute from the scrape class!""")
+                allFeatures attribute from the scrape class!""")
         if not allFeatureNames:
             raise ValueError("""No featureNames were passed; remember to pass the
-            allFeatureNames attribute from the scrape class!""")
+                allFeatureNames attribute from the scrape class!""")
         # Where predictions and classifications are dictionaries,
         # key is datasetName and value is eval object
         self.classifications = {}
@@ -2070,8 +2141,7 @@ class saveFish(scrape):
                 infoGain.select_attributes(dataset)
                 chi.select_attributes(dataset)
             except Exception:
-                logging.warning("""Sorry, you can't select attributes if there aren't enough class labels
-                (requires > 0) """)
+                logging.warning("""Sorry, you can't select attributes if there aren't enough class labels (requires > 0) """)
                 return False
 
             for attributeNum in correlational.ranked_attributes:
@@ -2121,24 +2191,41 @@ class saveFish(scrape):
             dataset = self.datasets[analyzer.name()]
             class1 = 0
             class2 = 0
+            # TODO: figure out if oversampling is correct
+            # ALSO FIGURE OUT WHY RANKED DATASET ISN'T NAMED/CORRECT? I still need to debug here
+            # That, and I need to figure why app.py isn't running, debug it, and figure out how to host it
+            # I wonder if it's this function that's ruining it...
+            # This generates the exception
             for instance in dataset:
                 index = instance.class_index
                 classVal = instance.get_value(index)
-                if classVal == 0:
-                    class1 += 1
-                elif classVal == 1:
-                    class2 += 1
-            if class1 < class2:
-                ratio = (class2 / class1) * 100
-                classVal = "1"
-            elif class1 < class2:
-                ratio = (class2 / class1) * 100
-                classVal = "0"
+                if not isnan(classVal):
+                    if int(classVal) == 0:
+                        class1 += 1
+                    elif int(classVal) == 1:
+                        class2 += 1
+            if class1 != 0 and class2 != 0:
+                if class1 < class2:
+                    try:
+                        ratio = (class2 / class1) * 100
+                    except ZeroDivisionError:
+                        ratio = 100
+                    classVal = "0"
+                elif class2 < class1:
+                    try:
+                        ratio = (class1 / class2) * 100
+                    except ZeroDivisionError:
+                        ratio = 100
+                    classVal = "1"
+                else:
+                    logging.warning("The classes are already balanced, no need to oversample")
+                    return
             else:
+                logging.warning("Can't oversample using nearest neighbors if there are no nearest neighbors")
                 return
             smote = Filter(
                 classname="weka.filters.supervised.instance.SMOTE", options=[
-                    "-C", classVal, "-P", ratio])
+                    "-C", classVal, "-P", str(ratio)])
             smote.inputformat(dataset)
             newInstances = smote.filter(dataset)
             for instance in newInstances:
@@ -2156,21 +2243,32 @@ class saveFish(scrape):
                     for instance in dataset:
                         index = instance.class_index
                         classVal = instance.get_value(index)
-                        if classVal == 0:
+                        if int(classVal) == 0:
                             class1 += 1
-                        elif classVal == 1:
+                        elif int(classVal) == 1:
                             class2 += 1
-                    if class1 < class2:
-                        ratio = (class2 / class1) * 100
-                        classVal = "1"
-                    elif class1 < class2:
-                        ratio = (class2 / class1) * 100
-                        classVal = "0"
+                    if class1 != 0 and class2 != 0:
+                        if class1 < class2:
+                            try:
+                                ratio = (class2 / class1) * 100
+                            except ZeroDivisionError:
+                                ratio = 100
+                            classVal = "0"
+                        elif class2 < class1:
+                            try:
+                                ratio = (class1 / class2) * 100
+                            except ZeroDivisionError:
+                                ratio = 100
+                            classVal = "1"
+                        else:
+                            logging.warning("The classes are already balanced, no need to oversample")
+                            return
                     else:
+                        logging.warning("Can't oversample using nearest neighbors if there are no nearest neighbors")
                         return
                     smote = Filter(
                         classname="weka.filters.supervised.instance.SMOTE", options=[
-                            "-C", classVal, "-P", ratio])
+                            "-C", classVal, "-P", str(ratio)])
                     smote.inputformat(dataset)
                     newInstances = smote.filter(dataset)
                     for instance in newInstances:
@@ -2186,6 +2284,7 @@ class saveFish(scrape):
         datasets that you want to save.'''
         datasetSaver = Saver(classname="weka.core.converters.ArffSaver")
         for datasetName, dataset in self.datasets.items():
+            print(datasetName)
             datasetSaver.save_file(
                 dataset,
                 self.dataDir +
@@ -2201,7 +2300,7 @@ class saveFish(scrape):
         for key, value in featureNames.items():
             if value == "numeric":
                 att = Attribute.create_numeric(key)
-            elif value == "nominal":
+            elif value == "nominal" and key == "classVal":
                 att = Attribute.create_nominal(key, [class1, class2])
             elif value == "string":
                 att = Attribute.create_string(key)
@@ -2237,9 +2336,9 @@ class saveFish(scrape):
                             graph.plot_dot_graph(classifier.graph, self.dataDir + "/graph/" + analyzer.name() + "Graph.png")
                         for instance in dataset:
                             classifications.append(classifier.classify_instance(instance))
-                    except Exception as e:
-                        print(e)
+                    except Exception:
                         logging.warning("Error using the " + classifierName + " classifier")
+                        classifications.append(Instance.missing_value())
                         continue
                 if len(classifications) != 0:
                     counting = Counter(classifications)
@@ -2254,7 +2353,7 @@ class saveFish(scrape):
                             classification = counting.most_common(1)[0][0]
                             self.cursor.execute(
                                 "UPDATE metadata SET classification = ? WHERE id = ?",
-                                classification, num)
+                                (classification,), (num,))
         for name, value in self.newDatasetOptions.items():
             if value:
                 classifications = []
@@ -2269,13 +2368,12 @@ class saveFish(scrape):
                                     graph.plot_dot_graph(classifier.graph, self.dataDir + "/graph/" + name + "Graph.png")
                                 for instance in dataset:
                                     classifications.append(classifier.classify_instance(instance))
-                            except Exception as e:
-                                print(e)
+                            except Exception:
                                 logging.warning("Error using the " + classifierName + " classifier")
                                 continue
                         if len(classifications) != 0:
                             counting = Counter(classifications)
-                            prediction = str(counting.most_common(1)[0][1]) + ": " + str(counting.most_common(2)[0][1])
+                            prediction = str(counting.most_common(1)[0][0]) + ": " + str(counting.most_common(2)[0][0])
                             classification = counting.most_common(1)[0][0]
                             self.classifications.update({name:classification})
                             self.score.update({name:prediction})
@@ -2303,11 +2401,13 @@ class saveFish(scrape):
                 values = []
                 attNum = 0
                 for value in instance.values():
-                    try:
+                    if type(value) == type('string'):
+                        values.append(datasetAtts[attNum].add_string_value(value))
+                    elif type(value) == type(1) or type(value) == type(1.0):
                         float(value)
                         values.append(value)
-                    except ValueError:
-                        values.append(datasetAtts[attNum].add_string_value(value))
+                    elif not value:
+                        values.append(Instance.missing_value())
                     attNum += 1
                 inst = Instance.create_instance(values)
                 dataset.add_instance(inst)
@@ -2316,19 +2416,24 @@ class saveFish(scrape):
             if analyzer.name() not in self.datasets.keys():
                 self.datasets.update({analyzer.name():dataset})
 
-        # I feel like there's probably a way to avoid (or minimize) all this iteration here and below
-        # But because the datasets have different creation processes, I haven't figured out how yet
         if self.newDatasetOptions["ranked"]:
             # Where self.FS returns a dictionary of lists of attributes (if multiple datasets)
+            # Keep in mind that datasets cannot SHARE the same attributes
+            # You can create new ones based off of current ones in use for another dataset however
             attributes = self.FS()
             if not attributes:
                 self.newDatasetOptions["ranked"] = False
             if self.newDatasetOptions["ranked"]:
+                attributeNames = []
+                for dataset in attributes:
+                    for attribute in dataset:
+                        attributeNames.append(attribute.name)
                 atts = []
                 if len(attributes) != 0:
                     for dataset in attributes:
                         for attribute in dataset:
-                            atts.append(attribute)
+                            if attribute.name in attributeNames:
+                                atts.append(attribute)
                 else:
                     logging.warning("No attributes were returned from FS")
                 if "ranked" in self.datasets.keys():
@@ -2346,11 +2451,13 @@ class saveFish(scrape):
                         valueNum = 0
                         for value in instance.values:
                             if valueNum in index:
-                                try:
+                                if type(value) == type('string'):
+                                    values.append(datasetAtts[attNum].add_string_value(value))
+                                elif type(value) == type(1) or type(value) == type(1.0):
                                     float(value)
                                     values.append(value)
-                                except ValueError:
-                                    values.append(atts[valueNum].add_string_value(value))
+                                elif not value:
+                                    values.append(Instance.missing_value())
                             valueNum += 1
                         inst = Instance.create_instance(values)
                         rankedDataset.add_instance(inst)
@@ -2366,24 +2473,20 @@ class saveFish(scrape):
             else:
                 fullDataset = Instances.create_instances(
                     "fullDataset", [att for att in atts], 0)
-            print(fullDataset)
             for instance in self.allFeatures:
                 values = []
                 attNum = 0
                 for value in instance.values():
-                    try:
+                    if type(value) == type('string'):
+                        values.append(atts[attNum].add_string_value(value))
+                    elif type(value) == type(1) or type(value) == type(1.0):
                         float(value)
                         values.append(value)
-                    except ValueError:
-                        values.append(atts[attNum].add_string_value(value))
+                    elif not value:
+                        values.append(Instance.missing_value())
                     attNum += 1
                 inst = Instance.create_instance(values)
-                # TODO: figure out error javabridge.jutil.JavaException: Index 400 out of bounds for length 0
-                # Then MongoDB + vercel hosting + debug app
-                # Then should be done so paper
-                print(inst)
                 fullDataset.add_instance(inst)
-                print(fullDataset)
             stringToNom.inputformat(fullDataset)
             fullDataset = stringToNom.filter(fullDataset)
             if "full" not in self.datasets.keys():
@@ -2394,6 +2497,8 @@ class saveFish(scrape):
 
 
 def main():
+    # Currently testing w/ switched classVal (on analyzers)
+    # and database func.
     # Initialization
     run = startFishing()
     run.initializeAll()
@@ -2401,16 +2506,16 @@ def main():
     fisher = scrape(
         urlFile="data/urls.txt",
         dataDir="data",
+        database="data/data.db",
         driver=run.driver,
-        classVal=0
     )
 
     # Initialization of the page analyzer
-    pageData = pageAnalyzer()
+    pageData = pageAnalyzer(classVal=0)
     fisher.addAnalyzer(pageData)
 
     # Initialization of the image analyzer
-    imageData = imageAnalyzer()
+    imageData = imageAnalyzer(classVal=0)
     fisher.addAnalyzer(imageData)
 
     # Once the analyzers have been added, it doesn't matter what
@@ -2427,7 +2532,6 @@ def main():
         urlFile="data/urls.txt",
         dataDir="data",
         driver=run.driver,
-        classVal=0,
         analyzers=fisher.analyzers,
         allFeatures=fisher.allFeatures,
         allFeatureNames=fisher.allFeatureNames
