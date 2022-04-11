@@ -1,3 +1,4 @@
 [build-system]
-requires = ["setuptools"]
+# I'm new to the build process, so I may need to tweak these values; I built it myself on setuptools 45.2
+requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
