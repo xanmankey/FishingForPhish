@@ -2,6 +2,8 @@
 # I used throughout this research
 # TODO: database func, debug saveFish class, run (CHECK THE DATABASE AFTER THIS CALL)
 # Make sure database doesn't add extra instances and functions accordingly
+# TODO: test installation and distribution, make sure it will install correctly
+# export FLASK_ENV=development
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -189,7 +191,7 @@ class scrape(startFishing):
             conn=None,
             id=0,
             classVal=Instance.missing_value(),
-            errors={},
+            errors=[],
             allFeatures=[],
             allFeatureNames={},
             **kwargs):
@@ -285,7 +287,7 @@ class scrape(startFishing):
                 tables = {
                     "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
                     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                    "errors": """CREATE TABLE errors (error TEXT)""",
+                    "errors": """CREATE TABLE errors (id INTEGER PRIMARY KEY, url TEXT, error TEXT)""",
                     "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
                 self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
                 currentTables = self.cursor.fetchall()
@@ -389,7 +391,7 @@ class scrape(startFishing):
             try:
                 self.driver.get(url)
             except Exception as e:
-                self.errors.update(url=e)
+                self.errors.append(e)
                 return False
             try:
                 url = self.driver.current_url
@@ -398,14 +400,14 @@ class scrape(startFishing):
                 try:
                     url = self.driver.current_url
                 except Exception as e:
-                    self.errors.update(url=e)
+                    self.errors.append(e)
                     return False
             try:
                 if requests.head(url, verify=False, timeout=5).status_code == 404:
-                    self.errors.update(url=404)
+                    self.errors.append(404)
                     return False
             except Exception as e:
-                self.errors.update(url=e)
+                self.errors.append(e)
                 return False
             return True
 
@@ -417,7 +419,7 @@ class scrape(startFishing):
         method above for more information regarding filenames)'''
         if not validated:
             if not self.siteValidation(url):
-                logging.warning(" Could not take a screenshot of " + url + " due to " + self.errors[url])
+                logging.warning("Could not take a screenshot of " + url + " due to " + self.errors[0])
                 return
         filename = self.generateFilename(url)
         original_size = self.driver.get_window_size()
@@ -481,7 +483,7 @@ class scrape(startFishing):
                 if not self.siteValidation(url):
                     if self.database:
                         self.cursor.execute(
-                            "INSERT INTO errors (error) VALUES (?)", (self.errors[url],))
+                            "INSERT INTO errors (id, url, error) VALUES (?, ?)", (self.id, url, self.errors))
                     continue
                 url = self.driver.current_url
                 if not self.screenshotDir:
@@ -491,6 +493,9 @@ class scrape(startFishing):
                             self.cursor.execute(
                                 "INSERT INTO metadata (url, UTCtime, classification) VALUES (?, ?, ?)",
                                 (url, time, self.classVal))
+                            error = self.cursor.execute("SELECT id FROM errors WHERE id = ?", self.id)
+                            if not bool(error):
+                                self.cursor.execute("INSERT INTO errors (id) VALUES (?)", (self.id,))
                         except Exception:
                             # Ensuring that the attribute values are caught up to the database values
                             # This could be optimized; I'm currently relying on dictionary values
@@ -1713,6 +1718,8 @@ class imageAnalyzer(analyzer):
         self.featureNames = featureNames
         self.classVal = classVal
         self.HASH = HASH
+        # An alternative attribute so imagehashing isn't locked behind database functionality
+        self.hashes = []
 
     def getImagemagickData(self, result):
         if result[0:6] != "Image:":
@@ -1829,8 +1836,23 @@ class imageAnalyzer(analyzer):
         specifically once enough hashes have been generated, the data could possibly be combined
         with the predictive model to add blacklisting functionality based on hash similarity.'''
         if not self.database:
-            logging.warning(" Can't store a hash value without database functionality")
-            return
+            logging.warning("Hashing without database functionality; previous hashing is not stored unless done manually")
+            hashes = {}
+            pHash = imagehash.phash(
+                Image.open(
+                    self.dataDir +
+                    "/screenshots/" +
+                    filename +
+                    ".png"))
+            dHash = imagehash.dhash(
+                Image.open(
+                    self.dataDir +
+                    "/screenshots/" +
+                    filename +
+                    ".png"))
+            hashes.update({"phash":pHash})
+            hashes.update({"dhash":dHash})
+            self.hashes.append(hashes)
         else:
             pHash = imagehash.phash(
                 Image.open(
