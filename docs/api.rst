@@ -216,6 +216,8 @@ The image class shares the same attributes as the page class. The features attri
       The classVal regarding the url. Defaults to nan, or a "?" value in a .arff file. If you want to update the classVal, you NEED to know the class value of each url so you can update the value accordingly and pass it back to goFish() using the resources dictionary. 
 * HASH=False
       A binary value that indicates whether you want to store hash values or not in the hashes table; elaborated upon more below with the imageHash function.
+* hashes=[]
+      An array to prevent hash functionality being locked behind database functionality; requires an alternate method of storage to save session data, for example a csv file, as the data is not written to one by default.
 
 The image class also has 3 other methods in addition to __init__() and analyze():
 
