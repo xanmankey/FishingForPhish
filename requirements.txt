@@ -1,5 +1,4 @@
-# These are the MINIMIMUM requirements to run the file, but if you are creating a custom analyzer, you may want to install other software.
-# For example, I installed imagemagick for my image-selection process.
+# These are the MINIMIMUM requirements to run the file standalone (excluding imagemagick, as it is a software installation rather than a python module), but if you are creating a custom analyzer, you may want to install other software.
 beautifulsoup4==4.10.0
 cssutils==2.4.0
 filetype==1.0.10
