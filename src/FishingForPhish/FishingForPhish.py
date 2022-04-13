@@ -1,9 +1,5 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
-# TODO: database func, debug saveFish class, run (CHECK THE DATABASE AFTER THIS CALL)
-# Make sure database doesn't add extra instances and functions accordingly
-# TODO: test installation and distribution, make sure it will install correctly
-# export FLASK_ENV=development
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -17,13 +13,10 @@ from weka.filters import Filter
 import weka.core.packages as packages
 from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
 from weka.classifiers import Classifier
-# TODO: still have to figure out graphing (can't do that on here though, installation instructions can be found in graph.py)
 # Optionally, for graphing purposes, pygraphviz and PIL can be installed and the
 # weka.plot.graph class can be imported
 # Check the installation process here for more details:
 # https://fracpete.github.io/python-weka-wrapper3/install.html
-# TODO: figure out classify results (why is full 4:4)?
-# Then set up on pypi, install, and run
 import weka.plot.graph as graph
 import time
 import pyshorteners
