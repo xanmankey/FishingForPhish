@@ -276,7 +276,6 @@ class scrape(startFishing):
                 self.cursor = db.cursor()
                 self.conn = db
                 # Verifying db by using table names; efficient, but not thorough
-                # TODO: build a semi-adaptive database system
                 tables = {
                     "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
                     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
@@ -619,7 +618,6 @@ class scrape(startFishing):
                         if self.urlNum <= len(self.analyzers):
                             self.allFeatureNames = self.allFeatureNames | newFeatureNames
                     if self.database:
-                        # TODO: newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
                         newFeatures = {key:val for key, val in newFeatures.items() if key != 'classVal'}
                         newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
                         self.cursor.execute("""INSERT INTO {} ({}) VALUES ({})""".format(analyzer.name(),
@@ -2038,7 +2036,7 @@ class imageAnalyzer(analyzer):
             location = img.location
             y = location["y"]
             if y < 0:
-                overlapping = 1
+                overlapping = 1a
                 break
         features.update({"imageOverlappingTop":overlapping})
 
@@ -2206,11 +2204,6 @@ class saveFish(scrape):
             dataset = self.datasets[analyzer.name()]
             class1 = 0
             class2 = 0
-            # TODO: figure out if oversampling is correct
-            # ALSO FIGURE OUT WHY RANKED DATASET ISN'T NAMED/CORRECT? I still need to debug here
-            # That, and I need to figure why app.py isn't running, debug it, and figure out how to host it
-            # I wonder if it's this function that's ruining it...
-            # This generates the exception
             for instance in dataset:
                 index = instance.class_index
                 classVal = instance.get_value(index)
