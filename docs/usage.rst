@@ -13,7 +13,7 @@ Prerequisites
 
 In order to setup java-11-orcacle, follow the steps listed below (please note that the below only accounts for a WSL-Ubuntu installation of java-11-oracle, I haven't had time to test installation on any other system yet and that you may need to restart your IDE/computer at times during the installation process in order for the JDK to be recognized):
 
-* Download and extract the OS-appropriate java development kit from https://adoptopenjdk.net/ (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
+* Download and extract the OS-appropriate java development kit from https://adoptium.net/temurin/releases (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
 * Set the JAVA_HOME environmental variable to the installation directory using the below command:
 
 .. code-block:: console
