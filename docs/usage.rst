@@ -11,7 +11,7 @@ Prerequisites
 
 **In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below.**
 
-In order to setup java-11-orcacle, follow the steps listed below (please note that the below only accounts for the linux (specifically a WSL-Ubuntu build) installation of java-11-oracle, I haven't had time to test installation on other OS yet):
+In order to setup java-11-orcacle, follow the steps listed below (please note that the below only accounts for a WSL-Ubuntu installation of java-11-oracle, I haven't had time to test installation on any other system yet and that you may need to restart your IDE/computer at times during the installation process in order for the JDK to be recognized):
 
 * Download and extract the OS-appropriate java development kit from https://adoptopenjdk.net/ (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
 * Set the JAVA_HOME environmental variable to the installation directory using the below command:
