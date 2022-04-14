@@ -75,8 +75,7 @@ If you get an error regarding python-javabridge and numpy when trying to install
    ModuleNotFoundError: No module named 'numpy'
    
 The setup.py of python-javabridge requires numpy, so install numpy first.
-(the numpy warning might be a red-herring; I'm still trying to figure it out, more info here: https://github.com/LeeKamentsky/python-javabridge/issues/28;
-the current problem is that I'm hitting the f-error limit due to too many numpy errors)
+(TODO: figure out a fix for this problem, I'm making progress regarding python-javabridge-master and javabridge==0.0.0)
 
 How to use it?
 --------------
