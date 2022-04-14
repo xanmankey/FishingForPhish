@@ -9,9 +9,7 @@ Installation
 Prerequisites
 ^^^^^^^^^^^^^
 
-**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable, as well as the Microsoft Visual C++ Build Tools; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the Microsoft Visual C++ Build Tools and the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below.**
-
-To install the Microsoft C++ Build Tools, run the below command (if on Ubuntu; however I also know that the build tools can also be downloaded here if using Windows, with version 15 being the version linked in the Python Weka Wrapper 3 documentation: https://www.microsoft.com/en-us/download/details.aspx?id=48159)
+**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below.**
 
 .. code-block:: console
 
@@ -22,7 +20,7 @@ To install the Microsoft C++ Build Tools, run the below command (if on Ubuntu; h
 
    $ export JAVA_HOME="path/to/your/installation/here"
 
-In order to setup java-11-orcacle, follow the steps listed below (please note that the below only accounts for a WSL-Ubuntu installation of java-11-oracle, I haven't had time to test installation on any other system yet and that you may need to restart your IDE/computer at times during the installation process in order for the JDK to be recognized):
+In order to setup java-11-oracle, follow the steps listed below (please note that the below only accounts for a WSL-Ubuntu installation of java-11-oracle, I haven't had time to test installation on any other system yet and that you may need to restart your IDE/computer at times during the installation process in order for the JDK to be recognized):
 
 * Download and extract the OS-appropriate java development kit from https://adoptium.net/temurin/releases (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
 * Set the JAVA_HOME environmental variable to the installation directory using the below command:
@@ -30,6 +28,14 @@ In order to setup java-11-orcacle, follow the steps listed below (please note th
 .. code-block:: console
 
    $ export JAVA_HOME="path/to/your/installation/here"
+   
+Also, I was unable to get one of the libraries python-weka-wrapper3 is reliant on to install without running the command:
+
+.. code-block:: console
+
+   $ pip install git+https://github.com/LeeKamentsky/python-javabridge.git@master. 
+   
+According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run the above command as well!
    
 Additionally, the imagemagick package is required to use the imageAnalyzer example analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
    
