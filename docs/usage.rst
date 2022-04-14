@@ -33,7 +33,7 @@ Also, I was unable to get one of the libraries python-weka-wrapper3 is reliant o
 
 .. code-block:: console
 
-   $ pip install git+https://github.com/LeeKamentsky/python-javabridge.git@master. 
+   $ pip install git+https://github.com/LeeKamentsky/python-javabridge.git@master
    
 According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run the above command as well!
    
