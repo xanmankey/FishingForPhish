@@ -32,7 +32,7 @@ According to the official library, it's not required, but it was the only way I 
    
 Additionally, the imagemagick package is required to use the imageAnalyzer example analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
 
-ALSO I FORGOT TO MENTION THAT FIREFOX NEEDS TO BE INSTALLED!
+Also, your Selenium browser of choice must be installed; I chose Firefox for security purposes and due to personal preference (I have yet to write support for Chrome due to time constraints). A good installation tutorial can be found here: https://tecadmin.net/setup-selenium-with-firefox-on-ubuntu/
 
 Additionally, the below is recommended:
 
