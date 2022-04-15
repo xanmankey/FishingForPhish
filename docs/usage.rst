@@ -18,17 +18,15 @@ Prerequisites
 
    $ export JAVA_HOME="path/to/your/installation/here"
    
-Also, I was unable to get one of the libraries python-weka-wrapper3 is reliant on to install without running the command:
+* Also, I was unable to get one of the libraries python-weka-wrapper3 is reliant on to install without running the below command. According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run it as well before running the pip install python-weka-wrapper3 command!:
 
 .. code-block:: console
 
    $ pip install git+https://github.com/LeeKamentsky/python-javabridge.git@master
-   
-According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run the above command as well before running the pip install python-weka-wrapper3 command!
 
 **Selenium Webdriver: requires a valid Selenium instance and a valid Webdriver (Firefox is reccomended as of right now, as the module doesn't have support for other drivers, although it could easily be added), see here for more information: https://www.selenium.dev/documentation/webdriver/getting_started/**
    
-The imagemagick package is required to use the example imageAnalyzer analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
+**The imagemagick package is required to use the example imageAnalyzer analyzer if so desired. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php**
 
 Additionally, the below is recommended:
 
@@ -51,11 +49,13 @@ Then you should have access to the API in classes.py.
 Installation from source (not recommended unless you want to download the initial research documents)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Alternatively, the library can be installed from source by cloning the github repository using the command
+The library can be cloned either by downloading a zip or cloning the github repository using the command below:
 
 .. code-block:: console
 
    $ git clone https://github.com/xanmankey/FishingForPhish.git
+   
+TODO: From there, I'm actually not sure how to install it from source using setup.cfg and pyproject.toml, or what the best way to allow for installation from source is
    
 Errors (at least that I'm aware of)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
