@@ -9,11 +9,7 @@ Installation
 Prerequisites
 ^^^^^^^^^^^^^
 
-TODO: this needs to be refined
-
-**In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below. The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper3/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper3/install.html#ubuntu; in order to get graphing functionality, there may be additional steps that you will need to take).**
-
-In order to setup java-11-oracle, follow the steps listed below (please note that the below only accounts for a WSL-Ubuntu installation of java-11-oracle, I haven't had time to test installation on any other system yet and that you may need to restart your IDE/computer at times during the installation process in order for the JDK to be recognized):
+**Python Weka Wrapper3: requires a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below.**
 
 * Download and extract the OS-appropriate java development kit from https://adoptium.net/temurin/releases (in the case of an WSL-Ubuntu build, I downloaded the Linux x64 Compressed Archive)
 * Set the JAVA_HOME environmental variable to the installation directory using the below command:
@@ -28,11 +24,11 @@ Also, I was unable to get one of the libraries python-weka-wrapper3 is reliant o
 
    $ pip install git+https://github.com/LeeKamentsky/python-javabridge.git@master
    
-According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run the above command as well!
-   
-Additionally, the imagemagick package is required to use the imageAnalyzer example analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
+According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run the above command as well before running the pip install python-weka-wrapper3 command!
 
-Also, your Selenium browser of choice must be installed; I chose Firefox for security purposes and due to personal preference (I have yet to write support for Chrome due to time constraints). A good installation tutorial can be found here: https://tecadmin.net/setup-selenium-with-firefox-on-ubuntu/
+**Selenium Webdriver: requires a valid Selenium instance and a valid Webdriver (Firefox is reccomended as of right now, as the module doesn't have support for other drivers, although it could easily be added), see here for more information: https://www.selenium.dev/documentation/webdriver/getting_started/**
+   
+The imagemagick package is required to use the example imageAnalyzer analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
 
 Additionally, the below is recommended:
 
@@ -40,11 +36,6 @@ Additionally, the below is recommended:
 * Prior programming background (as well as experience with an IDE)
 * A positive mindset (yeah, it's kinda hard to do data analysis without one)
 * Knowledge of positive web-scraping practices (try not to consume too many server resources; know website policies beforehand if possible)
-
-In regards to accessing the mongodb database (which stores the data from the website at TODO), some great tutorials can be found below:
-
-* Installation: https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
-* Usage: https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
 
 Installation (via pip)
 ^^^^^^^^^^^^^^^^^^^^^^
