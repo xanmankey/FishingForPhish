@@ -9,6 +9,8 @@ Installation
 Prerequisites
 ^^^^^^^^^^^^^
 
+TODO: this needs to be refined
+
 **In order to use this library, python weka wrapper3 is required. This library, in turn, depends on a java deployment kit (JDK) and a set JAVA_HOME environmental variable among other things; the full installation process for python weka wrapper3 can be found at https://fracpete.github.io/python-weka-wrapper3/install.html, but the process for the installation of the java-11-oracle (the oracle version tested with this library and recommended by the devs behind Python-Weka-Wrapper3) and initialization of JAVA_HOME can be found below. The rest of the installations required can be found as a list of commands here: https://fracpete.github.io/python-weka-wrapper3/install.html (depending on the OS; I followed the commands here specifically: https://fracpete.github.io/python-weka-wrapper3/install.html#ubuntu; in order to get graphing functionality, there may be additional steps that you will need to take).**
 
 In order to setup java-11-oracle, follow the steps listed below (please note that the below only accounts for a WSL-Ubuntu installation of java-11-oracle, I haven't had time to test installation on any other system yet and that you may need to restart your IDE/computer at times during the installation process in order for the JDK to be recognized):
@@ -29,6 +31,8 @@ Also, I was unable to get one of the libraries python-weka-wrapper3 is reliant o
 According to the official library, it's not required, but it was the only way I was able to make the installation process consistent, so remember to run the above command as well!
    
 Additionally, the imagemagick package is required to use the imageAnalyzer example analyzer. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php
+
+ALSO I FORGOT TO MENTION THAT FIREFOX NEEDS TO BE INSTALLED!
 
 Additionally, the below is recommended:
 
