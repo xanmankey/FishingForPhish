@@ -24,7 +24,7 @@ Prerequisites
 
    $ pip install git+https://github.com/LeeKamentsky/python-javabridge.git@master
 
-**Selenium Webdriver: requires a valid Selenium instance and a valid Webdriver (Firefox is reccomended as of right now, as the module doesn't have support for other drivers, although it could easily be added), see here for more information: https://www.selenium.dev/documentation/webdriver/getting_started/**
+**Selenium Webdriver: requires a valid Selenium instance and a valid Webdriver (Firefox is reccomended as of right now, as the module doesn't have support for other drivers, although it could easily be added), see here for more information: https://www.selenium.dev/documentation/webdriver/getting_started/, and make sure you use compatible versions!**
    
 **The imagemagick package is required to use the example imageAnalyzer analyzer if so desired. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php**
 
