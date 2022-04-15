@@ -78,7 +78,7 @@ The scrape class inherits all attributes from the initialize class and declares 
       
 #. page: CREATE TABLE page (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol BOOLEAN, TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT, DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT, EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT, InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT, RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT, ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT)
       
-#. errors: CREATE TABLE errors (error TEXT)
+#. errors: CREATE TABLE errors (url TEXT, error TEXT)
       
 #. image: CREATE TABLE image (id INTEGER PRIMARY KEY, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel INT, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, favicon INT)
             
@@ -86,6 +86,7 @@ The scrape class inherits all attributes from the initialize class and declares 
       
 #. hashes: CREATE TABLE hashes (phash INT, dhash INT, url TEXT)
 |
+
 * screenshotDir=None
       A path to a directory with screenshots. This is useful to minimize necessary scraping and avoid duplicate screenshots if you already have screenshots and associated urls in urlFile.
 * htmlDir=None
