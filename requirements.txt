@@ -11,6 +11,7 @@ python_weka_wrapper3==0.2.6
 requests==2.27.1
 selenium==4.1.3
 tldextract==3.2.0
+unshortenit==0.4.0
 urllib3==1.26.8
 validators==0.18.2
 weka==1.0.6
