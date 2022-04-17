@@ -2,7 +2,7 @@ API
 ===
 
 The following section provides examples and goes into more depth about using FishingForPhish.
-More examples and documentation will be added when time allows. 
+More examples and documentation will be added when time allows, and similar documentation can be found in docstrings for classes and methods. 
 The API examples are currently broken down into example code snippets (*which unfortunately aren't always  able to stand alone due to the reliance on other sections of the code, for example initialization*) and a simple combined example at the end of the documentation.
 
 startFishing
@@ -46,7 +46,7 @@ analyzer
 
 The analyzer class is a base class, inherited by all analyzers (which in this context refers to feature selection classes with an **analyze** function that returns appropriate features: more on this below). 
 
-The analyzer class has NO attributes. However, 3 attributes are **required** (where required implies that the user creates their own code that follows these guidelines):
+The analyzer class has NO attributes. However, 3 attributes are **required** (where required implies that the user creates their own code that follows these guidelines; as of right now my attempts at inheritance have ended up in overwriting values, but this could probably be refactored to allow for inheritable and editable attributes, I just wasn't able to on my initial attempt and haven't yet had time to update the code):
 
 * self.features
    An array of dictionaries, where each dictionary is composed of a key-value pair of featureName:value
@@ -126,10 +126,10 @@ The scrape class also has 7 methods in addition to __init__():
       Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
 * saveScreenshot(self, url)
       Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
-* resume
-   
 * checkInternet
-   
+      Sends a .head request to google with a timeout of 10 seconds. If the request cannot be made due to EXTREMELY slow internet or more likely a lack of connection, the program shuts itself down. Called to prevent innaccurate data associated with a disconnection and to cleanly shut the program down.
+* resume(self, id=False)
+      Resumes the program if it crashes and values were stored in a database (by iterating through the database and adding values to attributes accordingly). If an id is passed, the method can also be used to add values related to a specific id in the database, which is useful, especially in the context of a duplicate url.
 * getTime(self)
       Gets the current time based on time zone; only called if database functionality is enabled.
 * goFish(self)
