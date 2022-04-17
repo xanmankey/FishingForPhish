@@ -126,6 +126,10 @@ The scrape class also has 7 methods in addition to __init__():
       Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
 * saveScreenshot(self, url)
       Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
+* resume
+   
+* checkInternet
+   
 * getTime(self)
       Gets the current time based on time zone; only called if database functionality is enabled.
 * goFish(self)
