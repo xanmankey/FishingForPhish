@@ -6,6 +6,8 @@ Usage
 Installation
 ------------
 
+**🛈 A word of caution before attempting to replicate my methodology, your data may be at risk if you don't take proper precautions, due to the nature of phishing websites. I used a VPN (ProtonVPN + OpenVPN protocol) and an Ubuntu VM in tandem to attempt to minimize possible security threats.**
+
 Prerequisites
 ^^^^^^^^^^^^^
 
@@ -27,14 +29,6 @@ Prerequisites
 **Selenium Webdriver: requires a valid Selenium instance and a valid Webdriver (Firefox is reccomended as of right now, as the module doesn't have support for other drivers, although it could easily be added), see here for more information: https://www.selenium.dev/documentation/webdriver/getting_started/, and make sure you use compatible versions!**
    
 **The imagemagick package is required to use the example imageAnalyzer analyzer if so desired. For more OS-specific information regarding installation see here: https://imagemagick.org/script/download.php**
-
-Additionally, the below is recommended:
-
-* Knowledge of machine learning (as well as an api to experiment with; WEKA was primarily used throughout this project)
-* Prior programming background (as well as experience with an IDE)
-* A positive mindset (yeah, it's kinda hard to do data analysis without one)
-* Knowledge of positive web-scraping practices (try not to consume too many server resources; know website policies beforehand if possible)
-* A computationally powerful machine to make the process smoother
 
 Installation (via pip)
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -81,7 +75,6 @@ Resources
 - Phishing-legitimate dataset (https://doi.org/10.17632/h3cgnj8hft.1).
 - Phishing screenshots (https://phishstats.info/). I only took screenshots of phishing sites with phish scores of 7 and up (where 10 is defined as "OMG PHISHING" by PhishStats) to help differentiate phishing sites from non-phishing sites for my dataset.
 - Legitimate screenshots (https://www.domcop.com/). I selected websites ranked from 6.39/10 to 10/10 by Open Page Rank.
-
 
 How to use it?
 --------------
