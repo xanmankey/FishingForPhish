@@ -34,6 +34,7 @@ Additionally, the below is recommended:
 * Prior programming background (as well as experience with an IDE)
 * A positive mindset (yeah, it's kinda hard to do data analysis without one)
 * Knowledge of positive web-scraping practices (try not to consume too many server resources; know website policies beforehand if possible)
+* A computationally powerful machine to make the process smoother
 
 Installation (via pip)
 ^^^^^^^^^^^^^^^^^^^^^^
