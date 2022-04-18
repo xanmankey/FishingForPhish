@@ -74,7 +74,7 @@ Resources
 
 - Phishing-legitimate dataset (https://doi.org/10.17632/h3cgnj8hft.1).
 - Phishing screenshots (https://phishstats.info/). I only took screenshots of phishing sites with phish scores of 7 and up (where 10 is defined as "OMG PHISHING" by PhishStats) to help differentiate phishing sites from non-phishing sites for my dataset.
-- Legitimate screenshots (https://www.domcop.com/). I selected websites ranked from 6.39/10 to 10/10 by Open Page Rank.
+- Legitimate screenshots (https://www.domcop.com/top-10-million-domains). I selected websites ranked from 6.39/10 to 10/10 by Open Page Rank.
 
 How to use it?
 --------------
