@@ -126,8 +126,8 @@ The scrape class also has 7 methods in addition to __init__():
       Check to make sure there is no error upon making a website request; specifically checks for errors while trying to access the website and it's url using Selenium, as well as checks for a 404 error using the requests library.
 * saveScreenshot(self, url)
       Takes a url as input, uses selenium.screenshot in combination with a workaround involving website width, height, and automated scrolling to screenshot the entire website. Screenshot can be found in the <dataDir>/screenshots directory and uses the naming structure returned by the generateFilename method.
-* checkInternet
-      Sends a .head request to google with a timeout of 10 seconds. If the request cannot be made due to EXTREMELY slow internet or more likely a lack of connection, the program shuts itself down. Called to prevent innaccurate data associated with a disconnection and to cleanly shut the program down.
+* exitHandler(self, exctype, value, traceback)
+      A method that closes down the main scraping loop and cleanly shuts down the program in the case of an exception (for example, if you lose internet connection).
 * resume(self, id=False)
       Resumes the program if it crashes and values were stored in a database (by iterating through the database and adding values to attributes accordingly). If an id is passed, the method can also be used to add values related to a specific id in the database, which is useful, especially in the context of a duplicate url.
 * getTime(self)
