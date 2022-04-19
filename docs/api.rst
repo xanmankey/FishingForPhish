@@ -84,7 +84,7 @@ The scrape class inherits all attributes from the initialize class and declares 
             
 #. allData: CREATE TABLE allData (id INTEGER PRIMARY KEY, NumDots INT, SubdomainLevel INT, PathLevel INT, UrlLength INT, NumDash INT, NumDashInHostname INT, AtSymbol INT, TildeSymbol INT, NumUnderscore INT, NumPercent INT, NumQueryComponents INT, NumAmpersand INT, NumHash INT, NumNumericChars INT, NoHttps INT, RandomString INT, IpAddress INT, DomainInSubdomains INT, DomainInPaths INT, HttpsInHostname INT, HostnameLength INT, PathLength INT, QueryLength INT, DoubleSlashInPath INT, NumSensitiveWords INT, EmbeddedBrandName INT, PctExtHyperlinks FLOAT, PctExtResourceUrls FLOAT, ExtFavicon INT, InsecureForms INT, RelativeFormAction INT, ExtFormAction INT, AbnormalFormAction INT, PctNullSelfRedirectHyperlinks FLOAT, FrequentDomainNameMismatch INT, FakeLinkInStatusBar INT, RightClickDisabled INT, PopUpWindow INT, SubmitInfoToEmail INT, IframeOrFrame INT, MissingTitle INT, ImagesOnlyInForm INT, SubdomainLevelRT INT, UrlLengthRT INT, PctExtResourceUrlsRT INT, AbnormalExtFormActionR INT, ExtMetaScriptLinkRT INT, PctExtNullSelfRedirectHyperlinksRT INT, numTagsInHtml INT, numTagsInHead INT, numTagsInMain INT, numTagsInBody INT, pctImgTags FLOAT, totalWidth FLOAT, totalHeight FLOAT, IMredMean FLOAT, IMredStdDev FLOAT, IMgreenMean FLOAT, IMgreenStdDev FLOAT, IMblueMean FLOAT, IMblueStdDev FLOAT, IMalphaChannel INT, IMgamma FLOAT, numBoldTags INT, averageFontWeight FLOAT, mostUsedFont TEXT, averageFontSize FLOAT, numStyles INT, mostUsedStyle TEXT, pctItalics FLOAT, pctUnderline FLOAT, favicon INT)
       
-#. hashes: CREATE TABLE hashes (phash INT, dhash INT, url TEXT)
+#. hashes: CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)
 |
 
 * screenshotDir=None
