@@ -1,10 +1,19 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
+# TODO: remember to turn display settings back to normal after this project
+# https://www.eightforums.com/threads/computer-goes-to-sleep-when-i-turn-the-monitor-off.58153/
+# Disabled the 2 save power options
+# ALSO NOTE THAT IF THERE'S A CONNECTION ERROR, YOU MAY HAVE TO GO BACK A FEW URLS
+# (not sure if this cmd works) DELETE FROM errors WHERE ROWID IN (SELECT errors.ROWID FROM errors a INNER JOIN metadata b ON (a.url=b.url));
+# DELETE FROM metadata ORDER BY id DESC LIMIT 1;
+# UPDATE allData SET classVal = 0 WHERE id > 47;
+# TODO: I'll update the hashes table at the very end
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions
 import weka.core.jvm as jvm
 from weka.core.dataset import Attribute, Instance, Instances
@@ -20,12 +29,14 @@ from weka.classifiers import Classifier
 import weka.plot.graph as graph
 import time
 import pyshorteners
+from unshortenit import UnshortenIt
 from bs4 import BeautifulSoup
 from collections import Counter
 import requests
 import os
+import sys
 from filetype import is_image
-import sqlite3 as SQL
+import sqlite3
 import cssutils
 import logging
 from datetime import datetime
@@ -34,6 +45,8 @@ import validators
 import operator
 import urllib
 from urllib.parse import urlparse
+import socket
+from socket import timeout
 import tldextract
 from IPy import IP
 import subprocess
@@ -148,10 +161,25 @@ class startFishing():
 
 # The analyzer base class
 class analyzer():
+    '''A base class for adding analyzers to analyze scraped values which can be called during the url
+    processing step (the goFish method). See the analyze shell function for more information. 
+    I'm still working on finding a way to make this class more inheritable and 
+    easier to work with.'''
+
     def __init__(self):
+        '''There are currently no inheritable attributes, largely because of my lack of 
+        knowledge regarding class inheritance (the attributes ended up overwriting one another). 
+        However, when creating an instance of the analyzer class, there are a couple REQUIRED 
+        attributes: features (an array of features, a dict in name:featureValue format), 
+        featureNames (a dict in featureName:wekaDatatype format, see the docs at 
+        https://fishingforphish.readthedocs.io/ for more info), and classVal. And of course, 
+        if you are making your own analyzer, 
+        you can create attributes of your own, just make sure to consider them in regards to 
+        the goFish method, especially in consideration of the resources dictionary'''
         pass
 
     def name(self):
+        '''Returns the class name (used for table and dataset names respectively)'''
         return self.__class__.__name__
 
     # Shell function
@@ -182,9 +210,10 @@ class scrape(startFishing):
             cssDir=None,
             cursor=None,
             conn=None,
+            urlNum=1,
             id=0,
             classVal=Instance.missing_value(),
-            errors=[],
+            allErrors=[],
             allFeatures=[],
             allFeatureNames={},
             **kwargs):
@@ -203,7 +232,7 @@ class scrape(startFishing):
         imageData, otherData, and allFeatures tables... the rest can be joined if necessary)'''
         super().__init__(**kwargs)
         self.urlFile = urlFile
-        self.urlNum = 0
+        self.urlNum = urlNum
         # Still need to find a way to have analyzers as an attribute, rather than a global variable
         self.screenshotDir = screenshotDir
         self.htmlDir = htmlDir
@@ -215,7 +244,10 @@ class scrape(startFishing):
         self.id = id
         self.BS = None
         self.analyzers = []
-        self.errors = errors
+        self.errors = []
+        self.allErrors = allErrors
+        self.shortener = pyshorteners.Shortener()
+        self.unshortener = UnshortenIt()
         self.allFeatures = allFeatures
         self.allFeatureNames = allFeatureNames
         if not os.path.isfile(self.urlFile):
@@ -228,6 +260,8 @@ class scrape(startFishing):
                     if not validators.url(url):
                         raise ValueError(
                             """Sorry, are you sure urlFile contains valid urls?""")
+        # INFO: I haven't had the time to test running the program with a standalone
+        # screenshotDir, cssDir, or htmlDir as of right now
         if self.screenshotDir:
             if not os.path.isdir(self.screenshotDir):
                 raise FileNotFoundError(
@@ -267,20 +301,21 @@ class scrape(startFishing):
                         raise ValueError(
                             """Are you sure the files in cssDir are all .css files?""")
         if self.database:
+            # Consistent db table names
+            tables = {
+                "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
+                url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
+                "errors": """CREATE TABLE errors (url TEXT, error TEXT)""",
+                "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
+            }
             if os.path.isfile(self.database):
                 try:
-                    db = SQL.connect(self.database)
+                    self.conn = sqlite3.connect(self.database)
                 except Exception:
                     raise FileNotFoundError(
                         """Sorry, can't connect to that database!""")
-                self.cursor = db.cursor()
-                self.conn = db
-                # Verifying db by using table names; efficient, but not thorough
-                tables = {
-                    "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
-                    url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                    "errors": """CREATE TABLE errors (id INTEGER PRIMARY KEY, url TEXT, error TEXT)""",
-                    "hashes": """CREATE TABLE hashes (phash INT, dhash INT, url TEXT)"""}
+                self.conn.row_factory = sqlite3.Row
+                self.cursor = self.conn.cursor()
                 self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
                 currentTables = self.cursor.fetchall()
                 currentTables = [item for table in currentTables for item in table]
@@ -291,10 +326,10 @@ class scrape(startFishing):
                         self.cursor.execute(creation)
                 self.conn.commit()
             else:
-                os.path.mkfile(self.dataDir + "data.db")
-                db = SQL.connect(self.database)
-                self.cursor = db.cursor()
-                self.conn = db
+                open(self.dataDir + "/data.db", "w").close()
+                self.conn = sqlite3.connect(self.database)
+                self.conn.row_factory = sqlite3.Row
+                self.cursor = self.conn.cursor()
                 for creation in tables.values():
                     self.cursor.execute(creation)
                 self.conn.commit()
@@ -314,13 +349,15 @@ class scrape(startFishing):
         try:
             self.BS = BeautifulSoup(html, "html.parser")
         except Exception as e:
-            logging.warning(" Couldn't initialize due to " + e + """. Are you sure you
-            inputted valid html?""")
+            logging.warning(" Couldn't initialize due to " + str(e) + ". Are you sure you inputted valid html?")
 
     # When an analyzer is to be added
     # The addAnalyzer function should be called
     # With an instance of the analyzer itself
     def addAnalyzer(self, analyzer):
+        '''A function that takes the name of an analyzer passed to it, and adds it 
+        to the self.analyzers array, which is then used
+        to collect data accordingly throughout (tables, dataset, attributes)'''
         print(str(analyzer.name()) + " added!")
         self.analyzers.append(analyzer)
         # A table is created for each added analyzer in this function
@@ -345,33 +382,43 @@ class scrape(startFishing):
                     analyzer.name(), ",".join(name for name in columns)))
 
     def shorten(self, url, validate=False):
-        '''Shortens the url using pyshorteners and the clckru shortener. 5 unique characters are
+        '''Shortens the url using pyshorteners and the clckru shortener. Unique characters are
         generated at the end of the url which are then used to rename the file, and once the id in
-        front of the filename is removed, https://clck.ru/ can be added back to the url and combined
+        front of the filename is removed, https://tinyurl.com/" can be added back to the url and combined
         with the expand() method below to get the original url from a filename'''
         if not validate:
             if not validators.url(url):
                 raise ValueError("Invalid url: " + url)
-        clckruShortener = pyshorteners.Shortener()
-        shortUrl = clckruShortener.clckru.short(url)
+        try:
+            shortUrl = self.shortener.tinyurl.short(url)
+        except Exception as e:
+            self.errors.append(e)
+            return False
+        print("shortUrl: " + str(shortUrl))
         return shortUrl
 
     def expand(self, urlID):
         '''Expands a filename into the url associated with the file using pyshorteners and clck.ru.
         Explained more in the shorten() function above'''
-        if len(urlID) != 5:
-            raise ValueError("Invalid urlID: " + urlID)
-        clckruShortener = pyshorteners.Shortener()
-        filename = "https://clck.ru/" + urlID
-        filename = filename.replace("_" + self.id + "_", "")
-        url = clckruShortener.clckru.expand(filename)
+        filename = "https://tinyurl.com/" + urlID
+        filename = filename.replace("_" + str(self.id) + "_", "")
+        try:
+            url = self.unshortener.unshorten(filename)
+            print("unshortenedUrl: " + url)
+        except Exception as e:
+            print(str(e))
+            logging.warning("Could not expand the url!")
+            self.errors.append(e)
+            return False
         return url
 
     def generateFilename(self, url):
         '''A convenience method for generating a filename to name files associated with a website.
         Follow the naming conventions of "_<self.id>_<final 5 characters of shortened url>.png".'''
         shortUrl = self.shorten(url)
-        filename = shortUrl.replace("https://clck.ru/", "")
+        if not shortUrl:
+            return False
+        filename = shortUrl.replace("https://tinyurl.com/", "")
         filename = "_" + str(self.id) + "_" + filename
         return filename
 
@@ -395,15 +442,16 @@ class scrape(startFishing):
                     self.errors.append(e)
                     return False
             try:
-                if requests.head(url, verify=False, timeout=5).status_code == 404:
-                    self.errors.append(404)
+                r = requests.head(url, verify=False, timeout=5)
+                if r:
+                    self.errors.append(r.status_code)
                     return False
             except Exception as e:
                 self.errors.append(e)
                 return False
-            return True
+        return True
 
-    def saveScreenshot(self, url, validated=False):
+    def saveScreenshot(self, url, filename, validated=False):
         '''Method for saving a screenshot of the full website. Scrolls the page (if possible) to get
         the height and width of a website. A minimum height and width of 10000 (unlikely to ever
         be hit unless intentional) are set to help prevent Selenium crashing.
@@ -411,31 +459,175 @@ class scrape(startFishing):
         method above for more information regarding filenames)'''
         if not validated:
             if not self.siteValidation(url):
-                logging.warning("Could not take a screenshot of " + url + " due to " + self.errors[0])
+                logging.warning("Could not take a screenshot of " + url + " due to " + str(self.errors[0]))
                 return
-        filename = self.generateFilename(url)
-        original_size = self.driver.get_window_size()
-        required_width = self.driver.execute_script(
-            'return document.body.parentNode.scrollWidth')
-        required_height = self.driver.execute_script(
-            'return document.body.parentNode.scrollHeight')
-        self.driver.set_window_size(
-            min(10000, required_width), min(10000, required_height))
-        self.driver.find_element(
-            By.TAG_NAME,
-            'body').screenshot(
-            self.dataDir +
-            "/screenshots/" +
-            filename +
-            ".png")
-        self.driver.set_window_size(
-            original_size['width'],
-            original_size['height'])
+        screenshot = False
+        try:
+            original_size = self.driver.get_window_size()
+            required_width = self.driver.execute_script(
+                'return document.body.parentNode.scrollWidth')
+            required_height = self.driver.execute_script(
+                'return document.body.parentNode.scrollHeight')
+            self.driver.set_window_size(
+                min(10000, required_width), min(10000, required_height))
+            self.driver.find_element(
+                By.TAG_NAME,
+                'body').screenshot(
+                self.dataDir +
+                "/screenshots/" +
+                filename +
+                ".png")
+            self.driver.set_window_size(
+                original_size['width'],
+                original_size['height'])
+            screenshot = True
+            return True
+        except Exception as e:
+            self.errors.append(e)
+            if screenshot:
+                os.remove(self.dataDir + "/screenshots/" + filename + ".png")
+            return False
 
     def getTime(self):
         '''Generates a time value (uses Coordinated Universal Time, or UTC)'''
         time = datetime.now().strftime("%H:%M:%S")
         return time
+
+    def exitHandler(self, exctype, value, traceback):
+        '''Exit the code correctly on an exception and adapt databases 
+        accordingly (if enabled)'''
+        if self.database:
+            self.cursor.execute("SELECT id FROM metadata")
+            numMetadata = len(self.cursor.fetchall())
+            self.cursor.execute("SELECT id FROM allData")
+            numAllData = len(self.cursor.fetchall())
+            if numMetadata != numAllData:
+                for i in range(numMetadata - numAllData):
+                    self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
+                self.conn.commit()
+            if len(self.allFeatures) == 0 or len(self.allFeatureNames) == 0:
+                try:
+                    self.driver.close()
+                    self.driver.quit()
+                    jvm.stop()
+                except Exception:
+                    pass
+            else:
+                closing = saveFish(urlFile="data/urls.txt",
+                        dataDir="data",
+                        driver=self.driver,
+                        analyzers=self.analyzers,
+                        allFeatures=self.allFeatures,
+                        allFeatureNames=self.allFeatureNames)
+                closing.closeSelenium()
+                closing.closePWW3()
+            sys.__excepthook__(exctype, value, traceback)
+        else:
+            if len(self.allFeatures) == 0 or len(self.allFeatureNames) == 0:
+                try:
+                    self.driver.close()
+                    self.driver.quit()
+                    jvm.stop()
+                except Exception:
+                    pass
+            else:
+                closing = saveFish(urlFile="data/urls.txt",
+                        dataDir="data",
+                        driver=self.driver,
+                        analyzers=self.analyzers,
+                        allFeatures=self.allFeatures,
+                        allFeatureNames=self.allFeatureNames)
+                closing.closeSelenium()
+                closing.closePWW3(save=False)
+            sys.__excepthook__(exctype, value, traceback)
+
+    def resume(self, id=False):
+        '''A function to resume the program if it crashes and you were storing data
+        in a database. Called before calling goFish, initializes attributes with the 
+        previously scraped information from the previous session. Note that 
+        your urlFile, self.id, and self.urlNum will need to be updated to where you left off.'''
+        # If the program crashed, pick up where you left off (if database functionality was and is still enabled)
+        # Note that self.allFeatureNames will autogenerate later on and doesn't need to be initialized upon rerunning
+        # And remember that database functionality assumes that the featureNames are the same as the columnNames (analyzer.featureNames)
+        # and are still in the same order
+        if self.database:
+            if not id:
+                for analyzer in self.analyzers:
+                    self.cursor.execute("SELECT * FROM {}".format(analyzer.name()))
+                    features = self.cursor.fetchall()
+                    for instance in features:
+                        featureNum = 0
+                        values = {}
+                        for name, value in dict(instance).items():
+                            if featureNum == 0:
+                                featureNum += 1
+                                continue
+                            values.update({name:value})
+                        analyzer.features.append(values)
+                self.cursor.execute("SELECT * FROM allData")
+                allFeatures = self.cursor.fetchall()
+                for instance in allFeatures:
+                    featureNum = 0
+                    features = {}
+                    for name, value in dict(instance).items():
+                        if featureNum == 0:
+                            featureNum += 1
+                            continue
+                        features.update({name:value})
+                    self.allFeatures.append(features)
+                self.cursor.execute("SELECT error FROM errors")
+                allErrors = self.cursor.fetchall()
+                for instance in allErrors:
+                    for name, errors in dict(instance).items():
+                        if name == "error":
+                            error = errors.split(", ")
+                            for exception in error:
+                                self.allErrors.append(exception)
+            elif type(id) == int:
+                # Used if the values are already in the database
+                # To update the runtime values with the database values
+                for analyzer in self.analyzers:
+                    self.cursor.execute("SELECT * FROM {} WHERE id = ?".format(analyzer.name()), id)
+                    features = self.cursor.fetchall()
+                    for instance in features:
+                        featureNum = 0
+                        values = {}
+                        for name, value in dict(instance).items():
+                            if featureNum == 0:
+                                featureNum += 1
+                                continue
+                            values.update({name:value})
+                        analyzer.features.append(values)
+                self.cursor.execute("SELECT * FROM allData WHERE id = ?", id)
+                allFeatures = self.cursor.fetchall()
+                for instance in allFeatures:
+                    featureNum = 0
+                    features = {}
+                    for name, value in dict(instance).items():
+                        if featureNum == 0:
+                            featureNum += 1
+                            continue
+                        features.update({name:value})
+                    self.allFeatures.append(features)
+                self.cursor.execute("SELECT error FROM errors INNER JOIN metadata ON metadata.url = errors.url")
+                errors = self.cursor.fetchall()
+                for error in errors.values():
+                    error = error.split(", ")
+                for exception in error:
+                    self.allErrors.append(exception)
+
+    def checkInternet(self, validated=False):
+        '''A function that can optionally be called upon a failed validation to 
+        ensure the program exits upon failure to send a request to google.com. Saves
+        computational power and time alike.'''
+        if not validated:
+            try:
+                response = requests.get("https://www.google.com")
+                if response.status_code >= 400:
+                    raise ValueError("Recieved status code: " + str(response.status_code) + "when trying to connect to https://www.google.com")
+            except Exception:
+                raise ValueError("Recieved status code: " + str(response.status_code) + "when trying to connect to https://www.google.com")
+        return
 
     def goFish(self):
         '''Automates the scraping process by reading from the url file, validating the url,
@@ -469,15 +661,44 @@ class scrape(startFishing):
                     ",".join(name for name in featureNames)))
         with open(self.urlFile, "r") as f:
             for line in f:
+                self.errors = []
                 print("url: " + str(line))
+                initialTime = datetime.now()
+                print("initialTime: " + str(initialTime - initialTime))
                 features = {}
                 url = line.strip()
                 if not self.siteValidation(url):
                     if self.database:
                         self.cursor.execute(
-                            "INSERT INTO errors (id, url, error) VALUES (?, ?)", (self.id, url, self.errors))
+                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                            (url, ", ".join(str(error) for error in self.errors)))
+                        self.conn.commit()
+                    self.checkInternet()
+                    self.urlNum += 1
+                    self.allErrors.append(self.errors)
                     continue
+                print("validationTime: " + str(datetime.now() - initialTime))
                 url = self.driver.current_url
+                filename = self.generateFilename(url)
+                if not filename:
+                    if self.database:
+                        self.cursor.execute(
+                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                            (url, ", ".join(str(error) for error in self.errors)))
+                        self.conn.commit()
+                    self.urlNum += 1
+                    continue
+                urlID = filename.replace("https://tinyurl.com/", "")
+                urlID = urlID.replace("_" + str(self.id) + "_", "")
+                if not self.expand(urlID):
+                    if self.database:
+                        self.cursor.execute(
+                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                            (url, ", ".join(str(error) for error in self.errors)))
+                        self.conn.commit()
+                    self.urlNum += 1
+                    self.allErrors.append(self.errors)
+                    continue
                 if not self.screenshotDir:
                     if self.database:
                         try:
@@ -485,68 +706,38 @@ class scrape(startFishing):
                             self.cursor.execute(
                                 "INSERT INTO metadata (url, UTCtime, classification) VALUES (?, ?, ?)",
                                 (url, time, self.classVal))
-                            error = self.cursor.execute("SELECT id FROM errors WHERE id = ?", self.id)
-                            if not bool(error):
-                                self.cursor.execute("INSERT INTO errors (id) VALUES (?)", (self.id,))
-                        except Exception:
+                            self.conn.commit()
+                        except Exception as e:
                             # Ensuring that the attribute values are caught up to the database values
                             # This could be optimized; I'm currently relying on dictionary values
                             # being replaced when identical keys-values are inserted
-                            self.id = self.cursor.execute(
+                            self.errors.append(e)
+                            self.cursor.execute(
                                 "SELECT id FROM metadata WHERE url = ?", (url,))
+                            id = dict(self.cursor.fetchall())
+                            id = id.items()['id']
                             try:
-                                self.id = list(self.id)[0][0]
-                                features = self.cursor.execute(
-                                    "SELECT * FROM allData WHERE id = ?",
-                                    (self.id,))
-                                allFeatures = {}
-                                allFeatureNames = {}
-                                for analyzer in self.analyzers:
-                                    analyzerFeatures = self.cursor.execute(
-                                    "SELECT * FROM {} WHERE id = ?".format(analyzer.name()),
-                                    (self.id,))
-                                    analyzerFeaturesIter = list(analyzerFeatures)[0]
-                                    newAnalyzerFeatures = {}
-                                    featureNum = 0
-                                    for column in analyzerFeatures.description:
-                                        if featureNum == 0:
-                                            featureNum += 1
-                                            continue
-                                        newAnalyzerFeatures.update({column[0]:analyzerFeaturesIter[featureNum]})
-                                        featureNum += 1
-                                    classVal = self.cursor.execute("SELECT classification FROM metadata WHERE id = ?", (self.id,))
-                                    classVal = list(classVal)[0]
-                                    allFeatures = allFeatures | copy.deepcopy(newAnalyzerFeatures)
-                                    newAnalyzerFeatures.update({'classVal':classVal[0]})
-                                    analyzer.features.append(newAnalyzerFeatures)
-                                    names = self.cursor.execute("""SELECT name, type FROM
-                                        pragma_table_info('{}')""".format(analyzer.name()))
-                                    names = dict(names)
-                                    featureNum = 0
-                                    for name, datatype in names.items():
-                                        if featureNum == 0:
-                                            featureNum += 1
-                                            continue
-                                        if datatype == "INTEGER" or datatype == "FLOAT" or datatype == "INT":
-                                            datatype = "numeric"
-                                        elif datatype == "TEXT":
-                                            datatype = "string"
-                                        elif datatype == "BOOLEAN":
-                                            datatype = "nominal"
-                                        analyzer.featureNames.update({name:datatype})
-                                    analyzerFeatureNames = copy.deepcopy(analyzer.featureNames)
-                                    analyzerFeatureNames.pop('classVal')
-                                    allFeatureNames = allFeatureNames | analyzerFeatureNames
-                                allFeatures.update({'classVal':classVal[0]})
-                                if len(self.allFeatureNames) == 0:
-                                    self.allFeatureNames = self.allFeatureNames | allFeatureNames
-                                    self.allFeatureNames.update({'classVal':'nominal'})
-                                self.allFeatures.append(allFeatures)
+                                logging.warning(url + " is already in the database, skipping another screenshot")
+                                self.resume(id=id)
+                                self.urlNum += 1
+                                self.allErrors.append(self.errors)
+                                self.cursor.execute(
+                                    "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                    (url, ", ".join(str(error) for error in self.errors)))
+                                self.conn.commit()
                                 continue
                             except Exception:
                                 raise ValueError("""Could not select the features from the url: """ + url)
-                    self.saveScreenshot(url, validated=True)
-                filename = self.generateFilename(url)
+                    if not self.saveScreenshot(url, filename, validated=True):
+                        if self.database:
+                            self.cursor.execute(
+                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                (url, ", ".join(str(error) for error in self.errors)))
+                            self.cursor.execute("DELETE FROM metadata WHERE url = ?", (url,))
+                            self.conn.commit()
+                        self.urlNum += 1
+                        self.allErrors.append(self.errors)
+                        continue
                 if not self.htmlDir:
                     html = self.driver.page_source
                     self.initializeBS(html)
@@ -582,7 +773,16 @@ class scrape(startFishing):
                     if not os.path.isfile(
                             self.dataDir + "/css/" + filename + ".css"):
                         with open(self.dataDir + "/css/" + filename + ".css", "w") as f:
-                            f.write(sheet.cssText.decode())
+                            try:
+                                f.write(sheet.cssText.decode())
+                            except Exception:
+                                # Alternatively, you can choose to skip the url on a blank style sheet
+                                # The imageAnalyzer defaults values to 0
+                                # os.remove(self.dataDir + "/html/" + filename + ".html")
+                                # os.remove(self.dataDir + "/css/" + filename + ".css")
+                                # self.urlNum += 1
+                                # continue
+                                pass
                 classCheck = 1
                 for analyzer in self.analyzers:
                     # features: {name:value}
@@ -600,8 +800,8 @@ class scrape(startFishing):
                         "errors":self.errors
                     }
                     # updating resources accordingly
-                    filename = self.generateFilename(url)
                     updatedResources = analyzer.analyze(url, filename, resources, self.urlNum)
+                    print("analyzerTime: " + str(datetime.now() - initialTime))
                     for resource, value in updatedResources.items():
                         if resource in resources.keys():
                             if resource == "features":
@@ -610,12 +810,22 @@ class scrape(startFishing):
                                 newFeatureNames = value
                             else:
                                 self.resource = value
+                    if len(newFeatures.values()) != len(newFeatureNames.values()):
+                        if self.database:
+                            self.cursor.execute(
+                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                (url, ", ".join(str(error) for error in self.errors)))
+                            self.cursor.execute("DELETE FROM metadata WHERE url = ?", (url,))
+                            self.conn.commit()
+                        self.urlNum += 1
+                        self.allErrors.append(self.errors)
+                        continue
                     if classCheck != len(self.analyzers):
                         features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
                         self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
                     else:
                         features = features | newFeatures
-                        if self.urlNum <= len(self.analyzers):
+                        if len(self.allFeatureNames) < len(features):
                             self.allFeatureNames = self.allFeatureNames | newFeatureNames
                     if self.database:
                         newFeatures = {key:val for key, val in newFeatures.items() if key != 'classVal'}
@@ -630,15 +840,16 @@ class scrape(startFishing):
                         ",".join(name for name in self.allFeatureNames.keys()),
                         ",".join("?" for i in range(len(self.allFeatureNames.keys())))),
                         [value for value in features.values()])
-                self.allFeatures.append(features)
-                if self.database:
                     self.conn.commit()
+                self.allFeatures.append(features)
                 self.id += 1
                 self.urlNum += 1
 
 
 class pageAnalyzer(analyzer):
-    '''A class for scraping page-based features'''
+    '''A class for scraping page-based features. Note that this code is adapted
+    from the methodology here: 
+    https://www.sciencedirect.com/science/article/abs/pii/S0020025519300763'''
 
     def __init__(self, features=[], featureNames={
         'NumDots':"numeric",
@@ -726,6 +937,8 @@ class pageAnalyzer(analyzer):
         return complete_webpage_url
 
     def analyze(self, url, filename, resources, urlNum):
+        # if urlNum == 100:
+        #     self.classVal = 0
 
         # Initialize feature dictionary
         features = {}
@@ -856,7 +1069,10 @@ class pageAnalyzer(analyzer):
                         features.update({'RandomString':1})
                         break
 
-        base_url_to_be_replaced = 'file:' + urllib.request.pathname2url(resources["dataDir"]) + str(urlNum) + '/'
+        try:
+            base_url_to_be_replaced = 'file:' + urllib.request.pathname2url(resources["dataDir"]) + str(urlNum) + '/'
+        except socket.timeout as e:
+            raise e
 
         url_scheme = parsed.scheme + '://'
 
@@ -872,7 +1088,7 @@ class pageAnalyzer(analyzer):
 
                 features.update({'IpAddress':1})
 
-            except BaseException:
+            except Exception:
                 pass
                 features.update({'IpAddress':0})
 
@@ -995,7 +1211,7 @@ class pageAnalyzer(analyzer):
 
             try:
                 resources["driver"].get(url)
-            except BaseException:
+            except Exception:
                 pass
 
             # SWITCH OFF ALERTS
@@ -1044,13 +1260,13 @@ class pageAnalyzer(analyzer):
 
                     try:
                         resources["driver"].switch_to.frame(iframe_frame_elem)
-                    except BaseException:
+                    except Exception:
                         continue
 
                     try:
                         input_field_list = resources["driver"].find_elements(
                             By.XPATH, '//input')
-                    except BaseException:
+                    except Exception:
                         input_field_list = []
 
                     total_input_field += len(input_field_list)
@@ -1138,7 +1354,7 @@ class pageAnalyzer(analyzer):
                                         else:
                                             request_URLs.append(link)
 
-                                except BaseException:
+                                except Exception:
                                     pass
 
                         tag_count += 1
@@ -1149,7 +1365,7 @@ class pageAnalyzer(analyzer):
 
             try:
                 input_field_list = resources["driver"].find_elements(By.XPATH, '//input')
-            except BaseException:
+            except Exception:
                 pass
 
             total_input_field += len(input_field_list)
@@ -1231,7 +1447,7 @@ class pageAnalyzer(analyzer):
                             else:
                                 request_URLs.append(link)
 
-                    except BaseException:
+                    except Exception:
                         pass
 
                 tag_count += 1
@@ -1284,27 +1500,33 @@ class pageAnalyzer(analyzer):
                 brand_name = max_freq_domain
 
             # not IP, extract first dot separated token
-            except BaseException:
-                pass
+            except Exception:
                 brand_name = max_freq_domain.split('.')[0]
+                pass
 
         parsed = urlparse(url)
         # ext = tldextract.TLDExtract(suffix_list_urls=None, fallback_to_snapshot=False)
         ext = tldextract.TLDExtract(suffix_list_urls=None)
         ext1 = ext(url)
-        if brand_name.lower() in ext1.subdomain.lower(
-        ) or brand_name.lower() in parsed.path.lower():
-            if brand_name != '':
-                features.update({'EmbeddedBrandName':1})
+        try:
+            if brand_name.lower() in ext1.subdomain.lower(
+            ) or brand_name.lower() in parsed.path.lower():
+                if brand_name != '':
+                    features.update({'EmbeddedBrandName':1})
+                else:
+                    features.update({'EmbeddedBrandName':0})
             else:
                 features.update({'EmbeddedBrandName':0})
-        else:
+        except UnboundLocalError:
             features.update({'EmbeddedBrandName':0})
 
         # Check frequent domain name in HTML matches with webpage domain name
-        if max_freq_domain != domain_query:
-            features.update({'FrequentDomainNameMismatch':1})
-        else:
+        try:
+            if max_freq_domain != domain_query:
+                features.update({'FrequentDomainNameMismatch':1})
+            else:
+                features.update({'FrequentDomainNameMismatch':0})
+        except UnboundLocalError:
             features.update({'FrequentDomainNameMismatch':0})
 
         # Count percentage of external hyperlinks
@@ -1320,7 +1542,7 @@ class pageAnalyzer(analyzer):
                     IP(ext2.domain)
                     domain_str_ext2 = ext2.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext2 != domain_query:
@@ -1362,7 +1584,7 @@ class pageAnalyzer(analyzer):
                     IP(ext2.domain)
                     domain_str_ext2 = ext2.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext2 != domain_query:
@@ -1391,7 +1613,7 @@ class pageAnalyzer(analyzer):
                     IP(ext2.domain)
                     domain_str_ext2 = ext2.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext2 != domain_query:
@@ -1422,7 +1644,7 @@ class pageAnalyzer(analyzer):
                     IP(ext_meta_script_link.domain)
                     domain_str_ext_meta_script_link = ext_meta_script_link.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext_meta_script_link != domain_query:
@@ -1462,7 +1684,7 @@ class pageAnalyzer(analyzer):
                     IP(ext_fav.domain)
                     domain_str_ext_fav = ext_fav.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext_fav != domain_query:
@@ -1490,7 +1712,7 @@ class pageAnalyzer(analyzer):
                             IP(ext_form.domain)
                             domain_str_ext_form = ext_form.domain
 
-                        except BaseException:
+                        except Exception:
                             pass
 
                     if domain_str_ext_form != domain_query:
@@ -1563,7 +1785,7 @@ class pageAnalyzer(analyzer):
                             IP(ext_form.domain)
                             domain_str_form = ext_form.domain
 
-                        except BaseException:
+                        except Exception:
                             pass
 
                     if domain_str_form != domain_query:
@@ -1635,7 +1857,7 @@ class pageAnalyzer(analyzer):
             # visible_text_in_form += form_elem.text.strip() + ' '
             try:
                 visible_text_in_form += form_elem.text.strip() + ' '
-            except BaseException:
+            except Exception:
                 pass
 
             image_elems_in_form.extend(form_elem.find_elements(By.XPATH, './/img'))
@@ -1665,9 +1887,11 @@ class pageAnalyzer(analyzer):
             features.update({'FakeLinkInStatusBar':1})
 
         features.update({"classVal":self.classVal})
-        self.features.append(features)
+        if len(features.values()) == len(self.featureNames.values()):
+            self.features.append(features)
         resources.update({"features":features})
         resources.update({"featureNames":self.featureNames})
+        resources.update({"classVal":self.classVal})
         return resources
 
 
@@ -1821,51 +2045,43 @@ class imageAnalyzer(analyzer):
                     break
         return IMData
 
-    def imageHash(self, url, filename):
+    def imageHash(self, url, filename, cursor, conn, dataDir, database):
         '''A hash function that stores values from the perceptual and difference hash ImageHash
         functions. A database is required in order to take full advantage of the hash values,
         specifically once enough hashes have been generated, the data could possibly be combined
         with the predictive model to add blacklisting functionality based on hash similarity.'''
-        if not self.database:
+        pHash = imagehash.phash(
+                Image.open(
+                    dataDir +
+                    "/screenshots/" +
+                    filename +
+                    ".png"))
+        dHash = imagehash.dhash(
+                Image.open(
+                    dataDir +
+                    "/screenshots/" +
+                    filename +
+                    ".png"))
+        hashes = {}
+        hashes.update({"phash":pHash})
+        hashes.update({"dhash":dHash})
+        self.hashes.append(hashes)
+        if not database:
             logging.warning("Hashing without database functionality; previous hashing is not stored unless done manually")
-            hashes = {}
-            pHash = imagehash.phash(
-                Image.open(
-                    self.dataDir +
-                    "/screenshots/" +
-                    filename +
-                    ".png"))
-            dHash = imagehash.dhash(
-                Image.open(
-                    self.dataDir +
-                    "/screenshots/" +
-                    filename +
-                    ".png"))
-            hashes.update({"phash":pHash})
-            hashes.update({"dhash":dHash})
-            self.hashes.append(hashes)
-        else:
-            pHash = imagehash.phash(
-                Image.open(
-                    self.dataDir +
-                    "/screenshots/" +
-                    filename +
-                    ".png"))
-            dHash = imagehash.dhash(
-                Image.open(
-                    self.dataDir +
-                    "/screenshots/" +
-                    filename +
-                    ".png"))
-            self.cursor.execute(
+        else:    
+            cursor.execute(
                 "INSERT INTO hashes (pHash, dHash, url) VALUES (?, ?, ?)",
-                (pHash, dHash, url))
+                (str(pHash), str(dHash), url))
+            conn.commit()
 
     def analyze(self, url, filename, resources, urlNum):
         '''Searches through the html of a url to get the specified image-features.
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
         into the categories: layout, style, and other.'''
+        # if urlNum == 100:
+        #     self.classVal = 0
+
         features = {}
         totalTags = resources["BS"].find_all()
         selTotalTags = resources["driver"].find_elements(By.XPATH, "//*")
@@ -1873,7 +2089,7 @@ class imageAnalyzer(analyzer):
 
         if self.HASH:
             # Optionally, update the hashes table if database functionality is enabled
-            self.imageHash(url, filename)
+            self.imageHash(url, filename, resources["cursor"], resources["connection"], resources["dataDir"], resources["database"])
 
         # LAYOUT
         # Get the total number of tags DIRECTLY in the HTML tag using Beautiful
@@ -1933,16 +2149,19 @@ class imageAnalyzer(analyzer):
         styles = []
         families = []
         for tag in selTotalTags:
-            if tag.value_of_css_property("font-size"):
-                sizes.append(tag.value_of_css_property("font-size"))
-            if tag.value_of_css_property("font-style"):
-                styles.append(tag.value_of_css_property("font-style"))
-            if tag.value_of_css_property("font-weight"):
-                weights.append(tag.value_of_css_property("font-weight"))
-            if tag.value_of_css_property("font-family"):
-                families.append(tag.value_of_css_property("font-family"))
-            if tag.value_of_css_property("text-decoration"):
-                styles.append(tag.value_of_css_property("text-decoration"))
+            try:
+                if tag.value_of_css_property("font-size"):
+                    sizes.append(tag.value_of_css_property("font-size"))
+                if tag.value_of_css_property("font-style"):
+                    styles.append(tag.value_of_css_property("font-style"))
+                if tag.value_of_css_property("font-weight"):
+                    weights.append(tag.value_of_css_property("font-weight"))
+                if tag.value_of_css_property("font-family"):
+                    families.append(tag.value_of_css_property("font-family"))
+                if tag.value_of_css_property("text-decoration"):
+                    styles.append(tag.value_of_css_property("text-decoration"))
+            except StaleElementReferenceException:
+                continue
 
         # Get the number of non-normal text, as well as the average font-weight
         boldTotal = 0
@@ -2033,26 +2252,34 @@ class imageAnalyzer(analyzer):
         # Check for an image overlapping the address bar
         overlapping = 0
         for img in imgTags:
-            location = img.location
-            y = location["y"]
-            if y < 0:
-                overlapping = 1a
-                break
+            try:
+                location = img.location
+                y = location["y"]
+                if y < 0:
+                    overlapping = 1
+                    break
+            except StaleElementReferenceException:
+                continue
         features.update({"imageOverlappingTop":overlapping})
 
         # Check if there is a rel=icon attribute in a link tag (check for a
         # favicon image)
         favicon = 0
         for link in linkTags:
-            attribute = link.get_attribute("rel")
-            if attribute == "icon":
-                favicon = 1
-                break
+            try:
+                attribute = link.get_attribute("rel")
+                if attribute == "icon":
+                    favicon = 1
+                    break
+            except StaleElementReferenceException:
+                continue
         features.update({"favicon":favicon})
         features.update({"classVal":self.classVal})
-        self.features.append(features)
+        if len(features.values()) == len(self.featureNames.values()):
+            self.features.append(features)
         resources.update({"features":features})
         resources.update({"featureNames":self.featureNames})
+        resources.update({"classVal":self.classVal})
         return resources
 
 
@@ -2286,17 +2513,18 @@ class saveFish(scrape):
                 else:
                     continue
 
-    def closePWW3(self):
+    def closePWW3(self, save=True):
         '''A function that saves all the altered datasets in dataDir/datasets/(dataset) and
         closes jvm. There are 6 predefined arguments, each of which True, representing the
         datasets that you want to save.'''
-        datasetSaver = Saver(classname="weka.core.converters.ArffSaver")
-        for datasetName, dataset in self.datasets.items():
-            print(datasetName)
-            datasetSaver.save_file(
-                dataset,
-                self.dataDir +
-                '/datasets/' + datasetName + "Dataset" + ".arff")
+        if save:
+            datasetSaver = Saver(classname="weka.core.converters.ArffSaver")
+            for datasetName, dataset in self.datasets.items():
+                print(datasetName)
+                datasetSaver.save_file(
+                    dataset,
+                    self.dataDir +
+                    '/datasets/' + datasetName + "Dataset" + ".arff")
         jvm.stop()
 
     # Returns a list of all the dataset attributes
@@ -2345,13 +2573,13 @@ class saveFish(scrape):
                         for instance in dataset:
                             classifications.append(classifier.classify_instance(instance))
                     except Exception:
-                        logging.warning("Error using the " + classifierName + " classifier")
+                        logging.warning("Error using the " + str(classifierName) + " classifier")
                         classifications.append(Instance.missing_value())
                         continue
                 if len(classifications) != 0:
                     counting = Counter(classifications)
                     prediction = str(counting.most_common(1)[0][0]) + ":" + str(counting.most_common(2)[0][0])
-                    classification = counting.most_common(1)[0][0]
+                    classification = str(counting.most_common(1)[0][0])
                     self.classifications.update({analyzer.name():classification})
                     self.score.update({analyzer.name():prediction})
                     if self.database:
@@ -2377,12 +2605,12 @@ class saveFish(scrape):
                                 for instance in dataset:
                                     classifications.append(classifier.classify_instance(instance))
                             except Exception:
-                                logging.warning("Error using the " + classifierName + " classifier")
+                                logging.warning("Error using the " + str(classifierName) + " classifier")
                                 continue
                         if len(classifications) != 0:
                             counting = Counter(classifications)
                             prediction = str(counting.most_common(1)[0][0]) + ": " + str(counting.most_common(2)[0][0])
-                            classification = counting.most_common(1)[0][0]
+                            classification = str(counting.most_common(1)[0][0])
                             self.classifications.update({name:classification})
                             self.score.update({name:prediction})
                 except Exception:
@@ -2505,8 +2733,13 @@ class saveFish(scrape):
 
 
 def main():
+    # Not sure if the file was adapted properly; I think it was
+    # TODO: run + debug the file
+    # TODO: update the mongoDB accordingly
+    # TODO: update the python module accordingly + release
     # Currently testing w/ switched classVal (on analyzers)
     # and database func.
+
     # Initialization
     run = startFishing()
     run.initializeAll()
@@ -2516,16 +2749,21 @@ def main():
         dataDir="data",
         database="data/data.db",
         driver=run.driver,
+        urlNum=138,
+        id=47
     )
+    # Handling an exception
+    sys.excepthook = fisher.exitHandler
 
     # Initialization of the page analyzer
     pageData = pageAnalyzer(classVal=0)
     fisher.addAnalyzer(pageData)
 
     # Initialization of the image analyzer
-    imageData = imageAnalyzer(classVal=0)
+    imageData = imageAnalyzer(classVal=0, HASH=True)
     fisher.addAnalyzer(imageData)
 
+    fisher.resume()
     # Once the analyzers have been added, it doesn't matter what
     # instance the goFish method is called with
     fisher.goFish()
@@ -2536,6 +2774,11 @@ def main():
     # The features generated from the other instances are then used
     # when dealing with (creating datasets, classifying, ect.) data
     # Takes the same arguments as the scrape class
+    # To continue scraping (in case the program crashes and you stored info in a database)
+    # just adapt your urlFile to the url the program left off on
+    # your id to 1 after the latest screenshot/html/css file
+    # and your urlNum to the 1 + the number of urls that you've already scraped
+    # and finally call the resume function to re-initialize necessary attributes
     DC = saveFish(
         urlFile="data/urls.txt",
         dataDir="data",
@@ -2548,6 +2791,10 @@ def main():
     DC.classify()
     print(DC.score)
     print(DC.classifications)
+
+    occurences = Counter(fisher.allErrors)
+    error = occurences.most_common(1)[0][0]
+    print("Most common error: " + str(error))
 
     DC.closePWW3()
     DC.closeSelenium()
