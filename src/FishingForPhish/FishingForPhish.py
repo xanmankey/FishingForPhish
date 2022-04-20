@@ -119,7 +119,8 @@ class startFishing():
         # http://kb.mozillazine.org/index.php?title=Category:Preferences&until=Places.frecency.unvisitedTypedBonus
         # Javascript is necessary for dynamic websites, but can be
         # disabled by uncommenting the below preference
-        # options.set_preference("javascript.enabled", False)
+        # TODO: does disabling js fix the error?
+        options.set_preference("javascript.enabled", False)
         options.set_preference("network.cookie.cookieBehavior", 2)
         options.set_preference("Browser.sessionstore.privacy", 2)
         options.set_preference("Browser.cache.disk.enable", False)
@@ -443,7 +444,7 @@ class scrape(startFishing):
                     return False
             try:
                 r = requests.head(url, verify=False, timeout=5)
-                if r:
+                if r.status_code >= 400:
                     self.errors.append(r.status_code)
                     return False
             except Exception as e:
@@ -937,8 +938,9 @@ class pageAnalyzer(analyzer):
         return complete_webpage_url
 
     def analyze(self, url, filename, resources, urlNum):
+        # Change the class number on a certain url if desired
         # if urlNum == 100:
-        #     self.classVal = 0
+            # self.classVal = 0
 
         # Initialize feature dictionary
         features = {}
@@ -2079,8 +2081,9 @@ class imageAnalyzer(analyzer):
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
         into the categories: layout, style, and other.'''
+        # Change the class number on a certain url if desired
         # if urlNum == 100:
-        #     self.classVal = 0
+            # self.classVal = 0
 
         features = {}
         totalTags = resources["BS"].find_all()
@@ -2748,22 +2751,19 @@ def main():
         urlFile="data/urls.txt",
         dataDir="data",
         database="data/data.db",
-        driver=run.driver,
-        urlNum=138,
-        id=47
+        driver=run.driver
     )
     # Handling an exception
     sys.excepthook = fisher.exitHandler
 
     # Initialization of the page analyzer
-    pageData = pageAnalyzer(classVal=0)
+    pageData = pageAnalyzer(classVal=1)
     fisher.addAnalyzer(pageData)
 
     # Initialization of the image analyzer
-    imageData = imageAnalyzer(classVal=0, HASH=True)
+    imageData = imageAnalyzer(classVal=1, HASH=True)
     fisher.addAnalyzer(imageData)
 
-    fisher.resume()
     # Once the analyzers have been added, it doesn't matter what
     # instance the goFish method is called with
     fisher.goFish()
