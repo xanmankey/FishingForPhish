@@ -133,7 +133,7 @@ The scrape class also has 7 methods in addition to __init__():
 * getTime(self)
       Gets the current time based on time zone; only called if database functionality is enabled.
 * checkInternet(self, validated=False)
-      A method that sends a request to https://www.google.com and checks the status of the request accordingly. If it isn't the expected response (an error code or an exception), a ValueError is raised which . Called inside the goFish scraping loop, the check can be disabled by passing True for the validated parameter.
+      A method that attempts to access https://www.google.com using the Selenium instance and checks the status of the request accordingly. If it isn't the expected response (an error code or an exception), a SystemError is raised. Called inside the goFish scraping loop if siteValidation doesn't pass, the check can be disabled by passing True for the validated parameter.
 * goFish(self)
       Automates the scraping process; iterates over the provided urlFile, validates the url (based on checks from Selenium and Requests), and parses html, css, and screenshots, initializes BS and the database, gets the time, and passes all the initialized data (dataDir, driver, database, BS, cursor, connection, id, classVal, and errors) in a dictionary, resources.
       
