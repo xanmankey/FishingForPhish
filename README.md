@@ -8,6 +8,6 @@ This project is currently under active development. Contributions and adaptation
 
 ## Resources
 - Documentation: https://fishingforphish.readthedocs.io/en/latest/
-- Website: TODO (the server-side code still has to be finalized, and a plan needs to be figured out 
-regarding production deployment and hosting)
+- Website: phish-ai.vercel.app
 - PyPi: TODO
+- Github: https://github.com/xanmankey/FishingForPhish/
