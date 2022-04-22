@@ -1,13 +1,8 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
-# TODO: remember to turn display settings back to normal after this project
-# https://www.eightforums.com/threads/computer-goes-to-sleep-when-i-turn-the-monitor-off.58153/
-# Disabled the 2 save power options
-# ALSO NOTE THAT IF THERE'S A CONNECTION ERROR, YOU MAY HAVE TO GO BACK A FEW URLS
 # (not sure if this cmd works) DELETE FROM errors WHERE ROWID IN (SELECT errors.ROWID FROM errors a INNER JOIN metadata b ON (a.url=b.url));
 # DELETE FROM metadata ORDER BY id DESC LIMIT 1;
 # UPDATE allData SET classVal = 0 WHERE id > 47;
-# TODO: I'll update the hashes table at the very end
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -33,6 +28,7 @@ from unshortenit import UnshortenIt
 from bs4 import BeautifulSoup
 from collections import Counter
 import requests
+from requests.exceptions import RequestException
 import os
 import sys
 from filetype import is_image
@@ -119,8 +115,7 @@ class startFishing():
         # http://kb.mozillazine.org/index.php?title=Category:Preferences&until=Places.frecency.unvisitedTypedBonus
         # Javascript is necessary for dynamic websites, but can be
         # disabled by uncommenting the below preference
-        # TODO: does disabling js fix the error?
-        options.set_preference("javascript.enabled", False)
+        # options.set_preference("javascript.enabled", False)
         options.set_preference("network.cookie.cookieBehavior", 2)
         options.set_preference("Browser.sessionstore.privacy", 2)
         options.set_preference("Browser.cache.disk.enable", False)
@@ -623,11 +618,9 @@ class scrape(startFishing):
         computational power and time alike.'''
         if not validated:
             try:
-                response = requests.get("https://www.google.com")
-                if response.status_code >= 400:
-                    raise ValueError("Recieved status code: " + str(response.status_code) + "when trying to connect to https://www.google.com")
-            except Exception:
-                raise ValueError("Recieved status code: " + str(response.status_code) + "when trying to connect to https://www.google.com")
+                self.driver.get("https://www.google.com")
+            except Exception as e:
+                raise SystemError(e)
         return
 
     def goFish(self):
@@ -709,32 +702,30 @@ class scrape(startFishing):
                                 (url, time, self.classVal))
                             self.conn.commit()
                         except Exception as e:
-                            # Ensuring that the attribute values are caught up to the database values
-                            # This could be optimized; I'm currently relying on dictionary values
-                            # being replaced when identical keys-values are inserted
-                            self.errors.append(e)
-                            self.cursor.execute(
-                                "SELECT id FROM metadata WHERE url = ?", (url,))
-                            id = dict(self.cursor.fetchall())
-                            id = id.items()['id']
-                            try:
-                                logging.warning(url + " is already in the database, skipping another screenshot")
-                                self.resume(id=id)
-                                self.urlNum += 1
-                                self.allErrors.append(self.errors)
-                                self.cursor.execute(
-                                    "INSERT INTO errors (url, error) VALUES (?, ?)", 
-                                    (url, ", ".join(str(error) for error in self.errors)))
-                                self.conn.commit()
-                                continue
-                            except Exception:
-                                raise ValueError("""Could not select the features from the url: """ + url)
+                            # In case the url is already in the database, just continuing with the 
+                            # main event loop
+                            # Code is commented out for ensuring adding the database values
+                            # to the current attribute values
+                            # self.errors.append(e)
+                            # self.cursor.execute(
+                            #     "SELECT id FROM metadata WHERE url = ?", url)
+                            # id = dict(self.cursor.fetchall())
+                            # id = id.items()['id']
+                            logging.warning(url + " is already in the database, skipping another screenshot")
+                            # self.resume(id=id)
+                            self.urlNum += 1
+                            # self.allErrors.append(self.errors)
+                            # self.cursor.execute(
+                            #     "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                            #     (url, ", ".join(str(error) for error in self.errors)))
+                            # self.conn.commit()
+                            continue
                     if not self.saveScreenshot(url, filename, validated=True):
                         if self.database:
                             self.cursor.execute(
                                 "INSERT INTO errors (url, error) VALUES (?, ?)", 
                                 (url, ", ".join(str(error) for error in self.errors)))
-                            self.cursor.execute("DELETE FROM metadata WHERE url = ?", (url,))
+                            self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                             self.conn.commit()
                         self.urlNum += 1
                         self.allErrors.append(self.errors)
@@ -812,15 +803,22 @@ class scrape(startFishing):
                             else:
                                 self.resource = value
                     if len(newFeatures.values()) != len(newFeatureNames.values()):
+                        for analyzer in self.analyzers:
+                            if len(analyzer.features) == len(self.allFeatures) + 1:
+                                analyzer.features.pop()
+                            if classCheck > 1:
+                                for i in range(classCheck - 1):
+                                    self.cursor.execute("DELETE FROM {} ORDER BY id DESC LIMIT 1".format(self.analyzers[i].name()))
+                                # To avoid insertion into allData
+                                classCheck = 0
                         if self.database:
                             self.cursor.execute(
                                 "INSERT INTO errors (url, error) VALUES (?, ?)", 
                                 (url, ", ".join(str(error) for error in self.errors)))
-                            self.cursor.execute("DELETE FROM metadata WHERE url = ?", (url,))
+                            self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                             self.conn.commit()
-                        self.urlNum += 1
                         self.allErrors.append(self.errors)
-                        continue
+                        break
                     if classCheck != len(self.analyzers):
                         features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
                         self.allFeatureNames = self.allFeatureNames | {key:val for key,val in newFeatureNames.items() if key != 'classVal'}
@@ -836,13 +834,14 @@ class scrape(startFishing):
                             ",".join("?" for i in range(len(newFeatureNames.keys())))),
                             [value for value in newFeatures.values()])
                     classCheck += 1
-                if self.database:
-                    self.cursor.execute("""INSERT INTO allData ({}) VALUES ({})""".format(
-                        ",".join(name for name in self.allFeatureNames.keys()),
-                        ",".join("?" for i in range(len(self.allFeatureNames.keys())))),
-                        [value for value in features.values()])
-                    self.conn.commit()
-                self.allFeatures.append(features)
+                if classCheck == len(self.analyzers) + 1:
+                    if self.database:
+                        self.cursor.execute("""INSERT INTO allData ({}) VALUES ({})""".format(
+                            ",".join(name for name in self.allFeatureNames.keys()),
+                            ",".join("?" for i in range(len(self.allFeatureNames.keys())))),
+                            [value for value in features.values()])
+                        self.conn.commit()
+                    self.allFeatures.append(features)
                 self.id += 1
                 self.urlNum += 1
 
@@ -938,13 +937,16 @@ class pageAnalyzer(analyzer):
         return complete_webpage_url
 
     def analyze(self, url, filename, resources, urlNum):
-        # Change the class number on a certain url if desired
-        # if urlNum == 100:
-            # self.classVal = 0
+        # TODO: also the class strategy hasn't been perfected or fully tested yet
+        if urlNum == 100:
+            self.classVal = 0
 
         # Initialize feature dictionary
         features = {}
-
+        
+        # TODO: I'd like to get rid of this initialization if possible
+        # As it leads to temporarily 0 values which could skew the data
+        # I'm just not sure how
         for name in self.featureNames.keys():
             features.update({name:0})
 
@@ -2081,9 +2083,8 @@ class imageAnalyzer(analyzer):
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
         into the categories: layout, style, and other.'''
-        # Change the class number on a certain url if desired
-        # if urlNum == 100:
-            # self.classVal = 0
+        if urlNum == 100:
+            self.classVal = 0
 
         features = {}
         totalTags = resources["BS"].find_all()
@@ -2736,13 +2737,6 @@ class saveFish(scrape):
 
 
 def main():
-    # Not sure if the file was adapted properly; I think it was
-    # TODO: run + debug the file
-    # TODO: update the mongoDB accordingly
-    # TODO: update the python module accordingly + release
-    # Currently testing w/ switched classVal (on analyzers)
-    # and database func.
-
     # Initialization
     run = startFishing()
     run.initializeAll()
