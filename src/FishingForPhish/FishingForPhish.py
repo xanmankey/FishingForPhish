@@ -302,7 +302,7 @@ class scrape(startFishing):
             tables = {
                 "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
                 url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                "errors": """CREATE TABLE errors (url TEXT, error TEXT)""",
+                "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
                 "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
             }
             if os.path.isfile(self.database):
@@ -372,9 +372,8 @@ class scrape(startFishing):
                         columns.append(name + " FLOAT")
                     elif datatype.lower() == "string":
                         columns.append(name + " TEXT")
-                    # classVal are not included in the solo dataset
-                    # elif datatype.lower() == "nominal":
-                    #     columns.append(name + " BOOLEAN")
+                    elif datatype.lower() == "nominal":
+                        columns.append(name + " BOOLEAN")
                 self.cursor.execute("CREATE TABLE {} (id INTEGER PRIMARY KEY, {})".format(
                     analyzer.name(), ",".join(name for name in columns)))
 
@@ -549,7 +548,13 @@ class scrape(startFishing):
         # and are still in the same order
         if self.database:
             if not id:
+                classToggle = 0
                 for analyzer in self.analyzers:
+                    for name, datatype in analyzer.featureNames.items():
+                        if name == "classVal" and classToggle == 0:
+                            classToggle += 1
+                            continue
+                        self.allFeatureNames.update({name:datatype})
                     self.cursor.execute("SELECT * FROM {}".format(analyzer.name()))
                     features = self.cursor.fetchall()
                     for instance in features:
@@ -664,10 +669,13 @@ class scrape(startFishing):
                 url = line.strip()
                 if not self.siteValidation(url):
                     if self.database:
-                        self.cursor.execute(
-                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
-                            (url, ", ".join(str(error) for error in self.errors)))
-                        self.conn.commit()
+                        try:
+                            self.cursor.execute(
+                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                (url, ", ".join(str(error) for error in self.errors)))
+                            self.conn.commit()
+                        except Exception:
+                            pass
                     self.checkInternet()
                     self.urlNum += 1
                     self.allErrors.append(self.errors)
@@ -677,20 +685,26 @@ class scrape(startFishing):
                 filename = self.generateFilename(url)
                 if not filename:
                     if self.database:
-                        self.cursor.execute(
-                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
-                            (url, ", ".join(str(error) for error in self.errors)))
-                        self.conn.commit()
+                        try:
+                            self.cursor.execute(
+                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                (url, ", ".join(str(error) for error in self.errors)))
+                            self.conn.commit()
+                        except Exception:
+                            pass
                     self.urlNum += 1
                     continue
                 urlID = filename.replace("https://tinyurl.com/", "")
                 urlID = urlID.replace("_" + str(self.id) + "_", "")
                 if not self.expand(urlID):
                     if self.database:
-                        self.cursor.execute(
-                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
-                            (url, ", ".join(str(error) for error in self.errors)))
-                        self.conn.commit()
+                        try:
+                            self.cursor.execute(
+                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                (url, ", ".join(str(error) for error in self.errors)))
+                            self.conn.commit()
+                        except Exception:
+                            pass
                     self.urlNum += 1
                     self.allErrors.append(self.errors)
                     continue
@@ -723,9 +737,12 @@ class scrape(startFishing):
                             continue
                     if not self.saveScreenshot(url, filename, validated=True):
                         if self.database:
-                            self.cursor.execute(
-                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
-                                (url, ", ".join(str(error) for error in self.errors)))
+                            try:
+                                self.cursor.execute(
+                                    "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                    (url, ", ".join(str(error) for error in self.errors)))
+                            except Exception:
+                                pass
                             self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                             self.conn.commit()
                         self.urlNum += 1
@@ -758,24 +775,48 @@ class scrape(startFishing):
                 if not self.cssDir:
                     linkTags = self.driver.find_elements(By.TAG_NAME, "link")
                     for tag in linkTags:
-                        css = tag.get_attribute("rel")
-                        if css == "stylesheet":
-                            cssFile = tag.get_attribute("href")
-                            sheet = cssutils.parseUrl(cssFile)
-                            break
+                        try:
+                            css = tag.get_attribute("rel")
+                            if css == "stylesheet":
+                                cssFile = tag.get_attribute("href")
+                                sheet = cssutils.parseUrl(cssFile)
+                                break
+                        except Exception:
+                            continue
                     if not os.path.isfile(
                             self.dataDir + "/css/" + filename + ".css"):
                         with open(self.dataDir + "/css/" + filename + ".css", "w") as f:
                             try:
                                 f.write(sheet.cssText.decode())
-                            except Exception:
-                                # Alternatively, you can choose to skip the url on a blank style sheet
-                                # The imageAnalyzer defaults values to 0
-                                # os.remove(self.dataDir + "/html/" + filename + ".html")
-                                # os.remove(self.dataDir + "/css/" + filename + ".css")
-                                # self.urlNum += 1
-                                # continue
-                                pass
+                            except Exception as e:
+                                # I'm skipping the url on failure to get the css
+                                # But alternatively you can just pass out of this exception
+                                # pass
+                                self.errors.append(e)
+                                if self.database:
+                                    try:
+                                        self.cursor.execute(
+                                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                            (url, ", ".join(str(error) for error in self.errors)))
+                                    except Exception:
+                                        pass
+                                    self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
+                                    self.conn.commit()
+                                try:
+                                    os.remove(self.dataDir + "/screenshots/" + filename + ".png")
+                                except FileNotFoundError:
+                                    pass
+                                try:
+                                    os.remove(self.dataDir + "/html/" + filename + ".html")
+                                except FileNotFoundError:
+                                    pass
+                                try:
+                                    os.remove(self.dataDir + "/css/" + filename + ".css")
+                                except FileNotFoundError:
+                                    pass
+                                self.urlNum += 1
+                                self.allErrors.append(self.errors)
+                                continue
                 classCheck = 1
                 for analyzer in self.analyzers:
                     # features: {name:value}
@@ -797,12 +838,17 @@ class scrape(startFishing):
                     print("analyzerTime: " + str(datetime.now() - initialTime))
                     for resource, value in updatedResources.items():
                         if resource in resources.keys():
+                            if resource != "features" and resource != "featureNames":
+                                # essentially updating the variable itself by updating the dict
+                                resources[resource] = value
                             if resource == "features":
                                 newFeatures = value
                             elif resource == "featureNames":
                                 newFeatureNames = value
+                            # Even though only classVal is updated in the analyzers
+                            # It's important to update the state of some of the attributes
                             else:
-                                self.resource = value
+                                self.classVal = value
                     if len(newFeatures.values()) != len(newFeatureNames.values()):
                         for analyzer in self.analyzers:
                             if len(analyzer.features) == len(self.allFeatures) + 1:
@@ -813,12 +859,29 @@ class scrape(startFishing):
                                 # To avoid insertion into allData
                                 classCheck = 0
                         if self.database:
-                            self.cursor.execute(
-                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
-                                (url, ", ".join(str(error) for error in self.errors)))
+                            self.errors.append('analyzerError')
+                            try:
+                                self.cursor.execute(
+                                    "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                    (url, ", ".join(str(error) for error in self.errors)))
+                            except Exception:
+                                pass
                             self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                             self.conn.commit()
                         self.allErrors.append(self.errors)
+                        self.id -= 1
+                        try:
+                            os.remove(self.dataDir + "/screenshots/" + filename + ".png")
+                        except FileNotFoundError:
+                            pass
+                        try:
+                            os.remove(self.dataDir + "/html/" + filename + ".html")
+                        except FileNotFoundError:
+                            pass
+                        try:
+                            os.remove(self.dataDir + "/css/" + filename + ".css")
+                        except FileNotFoundError:
+                            pass
                         break
                     if classCheck != len(self.analyzers):
                         features = {key:val for key, val in newFeatures.items() if key != 'classVal'}
@@ -828,8 +891,8 @@ class scrape(startFishing):
                         if len(self.allFeatureNames) < len(features):
                             self.allFeatureNames = self.allFeatureNames | newFeatureNames
                     if self.database:
-                        newFeatures = {key:val for key, val in newFeatures.items() if key != 'classVal'}
-                        newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
+                        # newFeatures = {key:val for key, val in newFeatures.items() if key != 'classVal'}
+                        # newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
                         self.cursor.execute("""INSERT INTO {} ({}) VALUES ({})""".format(analyzer.name(),
                             ",".join(name for name in newFeatureNames.keys()),
                             ",".join("?" for i in range(len(newFeatureNames.keys())))),
@@ -1882,7 +1945,10 @@ class pageAnalyzer(analyzer):
             except Exception:
                 pass
 
-            image_elems_in_form.extend(form_elem.find_elements(By.XPATH, './/img'))
+            try:
+                image_elems_in_form.extend(form_elem.find_elements(By.XPATH, './/img'))
+            except StaleElementReferenceException:
+                pass
 
         if visible_text_in_form.strip() == '' and len(image_elems_in_form) > 0:
             features.update({'ImagesOnlyInForm':1})
@@ -1909,11 +1975,11 @@ class pageAnalyzer(analyzer):
             features.update({'FakeLinkInStatusBar':1})
 
         features.update({"classVal":self.classVal})
+        resources.update({"classVal":self.classVal})
         if len(features.values()) == len(self.featureNames.values()):
             self.features.append(features)
         resources.update({"features":features})
         resources.update({"featureNames":self.featureNames})
-        resources.update({"classVal":self.classVal})
         return resources
 
 
@@ -2101,6 +2167,7 @@ class imageAnalyzer(analyzer):
         These features are defined in the research paper at
         https://github.com/xanmankey/FishingForPhish/tree/main/research and broken down
         into the categories: layout, style, and other.'''
+        # Again, this is for use with my provided urlFile specifically
         if urlNum == 100:
             self.classVal = 0
 
@@ -2485,10 +2552,11 @@ class saveFish(scrape):
                     "-C", classVal, "-P", str(ratio)])
             smote.inputformat(dataset)
             newInstances = smote.filter(dataset)
+            newDataset = dataset
             for instance in newInstances:
-                dataset.add_instance(instance)
-            dataset.sort(index)
-            self.datasets.update({analyzer.name() + "Balanced":dataset})
+                newDataset.add_instance(instance)
+            newDataset.sort(index)
+            self.datasets.update({analyzer.name() + "Balanced":newDataset})
 
         for option in self.newDatasetOptions.keys():
             if self.newDatasetOptions[option] and "Balanced" in option:
@@ -2528,10 +2596,11 @@ class saveFish(scrape):
                             "-C", classVal, "-P", str(ratio)])
                     smote.inputformat(dataset)
                     newInstances = smote.filter(dataset)
+                    newDataset = dataset
                     for instance in newInstances:
-                        dataset.add_instance(instance)
-                    dataset.sort(index)
-                    self.datasets.update({"{}Balanced".format(option):dataset})
+                        newDataset.add_instance(instance)
+                    newDataset.sort(index)
+                    self.datasets.update({"{}Balanced".format(option):newDataset})
                 else:
                     continue
 
@@ -2671,6 +2740,7 @@ class saveFish(scrape):
                 dataset.add_instance(inst)
             stringToNom.inputformat(dataset)
             dataset = stringToNom.filter(dataset)
+            dataset.class_is_last()
             if analyzer.name() not in self.datasets.keys():
                 self.datasets.update({analyzer.name():dataset})
 
@@ -2721,6 +2791,8 @@ class saveFish(scrape):
                         rankedDataset.add_instance(inst)
                 stringToNom.inputformat(rankedDataset)
                 rankedDataset = stringToNom.filter(rankedDataset)
+                rankedDataset.class_is_last()
+                print(rankedDataset)
                 if "ranked" not in self.datasets.keys():
                     self.datasets.update({"ranked":rankedDataset})
 
@@ -2747,6 +2819,8 @@ class saveFish(scrape):
                 fullDataset.add_instance(inst)
             stringToNom.inputformat(fullDataset)
             fullDataset = stringToNom.filter(fullDataset)
+            fullDataset.class_is_last()
+            print(fullDataset)
             if "full" not in self.datasets.keys():
                 self.datasets.update({"full":fullDataset})
 
@@ -2771,11 +2845,11 @@ def main():
     sys.excepthook = fisher.exitHandler
 
     # Initialization of the page analyzer
-    pageData = pageAnalyzer(classVal=0)
+    pageData = pageAnalyzer(classVal=1)
     fisher.addAnalyzer(pageData)
 
     # Initialization of the image analyzer
-    imageData = imageAnalyzer(classVal=0, HASH=True)
+    imageData = imageAnalyzer(classVal=1, HASH=True)
     fisher.addAnalyzer(imageData)
 
     # If resuming, uncomment the below line
