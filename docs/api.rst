@@ -62,7 +62,7 @@ The analyzer class has 1 inheritible method and 1 **required** method:
 * analyzer
    The analyzer function is a user created function; it is not inherited via code, and needs to be made by hand. The analyzer functions work in tandem with the goFish() method of the scrape class, which iterates through the provided urlFile and scrapes necessary data, whereas the analyzer functions analyze this data by taking a dictionary of resources resources (this includes the driver, database, BS instance, ect.; update this list if you need to access another resource from the scrape class), using them for analysis accordingly, and then returning the updated features, along with new key-value pairs, including "classVal":self.classVal, "features":features, and "featureNames":self.featureNames. Once these values are passed back to the goFish() method, it updates accordingly, and then the process either repeats for the next url in the urlFile or completes. 
 
-scrape
+fisher
 ------
 
 The scrape class is a useful compilation of all the scraping-related methods used, from saving a screenshot of a full webpage to checking if a site responded with no errors. The goFish() method is used to encompass the majority of the scrape class's functionality, providing a method for iterating and validating urls, in addition to parsing html, css, and taking a screenshot for analysis, and the comprehensive __init__ function and variety of supporting methods provide a lot of inheritable functionality.
@@ -137,8 +137,8 @@ The scrape class also has 7 methods in addition to __init__():
 * goFish(self)
       Automates the scraping process; iterates over the provided urlFile, validates the url (based on checks from Selenium and Requests), and parses html, css, and screenshots, initializes BS and the database, gets the time, and passes all the initialized data (dataDir, driver, database, BS, cursor, connection, id, classVal, and errors) in a dictionary, resources.
       
-page
-----
+pageAnalyzer
+------------
 
 The page class is an example class that inherits from the base analyzer class, with the purpose of scraping the page-based features outlined by the research here: https://github.com/xanmankey/FishingForPhish/blob/main/research/FishingForPhish.md. It recieves the resources dictionary from the goFish() method of the scrape class, uses the information to scrape the necessary features, and returns the updated resources objects in addition to the new attributes, features and featureNames
 An example of using the page class to print a set of full pageFeatures can be seen below (**Remember that selenium webdriver MUST be initialized first before scraping, and remember to close it AFTER scraping!**).
@@ -172,8 +172,8 @@ The page class inherits inherits the name method (and **requires** the creation 
 * analyze(self, url, filename, urlNum, resources)
       Searches through the html of a url to populate the features list accordingly; uses and updates the values in the resources array. The filename value is passed, as it may be used in other analyzer classes (for example in the image class), but it isn't used in the page class.
 
-image
------
+imageAnalyzer
+-------------
 
 The image class is an example class that inherits from the base analyzer class, with the purpose of scraping the page-based features outlined by the research at https://github.com/xanmankey/FishingForPhish/tree/main/research; each feature can be categorized under the layout, style, or other category).
 An example of using the image class in tandem with the goFish() can be seen below (**Again, don't forget about initialization and shutdown!**).
