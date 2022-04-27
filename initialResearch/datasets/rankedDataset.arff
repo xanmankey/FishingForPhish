@@ -1,0 +1,25 @@
+@relation combinedDataset
+
+@attribute FrequentDomainNameMismatch numeric, 
+@attribute NoHttps numeric, 
+@attribute SubmitInfoToEmail numeric, 
+@attribute ExtMetaScriptLinkRT numeric, 
+@attribute PctExtResourceUrls numeric, 
+@attribute PopUpWindow numeric, 
+@attribute NumUnderscore numeric, 
+@attribute NumNumericChars numeric, 
+@attribute NumAmpersand numeric, 
+@attribute RandomString numeric, 
+@attribute mostUsedFont {'\"Poppins\"',serif,Helvetica,'\"HiraginoKakuGothicProW3\"',hero-new,roboto,Inter,Arial,opensans,Roboto,arial,HelveticaNeueLT,sourcesanspro,'\"SFProText\"',OptimisticText,GraphikWeb,Whitney,'\"SourceSansPro\"',SegoeUI,'\"HaasGrotTextRWeb\"','\"Roboto\"','\"TrebuchetMS\"',YahooSansFinance,ProximaNova}, 
+@attribute averageFontSize numeric, 
+@attribute numBoldTags numeric, 
+@attribute favicon numeric, 
+@attribute numTagsInMain numeric, 
+@attribute pctImgTags numeric, 
+@attribute IMgreenMean numeric, 
+@attribute IMredMean numeric, 
+@attribute pctUnderline numeric, 
+@attribute IMblueStdDev numeric
+@attribute classVal {legit,phish}
+
+@data

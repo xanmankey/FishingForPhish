@@ -1,0 +1,71 @@
+@charset "utf-8";
+/*
+ * See: https://fonts.google.com/license/googlerestricted
+ */
+@font-face {
+    font-family: "Google Material Icons";
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/googlematerialicons/v107/Gw6kwdfw6UnXLJCcmafZyFRXb3BL9rvi0QZG3g.otf) format("opentype")
+    }
+@font-face {
+    font-family: "Google Sans";
+    font-style: italic;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/googlesans/v44/4Ua9rENHsxJlGDuGo1OIlL3L2JB874GPhFI9_IqmuRqGpjeaLi42kO8QvnQOs5beU3yksanMY0Ehpyw.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Google Sans";
+    font-style: italic;
+    font-weight: 700;
+    src: url(https://fonts.gstatic.com/s/googlesans/v44/4Ua9rENHsxJlGDuGo1OIlL3L2JB874GPhFI9_IqmuRqGpjeaLi42kO8QvnQOs5beU3yksanMY6Ympyw.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Google Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/googlesans/v44/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrwEIKli.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Google Sans";
+    font-style: normal;
+    font-weight: 500;
+    src: url(https://fonts.gstatic.com/s/googlesans/v44/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrw2IKli.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Google Sans";
+    font-style: normal;
+    font-weight: 700;
+    src: url(https://fonts.gstatic.com/s/googlesans/v44/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrzjJ6li.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Product Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/productsans/v19/pxiDypQkot1TnFhsFMOfGShlEA.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Me5Q.ttf) format("truetype")
+    }
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 500;
+    src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmEU9vAw.ttf) format("truetype")
+    }
+.google-material-icons {
+    font-family: "Google Material Icons";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr
+    }
