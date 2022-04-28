@@ -9,5 +9,4 @@ This project is currently under active development. Contributions and adaptation
 ## Resources
 - Documentation: https://fishingforphish.readthedocs.io/en/latest/
 - Website: phish-ai.vercel.app
-- PyPi: TODO
 - Github: https://github.com/xanmankey/FishingForPhish/
