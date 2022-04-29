@@ -273,17 +273,18 @@ overall following the combination of the two feature datasets), are listed in fi
 below, with the figure index corresponding with the set of features and related information.
 
 <ins>Figure 4.1: Ranked page feature data</ins>
-**Ranking Feature
-1 ExtMetaScriptLinkRT
-2 PctExtNullSelfRedirectHyperlinksRT
-3 NumNumericChars
-4 PathLength
-5 PathLevel
-6 NumAmpersand
-7 RandomString
-8 NumQueryComponents
-9 UrlLength
-10 HostnameLength**
+| Ranking | Feature |
+| ------- | ------- |
+| 1       |  ExtMetaScriptLinkRT |
+| 2       |  PctExtNullSelfRedirectHyperlinksRT |
+| 3       |  NumNumericChars |
+| 4       |  PathLength |
+| 5       |  PathLevel |
+| 6       |  NumAmpersand |
+| 7       |  RandomString |
+| 8       |  NumQueryComponents |
+| 9       |  UrlLength |
+| 10      |  HostnameLength |
 
 
 <ins>Figure 5.1: Ranked image feature data</ins>
