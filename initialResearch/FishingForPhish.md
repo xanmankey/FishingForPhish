@@ -263,7 +263,7 @@ The full sets of features can be found and are elaborated upon, with the page fe
 more depth at _Understanding phishers' strategies of mimicking uniform resource locators to
 leverage phishing attacks: A machine learning approach_ and the image features in figure 3 below.
 
-Figure 3: Documented set of image features
+<ins>Figure 3: Documented set of image features</ins>
 
 ![Figure 3: Documented set of image features](imageFeatureDocumentation.png)
 
@@ -272,7 +272,7 @@ combined ranked features for the ranked dataset (composed of the top 10 selected
 overall following the combination of the two feature datasets), are listed in figures 4.1, 5.1, and 6.
 below, with the figure index corresponding with the set of features and related information.
 
-Figure 4.1: Ranked page feature data
+<ins>Figure 4.1: Ranked page feature data</ins>
 **Ranking Feature
 1 ExtMetaScriptLinkRT
 2 PctExtNullSelfRedirectHyperlinksRT
@@ -286,7 +286,7 @@ Figure 4.1: Ranked page feature data
 10 HostnameLength**
 
 
-Figure 5.1: Ranked image feature data
+<ins>Figure 5.1: Ranked image feature data</ins>
 **Ranking Feature
 1 mostUsedFont
 2 averageFontSize
@@ -300,7 +300,7 @@ Figure 5.1: Ranked image feature data
 10 IMblueStdDev**
 
 
-Figure 6.1: Combined ranked feature data
+<ins>Figure 6.1: Combined ranked feature data</ins>
 **Ranking Feature
 1 averageFontSize
 2 mostUsedFont
