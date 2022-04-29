@@ -134,7 +134,7 @@ legitimate comparison of page and image features.
 
 ## METHODOLOGY
 
-| Resources found in Appendix A referenced throughout the paper from this point on
+> Resources found in Appendix A referenced throughout the paper from this point on
 
 1. https://doi.org/10.17632/h3cgnj8hft.
 2. https://phishstats.info/
@@ -209,6 +209,7 @@ provide an easily replicable web-scraping alternative. The usage of the module f
 researcher in accordance with the experimental design can be found in figure 1 below.
 
 <ins>Figure 1: Example usage of the FishingForPhish module</ins>
+
 ![Figure 1: Example usage of the FishingForPhish module](exampleCode.png)
 
 In order to understand the execution of the methodology, it is imperative to understand the
@@ -250,10 +251,12 @@ and specific adaptations and customizations of a single graph.
 
 
 <ins>Figure 2.1: Matrix of feature versus feature graphs</ins>
+
 ![Figure 2.1: Matrix of feature versus feature graphs](WekaVisualizationMatrix.png)
 
 
 <ins>Figure 2.2: Customizing a single Weka graph using customization capabilities</ins>
+
 ![Figure 2.2: Customizing a single Weka graph using customization capabilities](WekaVisualization.png)
 
 The full sets of features can be found and are elaborated upon, with the page features in
@@ -261,6 +264,7 @@ more depth at _Understanding phishers' strategies of mimicking uniform resource 
 leverage phishing attacks: A machine learning approach_ and the image features in figure 3 below.
 
 Figure 3: Documented set of image features
+
 ![Figure 3: Documented set of image features](imageFeatureDocumentation.png)
 
 Additionally, the top ten ranked features for the page and image features, as well as the
@@ -314,7 +318,6 @@ appendix in 3 sets of figures: 4.2, 4.3, 4.4, 5.2, 5.3, 5.4, and 6.2, 6.3, 6.4 r
 output files, view the _output_ directory at 4. An example classification output file can be seen in
 figure 6.3 below.
 
-<ins>Figure 6.3: Jrip model output (all features)</ins>
 ![Figure 6.3: Jrip model output (all features)](output/JripCombined)
 
 There are a couple of key things to note regarding the Jrip model output seen in figure 6.3,
@@ -565,14 +568,14 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 
 ### Appendix A– Resource links (citations can be found in references when necessary)
 
-(^1) https://doi.org/10.17632/h3cgnj8hft.1
-(^2) https://phishstats.info/
-(^3) https://domcop.com/top-10-million-domains
-(^4) https://github.com/xanmankey/FishingForPhish.git
-(^5) https://github.com/xanmankey/PhishAI.git
-(^6) https://phish-ai.vercel.app/
-(^7) https://pypi.org/project/FishingForPhish/0.3.0/
-(^8) https://fishingforphish.readthedocs.io/en/latest/
+1. https://doi.org/10.17632/h3cgnj8hft.1
+2. https://phishstats.info/
+3. https://domcop.com/top-10-million-domains
+4. https://github.com/xanmankey/FishingForPhish.git
+5. https://github.com/xanmankey/PhishAI.git
+6. https://phish-ai.vercel.app/
+7. https://pypi.org/project/FishingForPhish/0.3.0/
+8. https://fishingforphish.readthedocs.io/en/latest/
 
 
 <ins>Figure 1: Example usage of the FishingForPhish module</ins>
@@ -590,7 +593,7 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 
 
 <ins>Figure 3: Documented set of image features</ins>
-
+![Figure 3: Documented set of image features](imageFeatureDocumentation.png)
 
 ### Appendix C– Ranked page features and model output
 
@@ -609,14 +612,12 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 10 HostnameLength**
 
 
-<ins>Figure 4.2: J48 model output (all page features)</ins>
 ![Figure 4.2: J48 model output (all page features)](output/J48Page)
 
-<ins>Figure 4.3: Jrip model output (all page features)</ins>
 ![Figure 4.3: Jrip model output (all page features)](output/JripPage)
 
-<ins>Figure 4.4: Naive Bayes model output (all page features)</ins>
 ![Figure 4.4: Naive Bayes model output (all page features)](output/NaiveBayesCombined)
+
 
 ### Appendix D– Ranked image features and model output
 
@@ -635,13 +636,10 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 10 IMblueStdDev**
 
 
-<ins>Figure 5.2: J48 model output (all image features)</ins>
 ![Figure 5.2: J48 model output (all image features)](output/J48Image)
 
-<ins>Figure 5.3: Jrip model output (all image features)</ins>
 ![Figure 5.3: Jrip model output (all image features)](output/JripImage)
 
-<ins>Figure 5.4: Naive Bayes model output (all image features)</ins>
 ![Figure 5.4: Naive Bayes model output (all image features)](output/NaiveBayesImage)
 
 ### Appendix E– Combined ranked features and model output
@@ -661,11 +659,8 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 10 totalHeight**
 
 
-<ins>Figure 6.2: J48 model output (all features)</ins>
 ![Figure 6.2: J48 model output (all features)](output/J48Combined)
 
-<ins>Figure 6.3: Jrip model output (all features)</ins>
 ![Figure 6.3: Jrip model output (all features)](output/JripCombined)
 
-<ins>Figure 6.4: Naive Bayes model output (all features)</ins>
 ![Figure 6.4: Naive Bayes model output (all features)](output/NaiveBayesCombined)
