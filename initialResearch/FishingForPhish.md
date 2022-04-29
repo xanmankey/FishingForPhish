@@ -579,20 +579,24 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 
 
 <ins>Figure 1: Example usage of the FishingForPhish module</ins>
+
 ![Figure 1: Example usage of the FishingForPhish module](exampleCode.png)
 
 
 ### Appendix B– Weka visualization examples
 
 <ins>Figure 2.1: Matrix of feature versus feature graphs</ins>
+
 ![Figure 2.1: Matrix of feature versus feature graphs](WekaVisualizationMatrix.png)
 
 
 <ins>Figure 2.2: Customizing a single Weka graph using customization capabilities</ins>
+
 ![Figure 2.2: Customizing a single Weka graph using customization capabilities](WekaVisualization.png)
 
 
 <ins>Figure 3: Documented set of image features</ins>
+
 ![Figure 3: Documented set of image features](imageFeatureDocumentation.png)
 
 ### Appendix C– Ranked page features and model output
