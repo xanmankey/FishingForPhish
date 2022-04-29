@@ -1,8 +1,5 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
-# (not sure if this cmd works) DELETE FROM errors WHERE ROWID IN (SELECT errors.ROWID FROM errors a INNER JOIN metadata b ON (a.url=b.url));
-# DELETE FROM metadata ORDER BY id DESC LIMIT 1;
-# UPDATE allData SET classVal = 0 WHERE id > 47;
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -158,19 +155,19 @@ class startFishing():
 # The analyzer base class
 class analyzer():
     '''A base class for adding analyzers to analyze scraped values which can be called during the url
-    processing step (the goFish method). See the analyze shell function for more information. 
-    I'm still working on finding a way to make this class more inheritable and 
+    processing step (the goFish method). See the analyze shell function for more information.
+    I'm still working on finding a way to make this class more inheritable and
     easier to work with.'''
 
     def __init__(self):
-        '''There are currently no inheritable attributes, largely because of my lack of 
-        knowledge regarding class inheritance (the attributes ended up overwriting one another). 
-        However, when creating an instance of the analyzer class, there are a couple REQUIRED 
-        attributes: features (an array of features, a dict in name:featureValue format), 
-        featureNames (a dict in featureName:wekaDatatype format, see the docs at 
-        https://fishingforphish.readthedocs.io/ for more info), and classVal. And of course, 
-        if you are making your own analyzer, 
-        you can create attributes of your own, just make sure to consider them in regards to 
+        '''There are currently no inheritable attributes, largely because of my lack of
+        knowledge regarding class inheritance (the attributes ended up overwriting one another).
+        However, when creating an instance of the analyzer class, there are a couple REQUIRED
+        attributes: features (an array of features, a dict in name:featureValue format),
+        featureNames (a dict in featureName:wekaDatatype format, see the docs at
+        https://fishingforphish.readthedocs.io/ for more info), and classVal. And of course,
+        if you are making your own analyzer,
+        you can create attributes of your own, just make sure to consider them in regards to
         the goFish method, especially in consideration of the resources dictionary'''
         pass
 
@@ -352,7 +349,7 @@ class scrape(startFishing):
     # The addAnalyzer function should be called
     # With an instance of the analyzer itself
     def addAnalyzer(self, analyzer):
-        '''A function that takes the name of an analyzer passed to it, and adds it 
+        '''A function that takes the name of an analyzer passed to it, and adds it
         to the self.analyzers array, which is then used
         to collect data accordingly throughout (tables, dataset, attributes)'''
         print(str(analyzer.name()) + " added!")
@@ -490,7 +487,7 @@ class scrape(startFishing):
         return time
 
     def exitHandler(self, exctype, value, traceback):
-        '''Exit the code correctly on an exception and adapt databases 
+        '''Exit the code correctly on an exception and adapt databases
         accordingly (if enabled)'''
         if self.database:
             self.cursor.execute("SELECT id FROM metadata")
@@ -539,8 +536,8 @@ class scrape(startFishing):
 
     def resume(self, id=False):
         '''A function to resume the program if it crashes and you were storing data
-        in a database. Called before calling goFish, initializes attributes with the 
-        previously scraped information from the previous session. Note that 
+        in a database. Called before calling goFish, initializes attributes with the
+        previously scraped information from the previous session. Note that
         your urlFile, self.id, and self.urlNum will need to be updated to where you left off.'''
         # If the program crashed, pick up where you left off (if database functionality was and is still enabled)
         # Note that self.allFeatureNames will autogenerate later on and doesn't need to be initialized upon rerunning
@@ -619,7 +616,7 @@ class scrape(startFishing):
                     self.allErrors.append(exception)
 
     def checkInternet(self, validated=False):
-        '''A function that can optionally be called upon a failed validation to 
+        '''A function that can optionally be called upon a failed validation to
         ensure the program exits upon failure to send a request to google.com. Saves
         computational power and time alike.'''
         if not validated:
@@ -671,7 +668,7 @@ class scrape(startFishing):
                     if self.database:
                         try:
                             self.cursor.execute(
-                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                "INSERT INTO errors (url, error) VALUES (?, ?)",
                                 (url, ", ".join(str(error) for error in self.errors)))
                             self.conn.commit()
                         except Exception:
@@ -687,7 +684,7 @@ class scrape(startFishing):
                     if self.database:
                         try:
                             self.cursor.execute(
-                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                "INSERT INTO errors (url, error) VALUES (?, ?)",
                                 (url, ", ".join(str(error) for error in self.errors)))
                             self.conn.commit()
                         except Exception:
@@ -700,7 +697,7 @@ class scrape(startFishing):
                     if self.database:
                         try:
                             self.cursor.execute(
-                                "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                "INSERT INTO errors (url, error) VALUES (?, ?)",
                                 (url, ", ".join(str(error) for error in self.errors)))
                             self.conn.commit()
                         except Exception:
@@ -717,7 +714,7 @@ class scrape(startFishing):
                                 (url, time, self.classVal))
                             self.conn.commit()
                         except Exception as e:
-                            # In case the url is already in the database, just continuing with the 
+                            # In case the url is already in the database, just continuing with the
                             # main event loop
                             # Code is commented out for ensuring adding the database values
                             # to the current attribute values
@@ -731,7 +728,7 @@ class scrape(startFishing):
                             self.urlNum += 1
                             # self.allErrors.append(self.errors)
                             # self.cursor.execute(
-                            #     "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                            #     "INSERT INTO errors (url, error) VALUES (?, ?)",
                             #     (url, ", ".join(str(error) for error in self.errors)))
                             # self.conn.commit()
                             continue
@@ -739,7 +736,7 @@ class scrape(startFishing):
                         if self.database:
                             try:
                                 self.cursor.execute(
-                                    "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                    "INSERT INTO errors (url, error) VALUES (?, ?)",
                                     (url, ", ".join(str(error) for error in self.errors)))
                             except Exception:
                                 pass
@@ -796,7 +793,7 @@ class scrape(startFishing):
                                 if self.database:
                                     try:
                                         self.cursor.execute(
-                                            "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                            "INSERT INTO errors (url, error) VALUES (?, ?)",
                                             (url, ", ".join(str(error) for error in self.errors)))
                                     except Exception:
                                         pass
@@ -862,7 +859,7 @@ class scrape(startFishing):
                             self.errors.append('analyzerError')
                             try:
                                 self.cursor.execute(
-                                    "INSERT INTO errors (url, error) VALUES (?, ?)", 
+                                    "INSERT INTO errors (url, error) VALUES (?, ?)",
                                     (url, ", ".join(str(error) for error in self.errors)))
                             except Exception:
                                 pass
@@ -912,7 +909,7 @@ class scrape(startFishing):
 
 class pageAnalyzer(analyzer):
     '''A class for scraping page-based features. Note that this code is adapted
-    from the methodology here: 
+    from the methodology here:
     https://www.sciencedirect.com/science/article/abs/pii/S0020025519300763'''
 
     def __init__(self, features=[], featureNames={
@@ -1007,7 +1004,7 @@ class pageAnalyzer(analyzer):
 
         # Initialize feature dictionary
         features = {}
-        
+
         # TODO: I'd like to get rid of this initialization if possible
         # As it leads to temporarily 0 values which could skew the data
         # I'm just not sure how
@@ -1319,7 +1316,7 @@ class pageAnalyzer(analyzer):
                 features.update({'IframeOrFrame':1})
             else:
                 features.update({'IframeOrFrame':0})
-            
+
             for iframe_frame_elem in iframe_frame_elems:
                 try:
                     iframe_frame_style = iframe_frame_elem.get_attribute(
@@ -2156,7 +2153,7 @@ class imageAnalyzer(analyzer):
         self.hashes.append(hashes)
         if not database:
             logging.warning("Hashing without database functionality; previous hashing is not stored unless done manually")
-        else:    
+        else:
             cursor.execute(
                 "INSERT INTO hashes (pHash, dHash, url) VALUES (?, ?, ?)",
                 (str(pHash), str(dHash), url))
