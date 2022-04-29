@@ -134,6 +134,8 @@ legitimate comparison of page and image features.
 
 ## METHODOLOGY
 
+
+
 In regards to a procedure, it is difficult to be specific, as machine learning is an adaptive
 methodology, where one decision induces another, and experimentation is encouraged to obtain
 unique data that may be useful for accurate phishing detection. However, a formulated plan was
@@ -151,21 +153,10 @@ algorithms due to their comparison-based natures) to use visual similarity for i
 based on respective prior hash values. By providing an alternative image-hashing technique, it
 allows the module to be repurposed and utilized for hash-based detection purposes, as well as
 serves to optimize runtime. The researcher determined that a machine learning approach on the
-datasets _Phishing Dataset for Machine Learning: Feature Evaluation_ (originally found at 1 ,
-
-(^1) https://doi.org/10.17632/h3cgnj8hft.
-(^2) https://phishstats.info/
-(^3) https://domcop.com/top-10-million-domains
-(^4) https://github.com/xanmankey/FishingForPhish.git
-(^5) https://github.com/xanmankey/PhishAI.git
-(^6) https://phish-ai.vercel.app/
-(^7) https://pypi.org/project/FishingForPhish/0.3.0/
-(^8) https://fishingforphish.readthedocs.io/en/latest/
-
-
+datasets _Phishing Dataset for Machine Learning: Feature Evaluation_ (originally found at 1,
 consists of 10000 instances and 48 attributes, 5000 legitimate and 5000 phishing), _phish_score.csv_
-(originally found at 2 , the top 500 phishing websites were selected via the provided phish_score
-ranking system), and _top_ten_million.csv_ (originally found at 3 , the top 500 legitimate websites
+(originally found at 2, the top 500 phishing websites were selected via the provided phish_score
+ranking system), and _top_ten_million.csv_ (originally found at 3, the top 500 legitimate websites
 were selected via the Open Page Rank ranking system), with 6 resulting datasets (full and ranked
 feature versions of page-based only, image-based only, and combined feature datasets) would be an
 effective mix of page and image-based data for the context of this research, allowing for
