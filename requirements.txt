@@ -1,0 +1,17 @@
+# These are the MINIMIMUM requirements to run the file standalone (excluding imagemagick, as it is a software installation rather than a python module), but if you are creating a custom analyzer, you may want to install other software.
+beautifulsoup4==4.10.0
+cssutils==2.4.0
+filetype==1.0.10
+ImageHash==4.2.1
+IPy==1.1
+numpy==1.22.3
+Pillow==9.1.0
+pyshorteners==1.0.1
+python_weka_wrapper3==0.2.6
+requests==2.27.1
+selenium==4.1.3
+tldextract==3.2.0
+unshortenit==0.4.0
+urllib3==1.26.8
+validators==0.18.2
+weka==1.0.6

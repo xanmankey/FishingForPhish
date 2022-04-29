@@ -1,0 +1,124 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     imageAnalyzerDataset-weka.filters.unsupervised.attribute.StringToNominal-Rfirst-last_pageAnalyzerDataset-weka.filters.unsupervised.attribute.StringToNominal-Rfirst-last
+Instances:    37
+Attributes:   74
+              numTagsInHtml
+              numTagsInHead
+              numTagsInMain
+              numTagsInBody
+              pctImgTags
+              totalWidth
+              totalHeight
+              IMredMean
+              IMredStdDev
+              IMgreenMean
+              IMgreenStdDev
+              IMblueMean
+              IMblueStdDev
+              IMalphaChannel
+              IMgamma
+              numBoldTags
+              averageFontWeight
+              mostUsedFont
+              averageFontSize
+              numStyles
+              mostUsedStyle
+              pctItalics
+              pctUnderline
+              imageOverlappingTop
+              favicon
+              NumDots
+              SubdomainLevel
+              PathLevel
+              UrlLength
+              NumDash
+              NumDashInHostname
+              AtSymbol
+              TildeSymbol
+              NumUnderscore
+              NumPercent
+              NumQueryComponents
+              NumAmpersand
+              NumHash
+              NumNumericChars
+              NoHttps
+              RandomString
+              IpAddress
+              DomainInSubdomains
+              DomainInPaths
+              HttpsInHostname
+              HostnameLength
+              PathLength
+              QueryLength
+              DoubleSlashInPath
+              NumSensitiveWords
+              EmbeddedBrandName
+              PctExtHyperlinks
+              PctExtResourceUrls
+              ExtFavicon
+              InsecureForms
+              RelativeFormAction
+              ExtFormAction
+              AbnormalFormAction
+              PctNullSelfRedirectHyperlinks
+              FrequentDomainNameMismatch
+              FakeLinkInStatusBar
+              RightClickDisabled
+              PopUpWindow
+              SubmitInfoToEmail
+              IframeOrFrame
+              MissingTitle
+              ImagesOnlyInForm
+              SubdomainLevelRT
+              UrlLengthRT
+              PctExtResourceUrlsRT
+              AbnormalExtFormActionR
+              ExtMetaScriptLinkRT
+              PctExtNullSelfRedirectHyperlinksRT
+              classVal
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+numTagsInBody <= 9: phish (4.0)
+numTagsInBody > 9
+|   averageFontWeight <= 378.4689: phish (2.0)
+|   averageFontWeight > 378.4689: legit (31.0)
+
+Number of Leaves  : 	3
+
+Size of the tree : 	5
+
+
+Time taken to build model: 0.01 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances          32               86.4865 %
+Incorrectly Classified Instances         5               13.5135 %
+Kappa statistic                          0.4669
+Mean absolute error                      0.1389
+Root mean squared error                  0.3604
+Relative absolute error                 48.4384 %
+Root relative squared error             96.607  %
+Total Number of Instances               37     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.935    0.500    0.906      0.935    0.921      0.470    0.895     0.968     legit
+                 0.500    0.065    0.600      0.500    0.545      0.470    0.895     0.500     phish
+Weighted Avg.    0.865    0.429    0.857      0.865    0.860      0.470    0.895     0.892     
+
+=== Confusion Matrix ===
+
+  a  b   <-- classified as
+ 29  2 |  a = legit
+  3  3 |  b = phish
+

@@ -1,0 +1,5 @@
+[build-system]
+# I may need to tweak these values; I built it myself on setuptools 45.2, and haven't
+# done thorough testing for other versions
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
