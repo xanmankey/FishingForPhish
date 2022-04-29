@@ -134,7 +134,16 @@ legitimate comparison of page and image features.
 
 ## METHODOLOGY
 
+| Resources found in Appendix A referenced throughout the paper from this point on
 
+1. https://doi.org/10.17632/h3cgnj8hft.
+2. https://phishstats.info/
+3. https://domcop.com/top-10-million-domains
+4. https://github.com/xanmankey/FishingForPhish.git
+5. https://github.com/xanmankey/PhishAI.git
+6. https://phish-ai.vercel.app/
+7. https://pypi.org/project/FishingForPhish/0.3.0/
+8. https://fishingforphish.readthedocs.io/en/latest/
 
 In regards to a procedure, it is difficult to be specific, as machine learning is an adaptive
 methodology, where one decision induces another, and experimentation is encouraged to obtain
