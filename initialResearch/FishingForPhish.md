@@ -288,31 +288,33 @@ below, with the figure index corresponding with the set of features and related 
 
 
 <ins>Figure 5.1: Ranked image feature data</ins>
-**Ranking Feature
-1 mostUsedFont
-2 averageFontSize
-3 numBoldTags
-4 favicon
-5 numTagsInMain
-6 pctImgTags
-7 IMgreenMean
-8 IMredMean
-9 pctUnderline
-10 IMblueStdDev**
+| Ranking | Feature |
+| ------- | ------- |
+| 1       |  mostUsedFont |
+| 2       |  averageFontSize |
+| 3       |  numBoldTags |
+| 4       |  favicon |
+| 5       |  numTagsInMain |
+| 6       |  pctImgTags |
+| 7       |  IMgreenMean |
+| 8       |  IMredMean |
+| 9       |  pctUnderline |
+| 10      |  IMblueStdDev |
 
 
 <ins>Figure 6.1: Combined ranked feature data</ins>
-**Ranking Feature
-1 averageFontSize
-2 mostUsedFont
-3 numBoldTags
-4 NumDots
-5 PathLevel
-6 mostUsedStyle
-7 favicon
-8 UrlLength
-9 pctUnderline
-10 totalHeight**
+| Ranking | Feature |
+| ------- | ------- |
+| 1       |  averageFontSize |
+| 2       |  mostUsedFont |
+| 3       |  numBoldTags |
+| 4       |  NumDots |
+| 5       |  PathLevel |
+| 6       |  mostUsedStyle |
+| 7       |  favicon |
+| 8       |  UrlLength |
+| 9       |  pctUnderline |
+| 10      |  totalHeight |
 
 Furthermore, classification data for the page, image, and ranked data can be found in the
 appendix in 3 sets of figures: 4.2, 4.3, 4.4, 5.2, 5.3, 5.4, and 6.2, 6.3, 6.4 respectively. For the full
@@ -604,17 +606,18 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 
 <ins>Figure 4.1: Ranked page feature data</ins>
 
-**Ranking Feature
-1 ExtMetaScriptLinkRT
-2 PctExtNullSelfRedirectHyperlinksRT
-3 NumNumericChars
-4 PathLength
-5 PathLevel
-6 NumAmpersand
-7 RandomString
-8 NumQueryComponents
-9 UrlLength
-10 HostnameLength**
+| Ranking | Feature |
+| ------- | ------- |
+| 1       |  ExtMetaScriptLinkRT |
+| 2       |  PctExtNullSelfRedirectHyperlinksRT |
+| 3       |  NumNumericChars |
+| 4       |  PathLength |
+| 5       |  PathLevel |
+| 6       |  NumAmpersand |
+| 7       |  RandomString |
+| 8       |  NumQueryComponents |
+| 9       |  UrlLength |
+| 10      |  HostnameLength |
 
 
 ![Figure 4.2: J48 model output (all page features)](output/J48Page)
@@ -628,17 +631,18 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 
 <ins>Figure 5.1: Ranked image feature data</ins>
 
-**Ranking Feature
-1 mostUsedFont
-2 averageFontSize
-3 numBoldTags
-4 favicon
-5 numTagsInMain
-6 pctImgTags
-7 IMgreenMean
-8 IMredMean
-9 pctUnderline
-10 IMblueStdDev**
+| Ranking | Feature |
+| ------- | ------- |
+| 1       |  mostUsedFont |
+| 2       |  averageFontSize |
+| 3       |  numBoldTags |
+| 4       |  favicon |
+| 5       |  numTagsInMain |
+| 6       |  pctImgTags |
+| 7       |  IMgreenMean |
+| 8       |  IMredMean |
+| 9       |  pctUnderline |
+| 10      |  IMblueStdDev |
 
 
 ![Figure 5.2: J48 model output (all image features)](output/J48Image)
@@ -651,17 +655,18 @@ learning approach. Security and Privacy. https://doi.org/10.1002/spy2.120
 
 <ins>Figure 6.1: Combined ranked feature data</ins>
 
-**Ranking Feature
-1 averageFontSize
-2 mostUsedFont
-3 numBoldTags
-4 NumDots
-5 PathLevel
-6 mostUsedStyle
-7 favicon
-8 UrlLength
-9 pctUnderline
-10 totalHeight**
+| Ranking | Feature |
+| ------- | ------- |
+| 1       |  averageFontSize |
+| 2       |  mostUsedFont |
+| 3       |  numBoldTags |
+| 4       |  NumDots |
+| 5       |  PathLevel |
+| 6       |  mostUsedStyle |
+| 7       |  favicon |
+| 8       |  UrlLength |
+| 9       |  pctUnderline |
+| 10      |  totalHeight |
 
 
 ![Figure 6.2: J48 model output (all features)](output/J48Combined)
