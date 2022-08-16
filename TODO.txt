@@ -1,0 +1,2 @@
+Completely refactor code (scipy, or maybe tensorflow. Move away from java development)
+Add testing
