@@ -146,10 +146,11 @@ class startFishing():
     #     self.jvmToggle = True
 
     ## I'll need to slightly alter this method (as is the case for a lot of the methods)
-    def initializeAll(self, jvmOptions=["system_cp", "packages"]):
+    def initializeAll(self):
         '''A joint method that calls all the initialize methods (except for initializeBS). Packages
         are enabled, related resources are installed, and excessive warnings are limited.'''
-        options = [option for option in jvmOptions]
+        # Not sure about scikit-learn options yet
+        # options = [option for option in jvmOptions]
         requests.packages.urllib3.disable_warnings(
             category=InsecureRequestWarning)
         cssutils.log.setLevel(logging.CRITICAL)
