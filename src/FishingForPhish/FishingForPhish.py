@@ -54,7 +54,6 @@ import imagehash
 import copy
 from math import isnan
 
-
 class startFishing():
     '''A class for initializing Selenium, Beautiful Soup, and the project filesystem'''
 
@@ -66,6 +65,7 @@ class startFishing():
         objects respectively'''
         super().__init__(**kwargs)
         self.dataDir = dataDir
+        self.addonDir = dataDir + '/addons'
         self.driver = driver
         if not os.path.isdir(self.dataDir):
             if self.dataDir == "data":
@@ -87,7 +87,7 @@ class startFishing():
                 allow_redirects=True)
             # note that rsplit splits a string from the back
             open(
-                self.dataDir +
+                self.dataDir + '/addons/' +
                 url.rsplit('/', 1)[1],
                 'wb').write(
                 addon.content)
@@ -103,7 +103,7 @@ class startFishing():
         #     no_cookies.content))
 
     ## This is fine, unless I want to look into more selenium add_ons
-    def initializeSelenium(self, addons=None):
+    def initializeSelenium(self, addons=True):
         '''Initializes Selenium with any add_ons that are passed to the method'''
         options = FirefoxOptions()
         options.add_argument("--headless")
