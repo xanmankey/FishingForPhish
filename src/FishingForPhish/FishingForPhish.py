@@ -79,16 +79,17 @@ class startFishing():
 
     ## Because I want to refactor without python weka wrapper
     ## I'll need to find an alternative to these resources
-    def installResources(self, addons=[]):
+    def installResources(self, addons=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi']):
         '''Install Selenium Firefox addons'''
-        wayback_machine = requests.get(
-            'https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi',
-            allow_redirects=True)
-        open(
-            self.dataDir +
-            '/wayback_machine-3.0-fx.xpi',
-            'wb').write(
-            wayback_machine.content)
+        for addon in addons:
+            wayback_machine = requests.get(
+                'https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi',
+                allow_redirects=True)
+            open(
+                self.dataDir +
+                '/wayback_machine-3.0-fx.xpi',
+                'wb').write(
+                wayback_machine.content)
         # Another possible add_on would be a popup blocker (one is found below),
         # although not used for the purposes of this research to get representative
         # screenshots of what the average user might be seeing
