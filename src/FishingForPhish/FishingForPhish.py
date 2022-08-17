@@ -21,6 +21,7 @@ from sklearn import feature_selection
 # Not sure if you can create datasets using sklearn (I might want to load them instead)
 # I think maybe I'll use pandas instead
 import pandas as pd
+import numpy as np
 # for graphing
 from matplotlib import pyplot as plt
 from matplotlib import style
