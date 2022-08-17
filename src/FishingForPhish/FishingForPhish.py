@@ -103,7 +103,7 @@ class startFishing():
         #     no_cookies.content))
 
     ## This is fine, unless I want to look into more selenium add_ons
-    def initializeSelenium(self, add_ons=None):
+    def initializeSelenium(self, addons=None):
         '''Initializes Selenium with any add_ons that are passed to the method'''
         options = FirefoxOptions()
         options.add_argument("--headless")
@@ -122,13 +122,13 @@ class startFishing():
         options.set_preference("Browser.cache.disk.enable", False)
         options.set_preference("browser.privatebrowsing.autostart", True)
         driver = webdriver.Firefox(options=options)
-        if add_ons:
-            for add_on in add_ons:
-                if add_on[len(add_on) - 4:len(add_on)].upper() == ".XPI":
+        if addons:
+            for addon in addons:
+                if addon[len(addon) - 4:len(addon)].upper() == ".XPI":
                     try:
-                        driver.install_addon(os.path.abspath(self.dataDir + add_on), temporary=True)
+                        driver.install_addon(os.path.abspath(self.dataDir + addon), temporary=True)
                     except Exception:
-                        logging.warning(" " + self.dataDir + add_on + " is not a valid Firefox addon!")
+                        logging.warning(" " + self.dataDir + addon + " is not a valid Firefox addon!")
                         continue
         self.driver = driver
         self.driver.implicitly_wait(20)
