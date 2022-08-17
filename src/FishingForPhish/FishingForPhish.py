@@ -87,7 +87,7 @@ class startFishing():
                 allow_redirects=True)
             # note that rsplit splits a string from the back
             open(
-                self.dataDir + '/addons/' +
+                self.addonDir +
                 url.rsplit('/', 1)[1],
                 'wb').write(
                 addon.content)
@@ -123,12 +123,13 @@ class startFishing():
         options.set_preference("browser.privatebrowsing.autostart", True)
         driver = webdriver.Firefox(options=options)
         if addons:
-            for addon in addons:
+            for addon in os.listdir(self.addonDir):
                 if addon[len(addon) - 4:len(addon)].upper() == ".XPI":
                     try:
                         driver.install_addon(os.path.abspath(self.dataDir + addon), temporary=True)
+                        logging.info(addon + "was added on!")
                     except Exception:
-                        logging.warning(" " + self.dataDir + addon + " is not a valid Firefox addon!")
+                        logging.warning(" " + self.addonDir + addon + " is not a valid Firefox addon!")
                         continue
         self.driver = driver
         self.driver.implicitly_wait(20)
