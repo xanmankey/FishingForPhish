@@ -18,7 +18,7 @@ from selenium.webdriver.support import expected_conditions
 
 # scikit-learn
 from sklearn import feature_selection
-# Not sure if you can create datasets using sklearn (I tend to )
+# Not sure if you can create datasets using sklearn (I tend to load)
 from sklearn import datasets
 # for graphing
 from matplotlib import pyplot as plt
