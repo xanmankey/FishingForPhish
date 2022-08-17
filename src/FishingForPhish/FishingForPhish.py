@@ -7,6 +7,7 @@
 ## The goal is to get a stable release and easily usable API that I can use for my release of PhishAI
 ## I also need an alternative for graphing and data visualization (matplotlib?)
 
+# For scraping
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -14,14 +15,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions
+
 # scikit-learn
 from sklearn import feature_selection
-from sklearn import 
-
-# Optionally, for graphing purposes, pygraphviz and PIL can be installed and the
-# weka.plot.graph class can be imported
-# Check the installation process here for more details:
-# https://fracpete.github.io/python-weka-wrapper3/install.html
+# for creating datasets
+from sklearn.datasets import make_blobs
+# for graphing
+from matplotlib import pyplot as plt
+from matplotlib import style
+# utility libs
 import time
 import pyshorteners
 from unshortenit import UnshortenIt
