@@ -266,11 +266,15 @@ class scrape(startFishing):
                 """urlFile needs to be a path to a file with urls!""")
         else:
             with open(self.urlFile, "r") as f:
+                numUrls = 0
                 for line in f:
                     url = line.strip()
                     if not validators.url(url):
                         raise ValueError(
                             """Sorry, are you sure urlFile contains valid urls?""")
+                numUrls += 1
+            # pre-allocate memory for a numpy array?
+
         # INFO: I haven't had the time to test running the program with a standalone
         # screenshotDir, cssDir, or htmlDir as of right now
         if self.screenshotDir:
@@ -344,6 +348,10 @@ class scrape(startFishing):
                 for creation in tables.values():
                     self.cursor.execute(creation)
                 self.conn.commit()
+
+    def preallocate():
+        '''Preallocate memory for a numpy array and pandas dataframe.
+        Data wi'''
 
     def closeSelenium(self):
         '''Closes and quits Selenium using the Selenium.close() and Selenium.quit() methods.
