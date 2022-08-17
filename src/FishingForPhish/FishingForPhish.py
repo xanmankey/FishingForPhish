@@ -89,7 +89,7 @@ class startFishing():
                 self.dataDir +
                 '/wayback_machine-3.0-fx.xpi',
                 'wb').write(
-                wayback_machine.content)
+                addon.content)
         # Another possible add_on would be a popup blocker (one is found below),
         # although not used for the purposes of this research to get representative
         # screenshots of what the average user might be seeing
