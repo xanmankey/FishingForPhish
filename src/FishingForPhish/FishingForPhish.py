@@ -18,8 +18,8 @@ from selenium.webdriver.support import expected_conditions
 
 # scikit-learn
 from sklearn import feature_selection
-# for creating datasets
-from sklearn.datasets import make_blobs
+# for creating datasets ()
+from sklearn import datasets
 # for graphing
 from matplotlib import pyplot as plt
 from matplotlib import style
