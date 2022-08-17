@@ -164,6 +164,7 @@ class startFishing():
 
 
 # The analyzer base class
+## 
 class analyzer():
     '''A base class for adding analyzers to analyze scraped values which can be called during the url
     processing step (the goFish method). See the analyze shell function for more information.
