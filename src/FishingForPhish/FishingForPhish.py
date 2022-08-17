@@ -85,9 +85,10 @@ class startFishing():
             addon = requests.get(
                 url,
                 allow_redirects=True)
+            # note that rsplit splits a string from the back
             open(
                 self.dataDir +
-                '/wayback_machine-3.0-fx.xpi',
+                url.rsplit(),
                 'wb').write(
                 addon.content)
         # Another possible add_on would be a popup blocker (one is found below),
