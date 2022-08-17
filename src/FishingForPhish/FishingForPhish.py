@@ -88,7 +88,7 @@ class startFishing():
             # note that rsplit splits a string from the back
             open(
                 self.dataDir +
-                url.rsplit(),
+                url.rsplit('/', 1)[1],
                 'wb').write(
                 addon.content)
         # Another possible add_on would be a popup blocker (one is found below),
