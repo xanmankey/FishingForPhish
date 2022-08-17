@@ -218,8 +218,8 @@ class scrape(startFishing):
             screenshotDir=None,
             htmlDir=None,
             cssDir=None,
-            cursor=None,
-            conn=None,
+            # dataframe=None,
+            # numpyArray=None,
             urlNum=1,
             id=1,
             classVal=Instance.missing_value(),
@@ -248,8 +248,8 @@ class scrape(startFishing):
         self.htmlDir = htmlDir
         self.cssDir = cssDir
         self.database = database
-        self.conn = conn
-        self.cursor = cursor
+        # self.conn = conn
+        # self.cursor = cursor
         self.classVal = classVal
         # Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
         self.id = id
