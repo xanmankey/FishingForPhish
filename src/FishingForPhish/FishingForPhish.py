@@ -67,8 +67,6 @@ class startFishing():
         super().__init__(**kwargs)
         self.dataDir = dataDir
         self.driver = driver
-        ## Get rid of the jvm
-        self.jvmToggle = jvmToggle
         if not os.path.isdir(self.dataDir):
             if self.dataDir == "data":
                 os.mkdir("data")
@@ -81,15 +79,8 @@ class startFishing():
 
     ## Because I want to refactor without python weka wrapper
     ## I'll need to find an alternative to these resources
-    def installResources(self):
-        '''Installs the chiSquaredAttributeEval package (a Feature Selection method),
-        the SMOTE oversampler, and the Wayback Machine Firefox add_on
-        (the resources I used for this project that required download)'''
-        if not self.jvmToggle:
-            logging.warning(" Are you sure the jvm has been activated?")
-        else:
-            packages.install_package('chiSquaredAttributeEval')
-            packages.install_package('SMOTE')
+    def installResources(self, addons=[]):
+        '''Install Selenium Firefox addons'''
         wayback_machine = requests.get(
             'https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi',
             allow_redirects=True)
@@ -458,7 +449,7 @@ class scrape(startFishing):
                 self.errors.append(e)
                 return False
         return True
-    
+
     def saveScreenshot(self, url, filename, validated=False):
         '''Method for saving a screenshot of the full website. Scrolls the page (if possible) to get
         the height and width of a website. A minimum height and width of 10000 (unlikely to ever
