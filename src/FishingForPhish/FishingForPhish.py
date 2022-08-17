@@ -136,6 +136,7 @@ class startFishing():
         self.driver.implicitly_wait(20)
 
     # ## Alter this to work with scikit-learn or tensorflow
+    # ## I don't believe scikit
     # def initializePWW3(self, jvmOptions):
     #     '''Starts jvm using a list of optional parameters'''
     #     if self.jvmToggle:
@@ -154,9 +155,9 @@ class startFishing():
         requests.packages.urllib3.disable_warnings(
             category=InsecureRequestWarning)
         cssutils.log.setLevel(logging.CRITICAL)
-        if "packages" not in options:
-            logging.warning(" Are you sure you want to run jvm without package support?")
-        self.initializePWW3(options)
+        # if "packages" not in options:
+        #     logging.warning(" Are you sure you want to run jvm without package support?")
+        # self.initializePWW3(options)
         self.installResources()
         options = [addon for addon in os.listdir(self.addonDir)]
         self.initializeSelenium(options)
