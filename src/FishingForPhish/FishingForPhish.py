@@ -1,5 +1,12 @@
 # FishingForPhish.py: contains the major classes, functions, and objects
 # I used throughout this research
+
+## Using double comments to indicate refactoring notes and plans
+## My first goal is to reimplement my code using scikit-learn
+## (no drastic refactoring changes). Then, I plan on looking into optimization and edge cases.
+## The goal is to get a stable release and easily usable API that I can use for my release of PhishAI
+## I also need an alternative for graphing and data visualization (matplotlib?)
+
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
@@ -7,18 +14,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions
-import weka.core.jvm as jvm
-from weka.core.dataset import Attribute, Instance, Instances
-from weka.core.converters import Saver
-from weka.filters import Filter
-import weka.core.packages as packages
-from weka.attribute_selection import ASSearch, ASEvaluation, AttributeSelection
-from weka.classifiers import Classifier
+# scikit-learn
+
+
 # Optionally, for graphing purposes, pygraphviz and PIL can be installed and the
 # weka.plot.graph class can be imported
 # Check the installation process here for more details:
 # https://fracpete.github.io/python-weka-wrapper3/install.html
-import weka.plot.graph as graph
 import time
 import pyshorteners
 from unshortenit import UnshortenIt
@@ -61,6 +63,7 @@ class startFishing():
         super().__init__(**kwargs)
         self.dataDir = dataDir
         self.driver = driver
+        ## Get rid of the jvm
         self.jvmToggle = jvmToggle
         if not os.path.isdir(self.dataDir):
             if self.dataDir == "data":
@@ -72,6 +75,8 @@ class startFishing():
             if not os.path.isdir(subdir):
                 os.mkdir(subdir)
 
+    ## Because I want to refactor without python weka wrapper
+    ## I'll need to find an alternative to these resources
     def installResources(self):
         '''Installs the chiSquaredAttributeEval package (a Feature Selection method),
         the SMOTE oversampler, and the Wayback Machine Firefox add_on
@@ -100,6 +105,7 @@ class startFishing():
         #     'wb').write(
         #     no_cookies.content))
 
+    ## This is fine, unless I want to look into more selenium add_ons
     def initializeSelenium(self, add_ons=None):
         '''Initializes Selenium with any add_ons that are passed to the method'''
         options = FirefoxOptions()
@@ -128,6 +134,7 @@ class startFishing():
         self.driver = driver
         self.driver.implicitly_wait(20)
 
+    ## Alter this to work with scikit-learn or tensorflow
     def initializePWW3(self, jvmOptions):
         '''Starts jvm using a list of optional parameters'''
         if self.jvmToggle:
@@ -137,6 +144,7 @@ class startFishing():
         jvm.start(option for option in jvmOptions)
         self.jvmToggle = True
 
+    ## I'll need to slightly alter this method (as is the case for a lot of the methods)
     def initializeAll(self, jvmOptions=["system_cp", "packages"], add_ons=['/wayback_machine-3.0-fx.xpi']):
         '''A joint method that calls all the initialize methods (except for initializeBS). Packages
         are enabled, related resources are installed, and excessive warnings are limited.'''
@@ -191,6 +199,9 @@ class analyzer():
 # rather the variables are passed as arguments into the analyzers
 # and the analyzers return the respective features and feature names
 # which are then used in the data class which inherits from the scrape class
+
+## The scrape class doesn't need to be refactored (except for optimization and edge cases)
+## I would like to try and cut tinyurl functionality however and have a seperate table of urls
 class scrape(startFishing):
     '''A class (inheriting from initialize) that defines useful scrape objects and methods'''
 
@@ -907,6 +918,8 @@ class scrape(startFishing):
                 self.urlNum += 1
 
 
+## I might want to 're-analyze' this class (There's definitely room for optimization,
+## and I remember not understanding all of it)
 class pageAnalyzer(analyzer):
     '''A class for scraping page-based features. Note that this code is adapted
     from the methodology here:
@@ -1980,6 +1993,10 @@ class pageAnalyzer(analyzer):
         return resources
 
 
+## I'm pretty happy with the imageAnalyzer class; it's fairly self-explanatory, although
+## I imagine I could do more (I want to add more dynamism to this library; the most optimized
+## parts should be the creation of the webdriver and the autogeneration of the data; it should be
+## simple to create more analyzers)
 class imageAnalyzer(analyzer):
     '''A class for scraping image-based features'''
 
@@ -2377,6 +2394,9 @@ class imageAnalyzer(analyzer):
 # classify():
 # After refactoring, I might also try to build some tests (if it makes sense to test my code)
 # I'll build the tests off the examples
+
+## This is the class that is going to need to get drastically refactored
+## This is also the class I'm going to look at and optimize first
 class saveFish(scrape):
     '''A function to combine the results, specifically using python weka wrapper 3
     to create .arff datasets that can be used for machine learning purposes'''
@@ -2423,6 +2443,8 @@ class saveFish(scrape):
         self.graph = graphVal
 
     # Comparing attributes from ranker Feature Selection methods
+
+    ## Feature selection with Scikit-learn?
     def FS(self):
         '''The feature selection process used; the correlational, information gain, and chiSquared
         ranked feature selection methods are run and stored in arrays, of which the index values are
@@ -2508,6 +2530,7 @@ class saveFish(scrape):
             attributes.append(sorted(ranked, key=ranked.get))
         return attributes
 
+    ## Oversampling with scikit-learn??
     def generateInstances(self):
         '''Uses the SMOTE weka filter to oversample the minority class. 2 optional parameters
         default to True, ranked and full, each of which represent the dataset that you want
@@ -2601,6 +2624,7 @@ class saveFish(scrape):
                 else:
                     continue
 
+    ## Saving and safely closing w/ scikit-learn
     def closePWW3(self, save=True):
         '''A function that saves all the altered datasets in dataDir/datasets/(dataset) and
         closes jvm. There are 6 predefined arguments, each of which True, representing the
@@ -2616,6 +2640,7 @@ class saveFish(scrape):
         jvm.stop()
 
     # Returns a list of all the dataset attributes
+    ## Creating datasets with scikit-learn??
     def attributeCreation(self, featureNames, class1="legit", class2="phish"):
         '''A convenience function to create the attributes
         for a specific dataset based off of the featureName
@@ -2637,6 +2662,7 @@ class saveFish(scrape):
 
     # The classify_instance pww3 method ALSO generates predictions if the value is a missing instance
     # All output data is stored in the classifications dictionary
+    ## Classification with scikit-learn??
     def classify(self):
         '''A function that classifies the resulting datasets
         from the data creation process.'''
@@ -2704,6 +2730,7 @@ class saveFish(scrape):
                 except Exception:
                     continue
 
+    ## Again, creating datasets with scikit-learn??
     def createDatasets(self):
         '''A function that creates the initial datasets for feature selection. 2 particular arrays
         are defined, imageAttNames and pageAttNames, which contain the attribute type and name for

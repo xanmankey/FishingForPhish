@@ -1,2 +1,30 @@
-Completely refactor code (scipy, or maybe tensorflow. Move away from java development)
+GOALS
+Completely refactor code (scipy, or maybe tensorflow. Move away from java development) with a focus on optimization (numpy, pandas?),
+readability, and ease of use. Basically, the goal is to simplify it by building it off of the simpler scikit-learn API.
 Add testing
+
+COMPLETED
+Made notes about classes (and some individual functions) for what needs to be, could be, or should be refactored
+
+TODO
+Look into scikit-learn functionality (to see if refactoring is feasible) based on comments
+Attempt to refactor the SaveFish class
+If it works, adapt the StartFish class accordingly
+Look into general optimizations (especially with my non-optimizer classes; those are the heart of the library)
+
+RESOURCES
+https://scikit-learn.org/
+
+
+NOTES
+FEATURE SELECTION (https://scikit-learn.org/stable/modules/feature_selection.html)
+
+
+SAMPLING (https://machinelearningmastery.com/random-oversampling-and-undersampling-for-imbalanced-classification/)
+
+
+DATASETS (https://scikit-learn.org/stable/datasets/sample_generators.html)
+
+It seems like all of this is possible with scikit-learn; now I want to figure out a better way to handle Selenium errors
+I think perhaps instead of handling Selenium errors, what if I only accepted websites w/ ACTIVE return values?
+(an active return value is defined here: https://github.com/mitchellkrogza/Phishing.Database)
