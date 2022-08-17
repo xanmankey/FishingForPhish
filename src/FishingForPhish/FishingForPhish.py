@@ -351,7 +351,9 @@ class scrape(startFishing):
 
     def preallocate():
         '''Preallocate memory for a numpy array and pandas dataframe.
-        Data wi'''
+        Data will eventually be written to storage, but it's a lot faster
+        to work in memory and THEN write to storage after the fact.
+        '''
 
     def closeSelenium(self):
         '''Closes and quits Selenium using the Selenium.close() and Selenium.quit() methods.
