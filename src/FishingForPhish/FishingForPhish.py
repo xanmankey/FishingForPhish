@@ -136,7 +136,7 @@ class startFishing():
         self.driver.implicitly_wait(20)
 
     # ## Alter this to work with scikit-learn or tensorflow
-    # ## I don't believe scikit
+    # ## I don't believe scikitLearn requires any initialization (unlike the JVM)
     # def initializePWW3(self, jvmOptions):
     #     '''Starts jvm using a list of optional parameters'''
     #     if self.jvmToggle:
