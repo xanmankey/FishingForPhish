@@ -79,11 +79,11 @@ class startFishing():
 
     ## Because I want to refactor without python weka wrapper
     ## I'll need to find an alternative to these resources
-    def installResources(self, addons=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi']):
+    def installResources(self, addon_urls=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi']):
         '''Install Selenium Firefox addons'''
-        for addon in addons:
-            wayback_machine = requests.get(
-                'https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi',
+        for url in addon_urls:
+            addon = requests.get(
+                url,
                 allow_redirects=True)
             open(
                 self.dataDir +
