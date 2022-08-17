@@ -109,7 +109,8 @@ class startFishing():
         options.add_argument("--headless")
         options.add_argument('--hide-scrollbars')
         options.add_argument('--disable-gpu')
-        # In terms of security, a VPN and a VM is recommended.
+        # In terms of security, a VPN and a VM is recommended
+        # (but not necessary; Selenium + Firefox handles private browsing by default)
         # Additionally, cookies, session, and cache data are disabled
         # using Firefox preferences (found below)
         # http://kb.mozillazine.org/index.php?title=Category:Preferences&until=Places.frecency.unvisitedTypedBonus
@@ -119,6 +120,7 @@ class startFishing():
         options.set_preference("network.cookie.cookieBehavior", 2)
         options.set_preference("Browser.sessionstore.privacy", 2)
         options.set_preference("Browser.cache.disk.enable", False)
+        options.set_preference("browser.privatebrowsing.autostart", True)
         driver = webdriver.Firefox(options=options)
         if add_ons:
             for add_on in add_ons:
