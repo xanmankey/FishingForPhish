@@ -206,7 +206,7 @@ class analyzer():
 ## The scrape class doesn't need to be refactored (except for optimization and edge cases)
 ## I would like to try and cut tinyurl functionality however and have a seperate table of urls
 ## I also might want to replace the dataset functionality with something a little similar
-## (namely, pandas functionality, and then write pandas to a database)
+## (namely, pandas functionality, and then write pandas to a database later)
 class scrape(startFishing):
     '''A class (inheriting from initialize) that defines useful scrape objects and methods'''
 
