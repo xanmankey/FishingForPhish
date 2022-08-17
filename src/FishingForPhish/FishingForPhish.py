@@ -57,7 +57,7 @@ from math import isnan
 class startFishing():
     '''A class for initializing Selenium, Beautiful Soup, and the project filesystem'''
 
-    def __init__(self, dataDir="data", driver=None, jvmToggle=False, **kwargs):
+    def __init__(self, dataDir="data", driver=None, **kwargs):
         '''Defines the dataDir, driver, and BS attributes, where dataDir is the home directory
         containing a screenshots directory for screenshots, an html directory for html,
         a css directory for css, and a datasets directory for datasets, and the driver and
@@ -135,15 +135,15 @@ class startFishing():
         self.driver = driver
         self.driver.implicitly_wait(20)
 
-    ## Alter this to work with scikit-learn or tensorflow
-    def initializePWW3(self, jvmOptions):
-        '''Starts jvm using a list of optional parameters'''
-        if self.jvmToggle:
-            logging.warning(""" Have you already started the jvm? Remember that you can't
-            stop and then start it again mid-execution!""")
-            return
-        jvm.start(option for option in jvmOptions)
-        self.jvmToggle = True
+    # ## Alter this to work with scikit-learn or tensorflow
+    # def initializePWW3(self, jvmOptions):
+    #     '''Starts jvm using a list of optional parameters'''
+    #     if self.jvmToggle:
+    #         logging.warning(""" Have you already started the jvm? Remember that you can't
+    #         stop and then start it again mid-execution!""")
+    #         return
+    #     jvm.start(option for option in jvmOptions)
+    #     self.jvmToggle = True
 
     ## I'll need to slightly alter this method (as is the case for a lot of the methods)
     def initializeAll(self, jvmOptions=["system_cp", "packages"]):
