@@ -11,6 +11,7 @@ Look into scikit-learn functionality (to see if refactoring is feasible) based o
 Attempt to refactor the SaveFish class
 If it works, adapt the StartFish class accordingly
 Look into general optimizations (especially with my non-optimizer classes; those are the heart of the library)
+Look into preallocation based on the number of urls (for optimization sake; numpy )
 
 RESOURCES
 https://scikit-learn.org/
