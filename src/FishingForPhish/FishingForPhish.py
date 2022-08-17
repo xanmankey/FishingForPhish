@@ -458,7 +458,7 @@ class scrape(startFishing):
                 self.errors.append(e)
                 return False
         return True
-
+    
     def saveScreenshot(self, url, filename, validated=False):
         '''Method for saving a screenshot of the full website. Scrolls the page (if possible) to get
         the height and width of a website. A minimum height and width of 10000 (unlikely to ever
