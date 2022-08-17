@@ -349,11 +349,13 @@ class scrape(startFishing):
                     self.cursor.execute(creation)
                 self.conn.commit()
 
-    def preallocate():
+    def preallocate(length):
         '''Preallocate memory for a numpy array and pandas dataframe.
         Data will eventually be written to storage, but it's a lot faster
         to work in memory and THEN write to storage after the fact.
         '''
+        # self.numpyArray = np.empty(length)
+        # I need to figure out 
 
     def closeSelenium(self):
         '''Closes and quits Selenium using the Selenium.close() and Selenium.quit() methods.
