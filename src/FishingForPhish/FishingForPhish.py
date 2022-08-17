@@ -66,6 +66,7 @@ class startFishing():
         super().__init__(**kwargs)
         self.dataDir = dataDir
         self.addonDir = dataDir + '/addons'
+        self.addonUrls = ['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi']
         self.driver = driver
         if not os.path.isdir(self.dataDir):
             if self.dataDir == "data":
@@ -79,9 +80,9 @@ class startFishing():
 
     ## Because I want to refactor without python weka wrapper
     ## I'll need to find an alternative to these resources
-    def installResources(self, addon_urls=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi']):
+    def installResources(self):
         '''Install Selenium Firefox addons'''
-        for url in addon_urls:
+        for url in self.addon_urls:
             addon = requests.get(
                 url,
                 allow_redirects=True)
@@ -145,7 +146,7 @@ class startFishing():
         self.jvmToggle = True
 
     ## I'll need to slightly alter this method (as is the case for a lot of the methods)
-    def initializeAll(self, jvmOptions=["system_cp", "packages"], add_ons=['/wayback_machine-3.0-fx.xpi']):
+    def initializeAll(self, jvmOptions=["system_cp", "packages"]):
         '''A joint method that calls all the initialize methods (except for initializeBS). Packages
         are enabled, related resources are installed, and excessive warnings are limited.'''
         options = [option for option in jvmOptions]
@@ -156,7 +157,7 @@ class startFishing():
             logging.warning(" Are you sure you want to run jvm without package support?")
         self.initializePWW3(options)
         self.installResources()
-        options = [add_on for add_on in add_ons]
+        options = [addon for addon in os.listdir(self.addonDir)]
         self.initializeSelenium(options)
 
 
