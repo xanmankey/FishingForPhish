@@ -21,13 +21,14 @@ Background: https://scikit-learn.org/stable/tutorial/basic/tutorial.html
 FEATURE SELECTION (https://scikit-learn.org/stable/modules/feature_selection.html)
 
 
-SAMPLING (https://machinelearningmastery.com/random-oversampling-and-undersampling-for-imbalanced-classification/)
+SAMPLING (https://machinelearningmastery.com/random-oversampling-and-undersampling-for-imbalanced-classification/) + PREPROCESSING
+
 
 
 DATASETS (https://scikit-learn.org/stable/datasets/sample_generators.html)
 
 
-CLASSIFICATION
+CLASSIFICATION + REGRESSION
 I'm pigeon-holing a lot of the settings; I want to incorporate my API with scikit-learns to allow for as MUCH dynamism as possible.
 
 It seems like all of this is possible with scikit-learn; now I want to figure out a better way to handle Selenium errors
