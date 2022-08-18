@@ -262,7 +262,7 @@ class scrape(startFishing):
         super().__init__(**kwargs)
         self.urlFile = urlFile
         self.urlNum = urlNum
-        # Still need to find a way to have analyzers as an attribute, rather than a global variable
+        ## Still need to find a way to have analyzers as an attribute, rather than a global variable
         self.screenshotDir = screenshotDir
         self.htmlDir = htmlDir
         self.cssDir = cssDir
@@ -270,7 +270,7 @@ class scrape(startFishing):
         self.conn = conn
         self.cursor = cursor
         self.classVal = classVal
-        # Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
+        ## Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
         self.id = id
         self.BS = None
         self.analyzers = []
