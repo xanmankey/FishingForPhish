@@ -302,6 +302,7 @@ class scrape(startFishing):
             if not os.path.isdir(self.screenshotDir):
                 raise FileNotFoundError(
                     """screenshotDir needs to be a path to a directory with screenshots!""")
+            ## What's the most optimal way to handle this? I'm trying to think in an optimization-oriented way
             if not all(is_image(file) for file in os.listdir(self.screenshotDir)):
                 raise ValueError(
                     """Are you sure all the files in your screenshot directory are images?""")
