@@ -39,7 +39,6 @@ import os
 import sys
 from filetype import is_image
 ## Replaced sqlite3 with postgres (the PyPi module is well-abstracted anyway)
-# import sqlite3
 from postgres import Postgres
 import cssutils
 import logging
