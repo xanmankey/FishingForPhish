@@ -64,7 +64,7 @@ from .newPage import PageAnalyzer
 class startFishing():
     '''A class for initializing Selenium, Beautiful Soup, and the project filesystem'''
 
-    def __init__(self, dataDir="data", driver=None, **kwargs):
+    def __init__(self, dataDir="data", driver=None, addons=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi'], **kwargs):
         '''Defines the dataDir, driver, and BS attributes, where dataDir is the home directory
         containing a screenshots directory for screenshots, an html directory for html,
         a css directory for css, and a datasets directory for datasets, and the driver and
@@ -73,7 +73,8 @@ class startFishing():
         super().__init__(**kwargs)
         self.dataDir = dataDir
         self.addonDir = dataDir + '/addons'
-        self.addonUrls = ['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi']
+        # Add more
+        self.addonUrls = addons
         self.driver = driver
         if not os.path.isdir(self.dataDir):
             if self.dataDir == "data":
@@ -86,11 +87,15 @@ class startFishing():
                 os.mkdir(subdir)
 
     def installResources(self):
-        '''Install Selenium Firefox addons'''
+        '''Install Selenium Firefox addons. If the addons have already been downloaded
+        and written, there is no need to call this function again.'''
         for url in self.addonUrls:
-            addon = requests.get(
-                url,
-                allow_redirects=True)
+            try:
+                addon = requests.get(
+                    url,
+                    allow_redirects=True)
+            except requests.exceptions.RequestException as e:
+                raise ResponseError()
             # note that rsplit splits a string from the back
             open(
                 self.addonDir +
