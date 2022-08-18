@@ -324,13 +324,14 @@ class scrape(startFishing):
         ## In order to preserve resuming functionality (I'm just not going to write every time)
         # Initializing database (pre-existing or not) if desired
         if self.database:
+            ## Converted databases to pandas dataframes
             # Consistent db table names
-            tables = {
-                "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
-                url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
-                "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
-            }
+            # tables = {
+            #     "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
+            #     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
+            #     "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
+            #     "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
+            # }
             if os.path.isfile(self.database):
                 try:
                     self.conn = sqlite3.connect(self.database)
