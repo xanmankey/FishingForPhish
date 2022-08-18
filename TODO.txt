@@ -22,7 +22,7 @@ CHECKLIST (base methods)
 (besides a stupid mistake/oversight) is .
 ✅Analyzer: I'm also happy w/ the implementation of the base Analyzer method (I added @overrides method and raise
 NotImplementedErrors so it's readily apparent that the methods need to be overriden)
-Scrape
+Scrape: Upgrading from sqlite3 to PostgreSQL
 SaveFish
 
 CHECKLIST (analyzer methods)

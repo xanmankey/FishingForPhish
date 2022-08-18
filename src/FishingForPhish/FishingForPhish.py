@@ -262,8 +262,8 @@ class scrape(startFishing):
         self.htmlDir = htmlDir
         self.cssDir = cssDir
         self.database = database
-        # self.conn = conn
-        # self.cursor = cursor
+        self.conn = conn
+        self.cursor = cursor
         self.classVal = classVal
         # Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
         self.id = id
@@ -329,6 +329,9 @@ class scrape(startFishing):
                                 4:len(filename)].upper() != ".CSS":
                         raise ValueError(
                             """Are you sure the files in cssDir are all .css files?""")
+        ## I think I'm going to need to keep database functionality around
+        ## In order to preserve resuming functionality (I'm just not going to write every time)
+        # Initializing database (pre-existing or not) if desired
         if self.database:
             # Consistent db table names
             tables = {
