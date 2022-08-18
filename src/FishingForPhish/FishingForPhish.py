@@ -308,7 +308,8 @@ class scrape(startFishing):
                     """Are you sure all the files in your screenshot directory are images?""")
         if self.htmlDir:
             if os.path.isdir(self.htmlDir):
-                if not all(filename for filename in os.listdir(self.htmlDir)):
+                if not all(lambda file: file for file in os.listdir(self.htmlDir) if file[len(filename) -
+                                5:len(filename)].upper() == ".HTML" else False):
                     if self.id == 0:
                         self.id = filename[0:2]
                         self.id = self.id.replace("_", "")
