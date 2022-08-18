@@ -2,8 +2,6 @@
 # used as an example instance of the analyzer class
 # and bundled with the module
 # (the file itself is never called by FishingForPhish.py due to the possibility of a circular import)
-## Maybe try to figure out how to extract this without a circular dependency? I need to compare and optimize
-from .FishingForPhish import startFishing, analyzer, scrape, saveFish
 from selenium.webdriver.common.by import By
 import subprocess
 from collections import Counter

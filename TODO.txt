@@ -8,11 +8,19 @@ Made notes about classes (and some individual functions) for what needs to be, c
 
 TODO
 Look into scikit-learn functionality (to see if refactoring is feasible) based on comments
+Optimize the base code (startFish, scrape, saveFish) before working on any analyzers (it makes sense to go in inheritance
+order: startFish, scrape, saveFish).
 Attempt to refactor the SaveFish class
 If it works, adapt the StartFish class accordingly
 Look into general optimizations (especially with my non-optimizer classes; those are the heart of the library)
 Look into preallocation based on the number of urls (for optimization's sake; numpy sucks at appending but is great at pre-initialization)
 Break out the analyzer functionality and try to make them as standalone as possible (maybe I could add a function decorator instead of required naming?)
+I'm adding a lot of debugging notes (I'll get rid of the ## once I'm done)
+
+CHECKLIST
+StartFish
+Scrape
+SaveFish
 
 RESOURCES
 https://scikit-learn.org/

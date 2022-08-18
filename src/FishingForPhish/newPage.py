@@ -5,7 +5,6 @@
 # and helps the replicability of the research
 # Not all of this is documented, as it wasn't written myself, but instead adapted
 # so I don't have a full understanding of the inner-workings of this code yet
-from .FishingForPhish import startFishing, analyzer, scrape, saveFish
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By

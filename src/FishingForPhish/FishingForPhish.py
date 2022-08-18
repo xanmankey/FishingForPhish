@@ -60,6 +60,7 @@ from math import isnan
 from .newImage import ImageAnalyzer
 from .newPage import PageAnalyzer
 
+## The SuperClass method
 class startFishing():
     '''A class for initializing Selenium, Beautiful Soup, and the project filesystem'''
 
@@ -169,7 +170,7 @@ class startFishing():
         self.initializeSelenium(options)
 
 
-# The analyzer base class
+## The analyzer base class
 class Analyzer(EnforceOverrides):
     '''A base class for adding analyzers to analyze scraped values which can be called during the url
     processing step (the goFish method). See the analyze shell function for more information.
@@ -218,6 +219,7 @@ class Analyzer(EnforceOverrides):
 ## I would like to try and cut tinyurl functionality however and have a seperate table of urls
 ## I also might want to replace the dataset functionality with something a little similar
 ## (namely, pandas functionality, and then write pandas to a database later)
+## A subclass of startFishing; inherits initialization params
 class scrape(startFishing):
     '''A class (inheriting from initialize) that defines useful scrape objects and methods'''
 
@@ -957,6 +959,8 @@ class scrape(startFishing):
 
 ## This is the class that is going to need to get drastically refactored
 ## This is also the class I'm going to look at and optimize first
+
+## A subclass of a subclass, directly inherits the attributes of scrape
 class saveFish(scrape):
     '''A function to combine the results, specifically using python weka wrapper 3
     to create .arff datasets that can be used for machine learning purposes'''
