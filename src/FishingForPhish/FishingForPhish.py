@@ -337,7 +337,7 @@ class scrape(startFishing):
                     self.conn = sqlite3.connect(self.database)
                 except Exception:
                     raise FileNotFoundError(
-                        """Sorry, can't connect to that database!""")
+                        """Sorry, can't connect to database {self.database}""")
                 self.conn.row_factory = sqlite3.Row
                 self.cursor = self.conn.cursor()
                 self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
