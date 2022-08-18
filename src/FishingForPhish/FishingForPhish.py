@@ -6,6 +6,7 @@
 ## (no drastic refactoring changes). Then, I plan on looking into optimization and edge cases.
 ## The goal is to get a stable release and easily usable API that I can use for my release of PhishAI
 ## I also need an alternative for graphing and data visualization (matplotlib?)
+## I also want to branch the analyzers out into their own files without any dependency issues
 
 # For scraping
 from selenium import webdriver
