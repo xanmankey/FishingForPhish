@@ -20,8 +20,12 @@ import cssutils
 import requests
 import logging
 
+## I might want to 're-analyze' this class (There's definitely room for optimization,
+## and I remember not understanding all of it)
 class pageAnalyzer(analyzer):
-    '''A class for scraping page-based features'''
+    '''A class for scraping page-based features. Note that this code is adapted
+    from the methodology here:
+    https://www.sciencedirect.com/science/article/abs/pii/S0020025519300763'''
 
     def __init__(self, features=[], featureNames={
         'NumDots':"numeric",
@@ -73,7 +77,7 @@ class pageAnalyzer(analyzer):
         'ExtMetaScriptLinkRT':"numeric",
         'PctExtNullSelfRedirectHyperlinksRT':"numeric",
         "classVal":"nominal"
-    }, **kwargs):
+    }, classVal=Instance.missing_value(), **kwargs):
         '''Inherits all previous attributes, adds an optional attribute called pageFeatures
         (although the purpose of the function is to populate the pageFeatures list, so there
         isn't much of a point in passing in a value pageFeatures. If you already have a value,
@@ -84,7 +88,7 @@ class pageAnalyzer(analyzer):
         # You can return them as values instead in the analyze function, but it may be useful for convenience purposes
         self.features = features
         self.featureNames = featureNames
-        self.classVal = Instance.missing_value()
+        self.classVal = classVal
 
     def get_complete_webpage_url(self, saved_actual_url):
         parsed = urlparse(saved_actual_url)
@@ -109,10 +113,16 @@ class pageAnalyzer(analyzer):
         return complete_webpage_url
 
     def analyze(self, url, filename, resources, urlNum):
+        # TODO: also the class strategy hasn't been perfected or fully tested yet
+        if urlNum == 100:
+            self.classVal = 0
 
         # Initialize feature dictionary
         features = {}
 
+        # TODO: I'd like to get rid of this initialization if possible
+        # As it leads to temporarily 0 values which could skew the data
+        # I'm just not sure how
         for name in self.featureNames.keys():
             features.update({name:0})
 
@@ -239,7 +249,10 @@ class pageAnalyzer(analyzer):
                         features.update({'RandomString':1})
                         break
 
-        base_url_to_be_replaced = 'file:' + urllib.request.pathname2url(resources["dataDir"]) + str(urlNum) + '/'
+        try:
+            base_url_to_be_replaced = 'file:' + urllib.request.pathname2url(resources["dataDir"]) + str(urlNum) + '/'
+        except socket.timeout as e:
+            raise e
 
         url_scheme = parsed.scheme + '://'
 
@@ -255,7 +268,7 @@ class pageAnalyzer(analyzer):
 
                 features.update({'IpAddress':1})
 
-            except BaseException:
+            except Exception:
                 pass
                 features.update({'IpAddress':0})
 
@@ -378,7 +391,7 @@ class pageAnalyzer(analyzer):
 
             try:
                 resources["driver"].get(url)
-            except BaseException:
+            except Exception:
                 pass
 
             # SWITCH OFF ALERTS
@@ -420,120 +433,122 @@ class pageAnalyzer(analyzer):
                 features.update({'IframeOrFrame':0})
 
             for iframe_frame_elem in iframe_frame_elems:
-                iframe_frame_style = iframe_frame_elem.get_attribute(
-                    'style').replace(' ', '')
-                if iframe_frame_style.find(
-                        "visibility:hidden") == -1 and iframe_frame_style.find("display:none") == -1:
+                try:
+                    iframe_frame_style = iframe_frame_elem.get_attribute(
+                        'style').replace(' ', '')
+                    if iframe_frame_style.find(
+                            "visibility:hidden") == -1 and iframe_frame_style.find("display:none") == -1:
 
-                    try:
-                        resources["driver"].switch_to.frame(iframe_frame_elem)
-                    except BaseException:
-                        continue
+                        try:
+                            resources["driver"].switch_to.frame(iframe_frame_elem)
+                        except Exception:
+                            continue
 
-                    try:
-                        input_field_list = resources["driver"].find_elements(
-                            By.XPATH, '//input')
-                    except BaseException:
-                        input_field_list = []
+                        try:
+                            input_field_list = resources["driver"].find_elements(
+                                By.XPATH, '//input')
+                        except Exception:
+                            input_field_list = []
 
-                    total_input_field += len(input_field_list)
+                        total_input_field += len(input_field_list)
 
-                    tag_attrib = ['src', 'href']
-                    tag_count = 0
-                    link_count = 0
+                        tag_attrib = ['src', 'href']
+                        tag_count = 0
+                        link_count = 0
 
-                    # Extract all URLs
-                    while tag_count <= 1:
-                        elements = resources["driver"].find_elements(
-                            By.XPATH, '//*[@' + tag_attrib[tag_count] + ']')
-                        if elements:
-                            for elem in elements:
-                                try:
-                                    link = ''
-                                    link = elem.get_attribute(
-                                        tag_attrib[tag_count])
+                        # Extract all URLs
+                        while tag_count <= 1:
+                            elements = resources["driver"].find_elements(
+                                By.XPATH, '//*[@' + tag_attrib[tag_count] + ']')
+                            if elements:
+                                for elem in elements:
+                                    try:
+                                        link = ''
+                                        link = elem.get_attribute(
+                                            tag_attrib[tag_count])
 
-                                    # Check null link
-                                    null_link_detected = False
-                                    if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and (
-                                        link.startswith('#') or link == '' or link.lower().replace(
-                                            ' ', '').startswith('javascript::void(0)')):
-                                        null_link_count += 1
-                                        null_link_detected = True
+                                        # Check null link
+                                        null_link_detected = False
+                                        if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and (
+                                            link.startswith('#') or link == '' or link.lower().replace(
+                                                ' ', '').startswith('javascript::void(0)')):
+                                            null_link_count += 1
+                                            null_link_detected = True
 
-                                    # Construct full URL from relative URL (if
-                                    # webpage sample is processed offline)
-                                    if not link.startswith('http') and not link.startswith(
-                                            "javascript"):
-                                        # link = base_url + '/' + link    # this is
-                                        # for live relative URLs
+                                        # Construct full URL from relative URL (if
+                                        # webpage sample is processed offline)
+                                        if not link.startswith('http') and not link.startswith(
+                                                "javascript"):
+                                            # link = base_url + '/' + link    # this is
+                                            # for live relative URLs
 
-                                        # link = link.replace(base_url_to_be_replaced, url)
+                                            # link = link.replace(base_url_to_be_replaced, url)
 
-                                        link = link.replace(
-                                            base_url_to_be_replaced, url_scheme)
-                                        link = link.replace('///', '//')
-                                        link = link.replace(
-                                            'file://C:/', url)
-                                        # link = link.replace('file:///', url_scheme)
-                                        link = link.replace(
-                                            'file://', url_scheme)
+                                            link = link.replace(
+                                                base_url_to_be_replaced, url_scheme)
+                                            link = link.replace('///', '//')
+                                            link = link.replace(
+                                                'file://C:/', url)
+                                            # link = link.replace('file:///', url_scheme)
+                                            link = link.replace(
+                                                'file://', url_scheme)
 
-                                        # pass
+                                            # pass
 
-                                    link_count += 1
-                                    original_link_count += 1
+                                        link_count += 1
+                                        original_link_count += 1
 
-                                    # Check null link after constructing full URL
-                                    # from local URL (if webpage sample is
-                                    # processed offline)
-                                    if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and not null_link_detected and (
-                                            link == self.get_complete_webpage_url(url, urlNum) or link == self.get_complete_webpage_url(url, urlNum) + '#'):
-                                        null_link_count += 1
+                                        # Check null link after constructing full URL
+                                        # from local URL (if webpage sample is
+                                        # processed offline)
+                                        if tag_count == 1 and elem.get_attribute('outerHTML').lower().startswith('<a') and not null_link_detected and (
+                                                link == self.get_complete_webpage_url(url, urlNum) or link == self.get_complete_webpage_url(url, urlNum) + '#'):
+                                            null_link_count += 1
 
-                                    # print link
-                                    # if link not in captured_domains and link !=
-                                    # "":
-                                    if link != '' and link.startswith('http'):
+                                        # print link
+                                        # if link not in captured_domains and link !=
+                                        # "":
+                                        if link != '' and link.startswith('http'):
 
-                                        captured_domains.append(link)
+                                            captured_domains.append(link)
 
-                                        if tag_count == 0:
-                                            resource_URLs.append(link)
-                                        elif tag_count == 1:
-                                            # TODO: missing one hyperlink_URL
-                                            if not elem.get_attribute('outerHTML').lower(
-                                            ).startswith('<link'):
-                                                hyperlink_URLs.append(link)
+                                            if tag_count == 0:
+                                                resource_URLs.append(link)
+                                            elif tag_count == 1:
+                                                if not elem.get_attribute('outerHTML').lower(
+                                                ).startswith('<link'):
+                                                    hyperlink_URLs.append(link)
+                                                else:
+                                                    if elem.get_attribute('rel') in [
+                                                    'stylesheet', 'shortcut icon', 'icon']:
+                                                        resource_URLs.append(link)
+
+                                            # RT
+                                            if elem.get_attribute('outerHTML').lower().startswith('<meta') or \
+                                                    elem.get_attribute('outerHTML').lower().startswith('<script') or \
+                                                    elem.get_attribute('outerHTML').lower().startswith('<link'):
+
+                                                meta_script_link_URLs.append(link)
+
+                                            elif elem.get_attribute('outerHTML').lower().startswith('<a'):
+                                                pass
                                             else:
-                                                if elem.get_attribute('rel') in [
-                                                'stylesheet', 'shortcut icon', 'icon']:
-                                                    resource_URLs.append(link)
+                                                request_URLs.append(link)
 
-                                        # RT
-                                        if elem.get_attribute('outerHTML').lower().startswith('<meta') or \
-                                                elem.get_attribute('outerHTML').lower().startswith('<script') or \
-                                                elem.get_attribute('outerHTML').lower().startswith('<link'):
+                                    except Exception:
+                                        pass
 
-                                            meta_script_link_URLs.append(link)
+                            tag_count += 1
 
-                                        elif elem.get_attribute('outerHTML').lower().startswith('<a'):
-                                            pass
-                                        else:
-                                            request_URLs.append(link)
-
-                                except BaseException:
-                                    pass
-
-                        tag_count += 1
-
-                    resources["driver"].switch_to.default_content()
+                        resources["driver"].switch_to.default_content()
+                except StaleElementReferenceException:
+                    continue
 
             resources["driver"].switch_to.default_content()
 
             try:
                 input_field_list = resources["driver"].find_elements(By.XPATH, '//input')
-            except BaseException:
+            except Exception:
                 pass
 
             total_input_field += len(input_field_list)
@@ -615,7 +630,7 @@ class pageAnalyzer(analyzer):
                             else:
                                 request_URLs.append(link)
 
-                    except BaseException:
+                    except Exception:
                         pass
 
                 tag_count += 1
@@ -668,27 +683,33 @@ class pageAnalyzer(analyzer):
                 brand_name = max_freq_domain
 
             # not IP, extract first dot separated token
-            except BaseException:
-                pass
+            except Exception:
                 brand_name = max_freq_domain.split('.')[0]
+                pass
 
         parsed = urlparse(url)
         # ext = tldextract.TLDExtract(suffix_list_urls=None, fallback_to_snapshot=False)
         ext = tldextract.TLDExtract(suffix_list_urls=None)
         ext1 = ext(url)
-        if brand_name.lower() in ext1.subdomain.lower(
-        ) or brand_name.lower() in parsed.path.lower():
-            if brand_name != '':
-                features.update({'EmbeddedBrandName':1})
+        try:
+            if brand_name.lower() in ext1.subdomain.lower(
+            ) or brand_name.lower() in parsed.path.lower():
+                if brand_name != '':
+                    features.update({'EmbeddedBrandName':1})
+                else:
+                    features.update({'EmbeddedBrandName':0})
             else:
                 features.update({'EmbeddedBrandName':0})
-        else:
+        except UnboundLocalError:
             features.update({'EmbeddedBrandName':0})
 
         # Check frequent domain name in HTML matches with webpage domain name
-        if max_freq_domain != domain_query:
-            features.update({'FrequentDomainNameMismatch':1})
-        else:
+        try:
+            if max_freq_domain != domain_query:
+                features.update({'FrequentDomainNameMismatch':1})
+            else:
+                features.update({'FrequentDomainNameMismatch':0})
+        except UnboundLocalError:
             features.update({'FrequentDomainNameMismatch':0})
 
         # Count percentage of external hyperlinks
@@ -704,7 +725,7 @@ class pageAnalyzer(analyzer):
                     IP(ext2.domain)
                     domain_str_ext2 = ext2.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext2 != domain_query:
@@ -746,7 +767,7 @@ class pageAnalyzer(analyzer):
                     IP(ext2.domain)
                     domain_str_ext2 = ext2.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext2 != domain_query:
@@ -775,7 +796,7 @@ class pageAnalyzer(analyzer):
                     IP(ext2.domain)
                     domain_str_ext2 = ext2.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext2 != domain_query:
@@ -806,7 +827,7 @@ class pageAnalyzer(analyzer):
                     IP(ext_meta_script_link.domain)
                     domain_str_ext_meta_script_link = ext_meta_script_link.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext_meta_script_link != domain_query:
@@ -831,10 +852,13 @@ class pageAnalyzer(analyzer):
         favicon_URL = ''
 
         for link_elem in link_elems:
-            if link_elem.get_attribute(
-                    'rel') == 'shortcut icon' or link_elem.get_attribute('rel') == 'icon':
-                favicon_URL = link_elem.get_attribute('href')
-                break
+            try:
+                if link_elem.get_attribute(
+                        'rel') == 'shortcut icon' or link_elem.get_attribute('rel') == 'icon':
+                    favicon_URL = link_elem.get_attribute('href')
+                    break
+            except StaleElementReferenceException:
+                continue
 
         if favicon_URL != '':
             # if favicon_URL.startswith('http'):
@@ -846,7 +870,7 @@ class pageAnalyzer(analyzer):
                     IP(ext_fav.domain)
                     domain_str_ext_fav = ext_fav.domain
 
-                except BaseException:
+                except Exception:
                     pass
 
             if domain_str_ext_fav != domain_query:
@@ -861,105 +885,116 @@ class pageAnalyzer(analyzer):
 
         # Check for external form action
         for form_elem in form_elems:
+            try:
+                if form_elem.get_attribute('action') is not None:
+                    if form_elem.get_attribute('action').startswith('http'):
 
-            if form_elem.get_attribute('action') is not None:
-                if form_elem.get_attribute('action').startswith('http'):
+                        # check internal or external form
+                        ext_form = ext(form_elem.get_attribute('action'))
 
-                    # check internal or external form
-                    ext_form = ext(form_elem.get_attribute('action'))
+                        domain_str_ext_form = ext_form.domain + '.' + ext_form.suffix
+                        if ext_form.suffix == '':
+                            try:
+                                IP(ext_form.domain)
+                                domain_str_ext_form = ext_form.domain
 
-                    domain_str_ext_form = ext_form.domain + '.' + ext_form.suffix
-                    if ext_form.suffix == '':
-                        try:
-                            IP(ext_form.domain)
-                            domain_str_ext_form = ext_form.domain
+                            except Exception:
+                                pass
 
-                        except BaseException:
-                            pass
+                        if domain_str_ext_form != domain_query:
+                            features.update({'ExtFormAction':1})
+                            break
 
-                    if domain_str_ext_form != domain_query:
-                        features.update({'ExtFormAction':1})
-                        break
+            except StaleElementReferenceException:
+                continue
 
         # Check for insecure form action
         for form_elem in form_elems:
+            try:
+                if form_elem.get_attribute('action') is not None:
 
-            if form_elem.get_attribute('action') is not None:
+                    if form_elem.get_attribute('action').startswith('http'):
 
-                if form_elem.get_attribute('action').startswith('http'):
+                        if form_elem.get_attribute('action').startswith('https'):
+                            pass
+                        else:
+                            features.update({'InsecureForms':1})
+                            break
 
-                    if form_elem.get_attribute('action').startswith('https'):
-                        pass
                     else:
-                        features.update({'InsecureForms':1})
-                        break
-
-                else:
-                    # look at page URL
-                    if parsed.scheme == 'https':
-                        pass
-                    else:
-                        features.update({'InsecureForms':1})
-                        break
+                        # look at page URL
+                        if parsed.scheme == 'https':
+                            pass
+                        else:
+                            features.update({'InsecureForms':1})
+                            break
+            except StaleElementReferenceException:
+                continue
 
         # Check for relative form action
         for form_elem in form_elems:
+            try:
+                if form_elem.get_attribute('action') is not None:
 
-            if form_elem.get_attribute('action') is not None:
+                    if form_elem.get_attribute('action').startswith('http'):
+                        pass
 
-                if form_elem.get_attribute('action').startswith('http'):
-                    pass
-
-                else:
-                    features.update({'RelativeFormAction':1})
-                    break
+                    else:
+                        features.update({'RelativeFormAction':1})
+                        break
+            except StaleElementReferenceException:
+                continue
 
         # Check for abnormal form action
         for form_elem in form_elems:
+            try:
+                if form_elem.get_attribute('action') is not None:
+                    # if normal form
+                    if form_elem.get_attribute('action').startswith('http'):
+                        pass
+                    else:
 
-            if form_elem.get_attribute('action') is not None:
-                # if normal form
-                if form_elem.get_attribute('action').startswith('http'):
-                    pass
-                else:
-
-                    if form_elem.get_attribute('action').lower().replace(' ', '') in [
-                            '', '#', 'about:blank', 'javascript:true']:
-                        features.update({'AbnormalFormAction':1})
-                        break
+                        if form_elem.get_attribute('action').lower().replace(' ', '') in [
+                                '', '#', 'about:blank', 'javascript:true']:
+                            features.update({'AbnormalFormAction':1})
+                            break
+            except StaleElementReferenceException:
+                continue
 
         # Check server form handler (R)
         # otherwise legitimate state
         features.update({'AbnormalExtFormActionR':1})
         for form_elem in form_elems:
+            try:
+                if form_elem.get_attribute('action') is not None:
+                    # check link to external domain
+                    if form_elem.get_attribute('action').startswith(
+                            'http'):
+                        # pass
 
-            if form_elem.get_attribute('action') is not None:
-                # check link to external domain
-                if form_elem.get_attribute('action').startswith(
-                        'http'):
-                    # pass
+                        ext_form = ext(form_elem.get_attribute('action'))
 
-                    ext_form = ext(form_elem.get_attribute('action'))
+                        domain_str_form = ext_form.domain + '.' + ext_form.suffix
+                        if ext_form.suffix == '':
+                            try:
+                                IP(ext_form.domain)
+                                domain_str_form = ext_form.domain
 
-                    domain_str_form = ext_form.domain + '.' + ext_form.suffix
-                    if ext_form.suffix == '':
-                        try:
-                            IP(ext_form.domain)
-                            domain_str_form = ext_form.domain
+                            except Exception:
+                                pass
 
-                        except BaseException:
-                            pass
+                        if domain_str_form != domain_query:
+                            features.update({'AbnormalExtFormActionR':0})
+                            break
 
-                    if domain_str_form != domain_query:
-                        features.update({'AbnormalExtFormActionR':0})
-                        break
+                    else:
 
-                else:
-
-                    if form_elem.get_attribute('action').lower().replace(
-                            ' ', '') in ['', 'about:blank']:
-                        features.update({'AbnormalExtFormActionR':-1})
-                        break
+                        if form_elem.get_attribute('action').lower().replace(
+                                ' ', '') in ['', 'about:blank']:
+                            features.update({'AbnormalExtFormActionR':-1})
+                            break
+            except StaleElementReferenceException:
+                continue
 
         # Check for right click disabled
         page_src_str = resources["driver"].page_source
@@ -1019,10 +1054,13 @@ class pageAnalyzer(analyzer):
             # visible_text_in_form += form_elem.text.strip() + ' '
             try:
                 visible_text_in_form += form_elem.text.strip() + ' '
-            except BaseException:
+            except Exception:
                 pass
 
-            image_elems_in_form.extend(form_elem.find_elements(By.XPATH, './/img'))
+            try:
+                image_elems_in_form.extend(form_elem.find_elements(By.XPATH, './/img'))
+            except StaleElementReferenceException:
+                pass
 
         if visible_text_in_form.strip() == '' and len(image_elems_in_form) > 0:
             features.update({'ImagesOnlyInForm':1})
@@ -1049,7 +1087,9 @@ class pageAnalyzer(analyzer):
             features.update({'FakeLinkInStatusBar':1})
 
         features.update({"classVal":self.classVal})
-        self.features.append(features)
+        resources.update({"classVal":self.classVal})
+        if len(features.values()) == len(self.featureNames.values()):
+            self.features.append(features)
         resources.update({"features":features})
         resources.update({"featureNames":self.featureNames})
         return resources
