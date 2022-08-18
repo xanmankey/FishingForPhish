@@ -80,6 +80,10 @@ class startFishing():
         # Add more
         self.addonUrls = addons
         self.driver = driver
+
+    def initializeData(self):
+        '''A class method for initializing the directories and data
+        '''
         if not os.path.isdir(self.dataDir):
             if self.dataDir == "data":
                 os.mkdir("data")
@@ -89,6 +93,7 @@ class startFishing():
         for subdir in map(lambda subdir: self.dataDir + "/" + subdir, subDirectories):
             if not os.path.isdir(subdir):
                 os.mkdir(subdir)
+
 
 
     def installResources(self):
