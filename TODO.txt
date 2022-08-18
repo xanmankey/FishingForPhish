@@ -19,7 +19,7 @@ I'm adding a lot of debugging notes (I'll get rid of the ## once I'm done)
 I also want to increase readability (for example, by replacing a lot of the messy code with CONST vars)
 
 CHECKLIST (base methods)
-✅StartFish: Moved database initialization from scrape to this class. Upgraded from sqlite3 to PostgreSQL
+✅StartFish: Moved database initialization from scrape to this class. Upgraded from sqlite3 to PostgreSQL (maybe allows me to get rid of shorteners? That might help for optimization)
 ✅Analyzer: Added @overrides method and raise
 NotImplementedErrors so it's readily apparent that the methods need to be overriden
 Scrape: Fixed ID, migrated somecode to the StartFish class,
