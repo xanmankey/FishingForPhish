@@ -334,14 +334,11 @@ class scrape(startFishing):
             # }
             if os.path.isfile(self.database):
                 try:
-                    self.conn = sqlite3.connect(self.database)
+                    self.db = Postgres(self.database)
                 except Exception:
                     raise FileNotFoundError(
                         """Sorry, can't connect to database {self.database}""")
-                self.conn.row_factory = sqlite3.Row
-                self.cursor = self.conn.cursor()
-                self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
-                currentTables = self.cursor.fetchall()
+                self.db.execute("SELECT * FROM information_schema.tables")
                 currentTables = [item for table in currentTables for item in table]
                 for tableName, creation in tables.items():
                     if tableName in currentTables:
