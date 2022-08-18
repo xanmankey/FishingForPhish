@@ -22,7 +22,7 @@ CHECKLIST (base methods)
 ✅StartFish: Moved database initialization from scrape to this class. Upgraded from sqlite3 to PostgreSQL
 ✅Analyzer: Added @overrides method and raise
 NotImplementedErrors so it's readily apparent that the methods need to be overriden
-Scrape: Upgrading from sqlite3 to PostgreSQL
+Scrape: Fixed ID, migrated somecode to the StartFish class,
 SaveFish
 
 CHECKLIST (analyzer methods)

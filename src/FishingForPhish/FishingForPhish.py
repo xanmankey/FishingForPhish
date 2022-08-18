@@ -89,7 +89,7 @@ class startFishing():
         for subdir in map(lambda subdir: self.dataDir + "/" + subdir, subDirectories):
             if not os.path.isdir(subdir):
                 os.mkdir(subdir)
-        
+
 
     def installResources(self):
         '''Install Selenium Firefox addons. If the addons have already been downloaded
