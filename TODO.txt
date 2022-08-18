@@ -20,7 +20,8 @@ I'm adding a lot of debugging notes (I'll get rid of the ## once I'm done)
 CHECKLIST (base methods)
 ✅StartFish: I'm happy with the implementation of the superclass. The only reason I think I'd need to return to it
 (besides a stupid mistake/oversight) is .
-✅Analyzer: I'm also happy w/ the implementation of the base Analyzer
+✅Analyzer: I'm also happy w/ the implementation of the base Analyzer method (I added @overrides method and raise
+NotImplementedErrors so it's readily apparent that the methods need to be overriden)
 Scrape
 SaveFish
 
