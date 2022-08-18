@@ -14,6 +14,10 @@ import cssutils
 import requests
 import logging
 
+## I'm pretty happy with the imageAnalyzer class; it's fairly self-explanatory, although
+## I imagine I could do more (I want to add more dynamism to this library; the most optimized
+## parts should be the creation of the webdriver and the autogeneration of the data; it should be
+## simple to create more analyzers)
 class imageAnalyzer(analyzer):
     '''A class for scraping image-based features'''
 

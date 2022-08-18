@@ -55,6 +55,9 @@ from PIL import Image
 import imagehash
 import copy
 from math import isnan
+# Importing analyzers (circular dependency?)
+from .newImage import ImageAnalyzer
+from .newPage import PageAnalyzer
 
 class startFishing():
     '''A class for initializing Selenium, Beautiful Soup, and the project filesystem'''
