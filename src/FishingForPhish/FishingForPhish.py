@@ -85,11 +85,9 @@ class startFishing():
             if not os.path.isdir(subdir):
                 os.mkdir(subdir)
 
-    ## Because I want to refactor without python weka wrapper
-    ## I'll need to find an alternative to these resources
     def installResources(self):
         '''Install Selenium Firefox addons'''
-        for url in self.addon_urls:
+        for url in self.addonUrls:
             addon = requests.get(
                 url,
                 allow_redirects=True)
