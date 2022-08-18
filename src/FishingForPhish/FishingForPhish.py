@@ -302,19 +302,12 @@ class scrape(startFishing):
             if not os.path.isdir(self.screenshotDir):
                 raise FileNotFoundError(
                     """screenshotDir needs to be a path to a directory with screenshots!""")
-            for filename in os.listdir(self.screenshotDir):
-                if self.id == 0:
-                    self.id = filename[0:2]
-                    self.id = self.id.replace("_", "")
-                    self.id = int(self.id)
-                if is_image(filename):
-                    continue
-                else:
-                    raise ValueError(
-                        """Are you sure all the files in your screenshot directory are images?""")
+            if not all(is_image(file) for file in os.listdir(self.screenshotDir)):
+                raise ValueError(
+                    """Are you sure all the files in your screenshot directory are images?""")
         if self.htmlDir:
             if os.path.isdir(self.htmlDir):
-                for filename in os.listdir(self.htmlDir):
+                if not all(filename for filename in os.listdir(self.htmlDir)):
                     if self.id == 0:
                         self.id = filename[0:2]
                         self.id = self.id.replace("_", "")
