@@ -62,11 +62,13 @@ from math import isnan
 from .newImage import ImageAnalyzer
 from .newPage import PageAnalyzer
 
+
 ## The SuperClass method
 class startFishing():
     '''A class for initializing Selenium, Beautiful Soup, and the project filesystem'''
 
-    def __init__(self, dataDir="data", driver=None, addons=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi'], **kwargs):
+    def __init__(self, dataDir="data", driver=None, addons=['https://addons.mozilla.org/firefox/downloads/file/3911106/wayback_machine-3.0-fx.xpi'],
+        database=True, **kwargs):
         '''Defines the dataDir, driver, and BS attributes, where dataDir is the home directory
         containing a screenshots directory for screenshots, an html directory for html,
         a css directory for css, and a datasets directory for datasets, and the driver and
@@ -87,6 +89,7 @@ class startFishing():
         for subdir in map(lambda subdir: self.dataDir + "/" + subdir, subDirectories):
             if not os.path.isdir(subdir):
                 os.mkdir(subdir)
+        
 
     def installResources(self):
         '''Install Selenium Firefox addons. If the addons have already been downloaded
