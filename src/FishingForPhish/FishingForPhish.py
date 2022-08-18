@@ -303,7 +303,7 @@ class scrape(startFishing):
                 raise FileNotFoundError(
                     """screenshotDir needs to be a path to a directory with screenshots!""")
             # Empty lists are considered false
-            if not map(is_image(file) for file in os.listdir(self.screenshotDir)):
+            if not all(is_image(file) for file in os.listdir(self.screenshotDir)):
                 raise ValueError(
                     """Are you sure all the files in your screenshot directory are images?""")
         if self.htmlDir:
