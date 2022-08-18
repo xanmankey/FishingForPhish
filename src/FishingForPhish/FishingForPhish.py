@@ -176,6 +176,7 @@ class Analyzer(EnforceOverrides):
     I'm still working on finding a way to make this class more inheritable and
     easier to work with.'''
 
+    # shell function (override is required)
     def __init__(self):
         '''There are currently no inheritable attributes, largely because of my lack of
         knowledge regarding class inheritance (the attributes ended up overwriting one another).
@@ -186,10 +187,11 @@ class Analyzer(EnforceOverrides):
         if you are making your own analyzer,
         you can create attributes of your own, just make sure to consider them in regards to
         the goFish method, especially in consideration of the resources dictionary'''
-        pass
+        raise NotImplementedError
 
     ## Changed to a classmethod
     @classmethod
+    @final
     def name(cls):
         '''Returns the class name (used for table and dataset names respectively)'''
         return cls.__name__
@@ -202,7 +204,7 @@ class Analyzer(EnforceOverrides):
         # These classes are not standalone
         # But can function with a self.addAnalyzer(analyzer)
         # and self.goFish() call from the scrape class
-        pass
+        raise NotImplementedError
 
 
 # The scrape class; inherits from the startFishing initialization class.
