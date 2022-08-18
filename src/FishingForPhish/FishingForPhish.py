@@ -78,8 +78,9 @@ class startFishing():
         # Add more
         self.addonUrls = addons
         self.driver = driver
+        self.initializeDirectories()
 
-    def initializeData(self, database=True):
+    def initializeDirectories(self):
         '''A class method for initializing the directories and data.
         '''
         if not os.path.isdir(self.dataDir):
@@ -91,40 +92,6 @@ class startFishing():
         for subdir in map(lambda subdir: self.dataDir + "/" + subdir, subDirectories):
             if not os.path.isdir(subdir):
                 os.mkdir(subdir)
-        if database:
-            # Consistent db table names
-            tables = {
-                "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
-                url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
-                "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
-            }
-            if any(file for file in os.listdir(self.dataDir + "datasets") if '.db' in file):
-                try:
-                    self.conn = sqlite3.connect(self.database)
-                except Exception:
-                    raise FileNotFoundError(
-                        """Sorry, can't connect to that database!""")
-                self.conn.row_factory = sqlite3.Row
-                self.cursor = self.conn.cursor()
-                self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
-                currentTables = self.cursor.fetchall()
-                currentTables = [item for table in currentTables for item in table]
-                for tableName, creation in tables.items():
-                    if tableName in currentTables:
-                        continue
-                    else:
-                        self.cursor.execute(creation)
-                self.conn.commit()
-            else:
-                open(self.dataDir + "/data.db", "w").close()
-                self.conn = sqlite3.connect(self.database)
-                self.conn.row_factory = sqlite3.Row
-                self.cursor = self.conn.cursor()
-                for creation in tables.values():
-                    self.cursor.execute(creation)
-                self.conn.commit()
-
 
     def installResources(self):
         '''Install Selenium Firefox addons. If the addons have already been downloaded
