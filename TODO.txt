@@ -12,6 +12,7 @@ Attempt to refactor the SaveFish class
 If it works, adapt the StartFish class accordingly
 Look into general optimizations (especially with my non-optimizer classes; those are the heart of the library)
 Look into preallocation based on the number of urls (for optimization's sake; numpy sucks at appending but is great at pre-initialization)
+Break out the analyzer functionality and try to make them as standalone as possible (maybe I could add a function decorator instead of required naming?)
 
 RESOURCES
 https://scikit-learn.org/
