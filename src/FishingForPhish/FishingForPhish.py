@@ -188,8 +188,8 @@ class Analyzer(EnforceOverrides):
         the goFish method, especially in consideration of the resources dictionary'''
         pass
 
-    @static
-    def name(self):
+    @classmethod
+    def name(cls, self):
         '''Returns the class name (used for table and dataset names respectively)'''
         return self.__class__.__name__
 
