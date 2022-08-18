@@ -25,7 +25,8 @@ because so much still needs to be done)
 NotImplementedErrors so it's readily apparent that the methods need to be overriden
 Scrape: Upgraded from sqlite3 to PostgreSQL (maybe allows me to get rid of shorteners?
 That might help for optimization (urls should never exceed 2048 characters)). I also want to optimize naming conventions
-(files, database urls, ect)
+(files, database urls, ect). I'm going to have to be careful, because I am getting rid of a decent amount of functionality
+(hopefully it can easily be optimized tho)
 SaveFish
 
 CHECKLIST (analyzer methods)
