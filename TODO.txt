@@ -17,10 +17,16 @@ Look into preallocation based on the number of urls (for optimization's sake; nu
 Break out the analyzer functionality and try to make them as standalone as possible (maybe I could add a function decorator instead of required naming?)
 I'm adding a lot of debugging notes (I'll get rid of the ## once I'm done)
 
-CHECKLIST
-StartFish
+CHECKLIST (base methods)
+✅StartFish: I'm happy with the implementation of the superclass. The only reason I think I'd need to return to it
+(besides a stupid mistake/oversight) is .
+✅Analyzer: I'm also happy w/ the implementation of the base Analyzer
 Scrape
 SaveFish
+
+CHECKLIST (analyzer methods)
+ImageAnalyzer:
+PageAnalyzer:
 
 RESOURCES
 https://scikit-learn.org/
