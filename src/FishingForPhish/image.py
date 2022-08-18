@@ -3,9 +3,8 @@
 # and bundled with the module
 # (the file itself is never called by FishingForPhish.py due to the possibility of a circular import)
 ## Maybe try to figure out how to extract this without a circular dependency?
-from FishingForPhish import startFishing, analyzer, scrape, saveFish
+from .FishingForPhish import startFishing, analyzer, scrape, saveFish
 from selenium.webdriver.common.by import By
-from weka.core.dataset import Instance
 import subprocess
 from collections import Counter
 from PIL import Image
