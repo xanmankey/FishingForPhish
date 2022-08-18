@@ -269,8 +269,8 @@ class scrape(startFishing):
         self.htmlDir = htmlDir
         self.cssDir = cssDir
         self.database = database
-        self.conn = conn
-        self.cursor = cursor
+        # A dictionary of pandas dataframes, eventually converted to data
+        self.data = {}
         self.classVal = classVal
         ## Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
         self.id = id
