@@ -308,27 +308,16 @@ class scrape(startFishing):
                     """Are you sure all the files in your screenshot directory are images?""")
         if self.htmlDir:
             if os.path.isdir(self.htmlDir):
-                if not all(lambda file: file for file in os.listdir(self.htmlDir) if file[len(filename) -
-                                5:len(filename)].upper() == ".HTML" else False):
-                    if self.id == 0:
-                        self.id = filename[0:2]
-                        self.id = self.id.replace("_", "")
-                        self.id = int(self.id)
-                    if filename[len(filename) -
-                                5:len(filename)].upper() != ".HTML":
-                        raise ValueError(
-                            """Are you sure the files in htmlDir are all .html files?""")
+                if not all(lambda file: file for file in os.listdir(self.htmlDir) if file[len(file) -
+                    5:len(file)].upper() == ".HTML" else False):
+                    raise ValueError(
+                        """Are you sure the files in htmlDir are all .html files?""")
         # Technically, the css files are never actually used,
         # but it's still important to have them for future research
         if self.cssDir:
             if os.path.isdir(self.cssDir):
-                for filename in os.listdir(self.cssDir):
-                    if self.id == 0:
-                        self.id = filename[0:2]
-                        self.id = self.id.replace("_", "")
-                        self.id = int(self.id)
-                    if filename[len(filename) -
-                                4:len(filename)].upper() != ".CSS":
+                if not all(lambda file: file for file in os.listdir(self.cssDir) if file[len(file) -
+                    4:len(file)].upper() == ".CSS" else False):
                         raise ValueError(
                             """Are you sure the files in cssDir are all .css files?""")
         ## I think I'm going to need to keep database functionality around
