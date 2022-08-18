@@ -95,7 +95,7 @@ class startFishing():
                     url,
                     allow_redirects=True)
             except requests.exceptions.RequestException as e:
-                raise ResponseError()
+                logging.warning("Installing addon failed; are you sure {url} is the correct url?")
             # note that rsplit splits a string from the back
             open(
                 self.addonDir +
@@ -113,7 +113,6 @@ class startFishing():
         #     'wb').write(
         #     no_cookies.content))
 
-    ## This is fine, unless I want to look into more selenium add_ons
     def initializeSelenium(self, addons=True):
         '''Initializes Selenium with any add_ons that are passed to the method'''
         options = FirefoxOptions()
