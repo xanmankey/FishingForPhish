@@ -100,7 +100,7 @@ class startFishing():
                 "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
                 "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
             }
-            if any(for file in os.listdir(self.dataDir + "datasets")):
+            if any(file for file in os.listdir(self.dataDir + "datasets") if '.db' in file):
                 try:
                     self.conn = sqlite3.connect(self.database)
                 except Exception:
