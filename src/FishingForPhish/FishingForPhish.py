@@ -29,7 +29,7 @@ from matplotlib import style
 # utility libs
 import time
 import pyshorteners
-from overrides import overrides, EnforceOverides
+from overrides import overrides, EnforceOverides, final
 from unshortenit import UnshortenIt
 from bs4 import BeautifulSoup
 from collections import Counter
@@ -170,7 +170,7 @@ class startFishing():
 
 
 # The analyzer base class
-class analyzer():
+class Analyzer(EnforceOverrides):
     '''A base class for adding analyzers to analyze scraped values which can be called during the url
     processing step (the goFish method). See the analyze shell function for more information.
     I'm still working on finding a way to make this class more inheritable and
@@ -188,18 +188,20 @@ class analyzer():
         the goFish method, especially in consideration of the resources dictionary'''
         pass
 
+    @final
     def name(self):
         '''Returns the class name (used for table and dataset names respectively)'''
         return self.__class__.__name__
 
     # Shell function
-    # def analyze(self):
+    def analyze(self):
         # Your analysis code here
         # Every class inheriting from the analyzer class
         # Has a different analyze method
         # These classes are not standalone
         # But can function with a self.addAnalyzer(analyzer)
         # and self.goFish() call from the scrape class
+        pass
 
 
 # The scrape class; inherits from the startFishing initialization class.
