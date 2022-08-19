@@ -82,7 +82,9 @@ so I need to look into refactoring and optimizing as much as possible here
 
 SAVEFISH CLASS (my goal for this class is to use sklearn levels of customization)
 __init__:
-FS: U ysed 
+FS: I used correlational, information gain, and chi squared feature selection methods.
+But my goal is to avoid having them be specified ahead of time (how could I handle that? I could provide
+those as the default feature selection method, but also apply @overrides to individual sub-methods (I ))
 generateInstances: I'll probably refactor this to handle ALL sampling cases
 closePWW3: refactor to remove PWW3 functionality
 attributeCreation:
