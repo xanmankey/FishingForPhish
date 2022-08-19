@@ -677,7 +677,7 @@ class scrape(startFishing):
             raise ReferenceError("Cannot scrape without a valid driver instance")
         # Create the allData table
         if self.database:
-            self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+            self.db.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
             currentTables = self.cursor.fetchall()
             currentTables = [item for table in currentTables for item in table]
             if "allData" not in currentTables:
