@@ -332,7 +332,8 @@ class scrape(startFishing):
             tables = {
                 "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
                 url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-                "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
+                # note that 2000 is the de-facto standard for urls (so any urls longer than 2000 will be refused)
+                "errors": """CREATE TABLE errors (url VARCHAR(2000) UNIQUE, error TEXT)""",
                 "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
             }
             if os.path.isfile(self.database):
