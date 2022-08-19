@@ -221,12 +221,20 @@ class Selector():
         """A class with default feature selection methods,
         as well as a custom feature selection method that can be overriden."""
 
+    def InfoGain(self):
+
+    def Correlational(self):
+
+    def ChiSquared(self):
+
+    def FS(self):
 
 class Classifier():
     def __init__(self):
         """A class with default classification methods,
         as well as a custom classification method that can be overriden."""
 
+    def
 
 # The scrape class; inherits from the startFishing initialization class.
 # Provides many useful scraping methods and initializes file system and variables
@@ -1012,11 +1020,6 @@ class saveFish(scrape):
     ## For FS and probably classification, I plan on keeping up with the @override functionality
     ## (to allow for maximum customization).
     ## Not sure how I want to group these yet though (maybe static methods of a selection class? Similar to analyzer)
-    def InfoGain(self):
-
-    def Correlational(self):
-
-    def ChiSquared(self):
 
     ## Feature selection with Scikit-learn?
     def FS(self):
