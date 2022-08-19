@@ -65,4 +65,24 @@ __init__: I still need to review and make changes according to changes to class 
 preallocate: TODO
 ✅closeSelenium
 ✅initializeBS
-addAnalyzer:
+addAnalyzer: I think this is good, but again, I need to figure out what kind of changes I'm making,
+and adapt accordingly (I'm probably going to need to analyze the saveFish class as well)
+shorten: removed
+expand: removed
+generateFilename: removed (all of those added complexity that I'm determined to do without)
+siteValidation: Again, I think it's complete, but no way to tell without debugging
+✅saveScreenshot
+✅getTime
+exitHandler: Need to review my overall plan to determine whether I want to use the exitHandler or not
+resume: Definitely needs rethinking; this function is the product of a lot of my decisions, and it
+feels messy and inefficient
+✅checkInternet: Might want to remove this? Not sure yet
+goFish: Similar to resume, this function is the most important one in the scrape class,
+so I need to look into refactoring and optimizing as much as possible here
+
+SAVEFISH CLASS
+__init__:
+FS:
+generateInstances: I'll probably refactor this to handle ALL sampling cases
+closePWW3: refactor to remove PWW3 functionality
+attributeCreation: 
