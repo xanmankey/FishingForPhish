@@ -324,9 +324,7 @@ class scrape(startFishing):
         ## In order to preserve resuming functionality (I'm just not going to write every time)
         # Initializing database (pre-existing or not) if desired
         if self.database:
-            metadata = pd.DataFrame()
-            errors = pd.DataFrame()
-            hashes = pd.DataFrame()
+            ## It's a HORRIBLE idea to append to a numpy array or a pandas dataframe
             ## Converted databases to pandas dataframes
             # Consistent db table names
             # tables = {
