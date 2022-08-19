@@ -216,6 +216,17 @@ class Analyzer(EnforceOverrides):
         # and self.goFish() call from the scrape class
         raise NotImplementedError
 
+class Selector():
+    def __init__(self):
+        """A class with default feature selection methods,
+        as well as a custom feature selection method that can be overriden."""
+
+
+class Classifier():
+    def __init__(self):
+        """A class with default classification methods,
+        as well as a custom classification method that can be overriden."""
+
 
 # The scrape class; inherits from the startFishing initialization class.
 # Provides many useful scraping methods and initializes file system and variables
@@ -937,7 +948,6 @@ class scrape(startFishing):
                     self.allFeatures.append(features)
                 self.id += 1
                 self.urlNum += 1
-
 
 # The saveFish class is for interpreting the data from the scrape class
 # in regards to machine learning
