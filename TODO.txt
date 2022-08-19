@@ -80,9 +80,9 @@ feels messy and inefficient
 goFish: Similar to resume, this function is the most important one in the scrape class,
 so I need to look into refactoring and optimizing as much as possible here
 
-SAVEFISH CLASS
+SAVEFISH CLASS (my goal for this class is to use sklearn levels of customization)
 __init__:
-FS:
+FS: U ysed 
 generateInstances: I'll probably refactor this to handle ALL sampling cases
 closePWW3: refactor to remove PWW3 functionality
 attributeCreation:
