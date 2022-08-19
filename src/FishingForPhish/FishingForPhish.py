@@ -220,7 +220,8 @@ class Analyzer(EnforceOverrides):
 class Selector():
     def __init__(self):
         """A class with default feature selection methods,
-        as well as a custom feature selection method that can be overriden."""
+        as well as a custom feature selection method that can be overriden.
+        """
 
     def InfoGain(self):
 
@@ -228,8 +229,9 @@ class Selector():
 
     def ChiSquared(self):
 
+    @overrides
     def FS(self):
-        
+
 
 class Classifier():
     def __init__(self):
@@ -242,7 +244,9 @@ class Classifier():
 
     def JRIP(self):
 
+    @overrides
     def Classify(self):
+
 
 # The scrape class; inherits from the startFishing initialization class.
 # Provides many useful scraping methods and initializes file system and variables
