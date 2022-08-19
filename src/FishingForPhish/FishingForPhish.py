@@ -593,15 +593,15 @@ class scrape(startFishing):
                 classToggle = 0
                 ## TODO: I need to re-examine this function (and a lot of functions in this class)
                 ## In the context of refactoring; I want a lot of this to be semi-standalone and simple
-                ##
+                ## (but this class seems fairly complex; I'm asking myself "why did I do this again"?
+                ## As the person who wrote this code, I shouldn't have to be doing that)
                 for analyzer in self.analyzers:
                     for name, datatype in analyzer.featureNames.items():
                         if name == "classVal" and classToggle == 0:
                             classToggle += 1
                             continue
                         self.allFeatureNames.update({name:datatype})
-                    self.cursor.execute("SELECT * FROM {}".format(analyzer.name()))
-                    features = self.cursor.fetchall()
+                    features = self.db.all("SELECT * FROM {}".format(analyzer.name()))
                     for instance in features:
                         featureNum = 0
                         values = {}
@@ -611,8 +611,7 @@ class scrape(startFishing):
                                 continue
                             values.update({name:value})
                         analyzer.features.append(values)
-                self.cursor.execute("SELECT * FROM allData")
-                allFeatures = self.cursor.fetchall()
+                allFeatures = self.db.all("SELECT * FROM allData")
                 for instance in allFeatures:
                     featureNum = 0
                     features = {}
@@ -622,8 +621,7 @@ class scrape(startFishing):
                             continue
                         features.update({name:value})
                     self.allFeatures.append(features)
-                self.cursor.execute("SELECT error FROM errors")
-                allErrors = self.cursor.fetchall()
+                allErrors = self.db.all("SELECT error FROM errors")
                 for instance in allErrors:
                     for name, errors in dict(instance).items():
                         if name == "error":
@@ -634,8 +632,7 @@ class scrape(startFishing):
                 # Used if the values are already in the database
                 # To update the runtime values with the database values
                 for analyzer in self.analyzers:
-                    self.cursor.execute("SELECT * FROM {} WHERE id = ?".format(analyzer.name()), id)
-                    features = self.cursor.fetchall()
+                    features = self.db.execute("SELECT * FROM {} WHERE id = ?".format(analyzer.name()), id)
                     for instance in features:
                         featureNum = 0
                         values = {}
@@ -645,8 +642,7 @@ class scrape(startFishing):
                                 continue
                             values.update({name:value})
                         analyzer.features.append(values)
-                self.cursor.execute("SELECT * FROM allData WHERE id = ?", id)
-                allFeatures = self.cursor.fetchall()
+                allFeatures = self.db.execute("SELECT * FROM allData WHERE id = ?", id)
                 for instance in allFeatures:
                     featureNum = 0
                     features = {}
@@ -656,8 +652,7 @@ class scrape(startFishing):
                             continue
                         features.update({name:value})
                     self.allFeatures.append(features)
-                self.cursor.execute("SELECT error FROM errors INNER JOIN metadata ON metadata.url = errors.url")
-                errors = self.cursor.fetchall()
+                errors = self.db.execute("SELECT error FROM errors INNER JOIN metadata ON metadata.url = errors.url")
                 for error in errors.values():
                     error = error.split(", ")
                 for exception in error:

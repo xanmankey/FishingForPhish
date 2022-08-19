@@ -57,3 +57,12 @@ I'm pigeon-holing a lot of the settings; I want to incorporate my API with sciki
 It seems like all of this is possible with scikit-learn; now I want to figure out a better way to handle Selenium errors
 I think perhaps instead of handling Selenium errors, what if I only accepted websites w/ ACTIVE return values?
 (an active return value is defined here: https://github.com/mitchellkrogza/Phishing.Database)
+
+BREAKING DOWN INDIVIDUAL CLASSES
+
+SCRAPE CLASS
+__init__: I still need to review and make changes according to changes to class attributes
+preallocate: TODO
+✅closeSelenium
+✅initializeBS
+addAnalyzer:
