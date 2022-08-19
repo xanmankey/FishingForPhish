@@ -341,14 +341,17 @@ class scrape(startFishing):
                         """Sorry, can't connect to database {self.database}""")
                 # With postgres, use one to return one value, all to return all values, and run
                 # to not return anything
-                tables = self.db.all("SELECT * FROM information_schema.tables")
+                currentTables = self.db.all("SELECT * FROM information_schema.tables")
                 # currentTables = [item for table in currentTables for item in table]
+                print(currentTables)
                 for tableName, creation in tables.items():
                     if tableName in currentTables:
                         continue
                     else:
+                        # execute is an alias for run
                         self.cursor.execute(creation)
-                self.conn.commit()
+                ## Not sure if committing is necessary with postgres
+                # self.conn.commit()
             else:
                 open(self.dataDir + "/data.db", "w").close()
                 self.conn = sqlite3.connect(self.database)
