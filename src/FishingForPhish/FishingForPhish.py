@@ -234,7 +234,13 @@ class Classifier():
         """A class with default classification methods,
         as well as a custom classification method that can be overriden."""
 
-    def
+    def NaiveBayes(self):
+
+    def J48(self):
+
+    def JRIP(self):
+
+    def Classify(self):
 
 # The scrape class; inherits from the startFishing initialization class.
 # Provides many useful scraping methods and initializes file system and variables
