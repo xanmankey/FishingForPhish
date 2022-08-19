@@ -268,9 +268,11 @@ class scrape(startFishing):
         self.screenshotDir = screenshotDir
         self.htmlDir = htmlDir
         self.cssDir = cssDir
+        # For turning off database functionality
         self.database = database
         # A dictionary of pandas dataframes, eventually converted to data
         self.data = {}
+        self.db = None
         self.classVal = classVal
         ## Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
         self.id = id
@@ -349,6 +351,7 @@ class scrape(startFishing):
                         continue
                     else:
                         # execute is an alias for run
+                        # self.db refers to the data
                         self.db.execute(creation)
                 ## Not sure if committing is necessary with postgres
                 # self.conn.commit()
