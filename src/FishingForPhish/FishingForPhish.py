@@ -216,7 +216,7 @@ class Analyzer(EnforceOverrides):
         # and self.goFish() call from the scrape class
         raise NotImplementedError
 
-## How to add a 
+## Can I allow users to add a method to a class?
 class Selector():
     def __init__(self):
         """A class with default feature selection methods,
