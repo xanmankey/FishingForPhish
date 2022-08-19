@@ -462,6 +462,8 @@ class scrape(startFishing):
         '''Method that attempts to validate a site, specifically checking if Selenium can
         access the website, the website's url, and if the requests library does not return a
         404 error (which is often the case due to the slippery nature of phishing websites)'''
+        if len(url) > 2000:
+            return False
         if not validated:
             try:
                 self.driver.get(url)
@@ -471,7 +473,7 @@ class scrape(startFishing):
             try:
                 url = self.driver.current_url
             except Exception:
-                time.sleep(10)
+                # time.sleep(10)
                 try:
                     url = self.driver.current_url
                 except Exception as e:
