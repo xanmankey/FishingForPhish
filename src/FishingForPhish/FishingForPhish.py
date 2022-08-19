@@ -270,8 +270,7 @@ class scrape(startFishing):
         self.cssDir = cssDir
         # For turning off database functionality
         self.database = database
-        # A dictionary of pandas dataframes, eventually converted to data
-        self.data = {}
+        # A dictionary of lists, eventually appending to a database (if desired)
         self.db = None
         self.classVal = classVal
         ## Note that id is = 1 because id INTEGER PRIMARY KEY defaults to 1 in sqlite3 databases
@@ -280,8 +279,11 @@ class scrape(startFishing):
         self.analyzers = []
         self.errors = []
         self.allErrors = allErrors
-        self.shortener = pyshorteners.Shortener()
-        self.unshortener = UnshortenIt()
+        self.data = {}
+        ## TODO: I'm working on restructuring this __init__ method
+        ## Having allFeatures and allFeatureNames bugs me a bit
+        # self.shortener = pyshorteners.Shortener()
+        # self.unshortener = UnshortenIt()
         self.allFeatures = allFeatures
         self.allFeatureNames = allFeatureNames
         if not os.path.isfile(self.urlFile):
@@ -535,19 +537,18 @@ class scrape(startFishing):
         '''Exit the code correctly on an exception and adapt databases
         accordingly (if enabled)'''
         if self.database:
-            self.cursor.execute("SELECT id FROM metadata")
+            self.db.execute("SELECT id FROM metadata")
             numMetadata = len(self.cursor.fetchall())
-            self.cursor.execute("SELECT id FROM allData")
+            self.db.execute("SELECT id FROM allData")
             numAllData = len(self.cursor.fetchall())
             if numMetadata != numAllData:
                 for i in range(numMetadata - numAllData):
-                    self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
-                self.conn.commit()
+                    self.db.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
+                # self.conn.commit()
             if len(self.allFeatures) == 0 or len(self.allFeatureNames) == 0:
                 try:
                     self.driver.close()
                     self.driver.quit()
-                    jvm.stop()
                 except Exception:
                     pass
             else:
@@ -565,7 +566,6 @@ class scrape(startFishing):
                 try:
                     self.driver.close()
                     self.driver.quit()
-                    jvm.stop()
                 except Exception:
                     pass
             else:
@@ -591,6 +591,9 @@ class scrape(startFishing):
         if self.database:
             if not id:
                 classToggle = 0
+                ## TODO: I need to re-examine this function (and a lot of functions in this class)
+                ## In the context of refactoring; I want a lot of this to be semi-standalone and simple
+                ##
                 for analyzer in self.analyzers:
                     for name, datatype in analyzer.featureNames.items():
                         if name == "classVal" and classToggle == 0:
