@@ -345,7 +345,7 @@ class scrape(startFishing):
                 # to not return anything
                 currentTables = self.db.all("SELECT * FROM information_schema.tables")
                 # currentTables = [item for table in currentTables for item in table]
-                print(currentTables)
+                logging.info("current db tables" + str(currentTables))
                 for tableName, creation in tables.items():
                     if tableName in currentTables:
                         continue
@@ -397,14 +397,13 @@ class scrape(startFishing):
         '''A function that takes the name of an analyzer passed to it, and adds it
         to the self.analyzers array, which is then used
         to collect data accordingly throughout (tables, dataset, attributes)'''
-        print(str(analyzer.name()) + " added!")
+        logging.info(str(analyzer.name()) + " added!")
         self.analyzers.append(analyzer)
         # A table is created for each added analyzer in this function
         columns = []
         if self.database:
-            self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
-            currentTables = self.cursor.fetchall()
-            currentTables = [item for table in currentTables for item in table]
+            # self.cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+            currentTables = self.db.all("SELECT * FROM information_schema.tables")
             if analyzer.name() not in currentTables:
                 for name, datatype in analyzer.featureNames.items():
                     # Still should add more support for different datatypes
