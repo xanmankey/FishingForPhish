@@ -224,13 +224,17 @@ class Selector():
         """
 
     def InfoGain(self):
+        raise NotImplementedError
 
     def Correlational(self):
+        raise NotImplementedError
 
     def ChiSquared(self):
+        raise NotImplementedError
 
     @overrides
     def FS(self):
+        raise NotImplementedError
 
 
 class Classifier():
@@ -239,13 +243,17 @@ class Classifier():
         as well as a custom classification method that can be overriden."""
 
     def NaiveBayes(self):
+        raise NotImplementedError
 
     def J48(self):
+        raise NotImplementedError
 
     def JRIP(self):
+        raise NotImplementedError
 
     @overrides
     def Classify(self):
+        raise NotImplementedError
 
 
 # The scrape class; inherits from the startFishing initialization class.
