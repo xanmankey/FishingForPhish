@@ -406,59 +406,56 @@ class scrape(startFishing):
             currentTables = self.db.all("SELECT * FROM information_schema.tables")
             if analyzer.name() not in currentTables:
                 for name, datatype in analyzer.featureNames.items():
-                    # Still should add more support for different datatypes
-                    # in regards to autogenerating databases and datasets
-                    # and the relation between the two
-                    ## TODO: remove datatyping based on tables; I'm gonna store data in memory
+                    # The 3 datatypes I ended up working with are below
                     if datatype.lower() == "numeric":
                         columns.append(name + " FLOAT")
                     elif datatype.lower() == "string":
                         columns.append(name + " TEXT")
                     elif datatype.lower() == "nominal":
                         columns.append(name + " BOOLEAN")
-                self.cursor.execute("CREATE TABLE {} (id INTEGER PRIMARY KEY, {})".format(
+                self.db.execute("CREATE TABLE {} (id INTEGER PRIMARY KEY, {})".format(
                     analyzer.name(), ",".join(name for name in columns)))
 
-    def shorten(self, url, validate=False):
-        '''Shortens the url using pyshorteners and the clckru shortener. Unique characters are
-        generated at the end of the url which are then used to rename the file, and once the id in
-        front of the filename is removed, https://tinyurl.com/" can be added back to the url and combined
-        with the expand() method below to get the original url from a filename'''
-        if not validate:
-            if not validators.url(url):
-                raise ValueError("Invalid url: " + url)
-        try:
-            shortUrl = self.shortener.tinyurl.short(url)
-        except Exception as e:
-            self.errors.append(e)
-            return False
-        print("shortUrl: " + str(shortUrl))
-        return shortUrl
+    # def shorten(self, url, validate=False):
+    #     '''Shortens the url using pyshorteners and the clckru shortener. Unique characters are
+    #     generated at the end of the url which are then used to rename the file, and once the id in
+    #     front of the filename is removed, https://tinyurl.com/" can be added back to the url and combined
+    #     with the expand() method below to get the original url from a filename'''
+    #     if not validate:
+    #         if not validators.url(url):
+    #             raise ValueError("Invalid url: " + url)
+    #     try:
+    #         shortUrl = self.shortener.tinyurl.short(url)
+    #     except Exception as e:
+    #         self.errors.append(e)
+    #         return False
+    #     print("shortUrl: " + str(shortUrl))
+    #     return shortUrl
 
-    def expand(self, urlID):
-        '''Expands a filename into the url associated with the file using pyshorteners and clck.ru.
-        Explained more in the shorten() function above'''
-        filename = "https://tinyurl.com/" + urlID
-        filename = filename.replace("_" + str(self.id) + "_", "")
-        try:
-            url = self.unshortener.unshorten(filename)
-            print("unshortenedUrl: " + url)
-        except Exception as e:
-            print(str(e))
-            logging.warning("Could not expand the url!")
-            self.errors.append(e)
-            return False
-        return url
+    # def expand(self, urlID):
+    #     '''Expands a filename into the url associated with the file using pyshorteners and clck.ru.
+    #     Explained more in the shorten() function above'''
+    #     filename = "https://tinyurl.com/" + urlID
+    #     filename = filename.replace("_" + str(self.id) + "_", "")
+    #     try:
+    #         url = self.unshortener.unshorten(filename)
+    #         print("unshortenedUrl: " + url)
+    #     except Exception as e:
+    #         print(str(e))
+    #         logging.warning("Could not expand the url!")
+    #         self.errors.append(e)
+    #         return False
+    #     return url
 
-    def generateFilename(self, url):
-        '''A convenience method for generating a filename to name files associated with a website.
-        Follow the naming conventions of "_<self.id>_<final 5 characters of shortened url>.png".'''
-        shortUrl = self.shorten(url)
-        if not shortUrl:
-            return False
-        filename = shortUrl.replace("https://tinyurl.com/", "")
-        filename = "_" + str(self.id) + "_" + filename
-        return filename
+    # def generateFilename(self, url):
+    #     '''A convenience method for generating a filename to name files associated with a website.
+    #     Follow the naming conventions of "_<self.id>_<final 5 characters of shortened url>.png".'''
+    #     shortUrl = self.shorten(url)
+    #     if not shortUrl:
+    #         return False
+    #     filename = shortUrl.replace("https://tinyurl.com/", "")
+    #     filename = "_" + str(self.id) + "_" + filename
+    #     return filename
 
     def siteValidation(self, url, validated=False):
         '''Method that attempts to validate a site, specifically checking if Selenium can
