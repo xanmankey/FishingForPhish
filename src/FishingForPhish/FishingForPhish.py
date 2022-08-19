@@ -327,20 +327,22 @@ class scrape(startFishing):
             ## It's a HORRIBLE idea to append to a numpy array or a pandas dataframe
             ## Converted databases to pandas dataframes
             # Consistent db table names
-            # tables = {
-            #     "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
-            #     url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
-            #     "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
-            #     "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
-            # }
+            tables = {
+                "metadata": """CREATE TABLE metadata (id INTEGER PRIMARY KEY,
+                url TEXT UNIQUE, UTCtime INT, classification TEXT)""",
+                "errors": """CREATE TABLE errors (url TEXT UNIQUE, error TEXT)""",
+                "hashes": """CREATE TABLE hashes (phash TEXT, dhash TEXT, url TEXT)"""
+            }
             if os.path.isfile(self.database):
                 try:
                     self.db = Postgres(self.database)
                 except Exception:
                     raise FileNotFoundError(
                         """Sorry, can't connect to database {self.database}""")
-                self.db.execute("SELECT * FROM information_schema.tables")
-                currentTables = [item for table in currentTables for item in table]
+                # With postgres, use one to return one value, all to return all values, and run
+                # to not return anything
+                tables = self.db.all("SELECT * FROM information_schema.tables")
+                # currentTables = [item for table in currentTables for item in table]
                 for tableName, creation in tables.items():
                     if tableName in currentTables:
                         continue
