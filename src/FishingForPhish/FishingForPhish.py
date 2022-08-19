@@ -677,9 +677,7 @@ class scrape(startFishing):
             raise ReferenceError("Cannot scrape without a valid driver instance")
         # Create the allData table
         if self.database:
-            self.db.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
-            currentTables = self.cursor.fetchall()
-            currentTables = [item for table in currentTables for item in table]
+            currentTables = self.db.all("SELECT * FROM information_schema.tables")
             if "allData" not in currentTables:
                 featureNames = []
                 analyzerNum = 1
@@ -697,7 +695,7 @@ class scrape(startFishing):
                             datatype = " BOOLEAN"
                         featureNames.append(name + datatype)
                     analyzerNum += 1
-                self.cursor.execute("CREATE TABLE allData (id INTEGER PRIMARY KEY, {})".format(
+                self.db.execute("CREATE TABLE allData (id INTEGER PRIMARY KEY, {})".format(
                     ",".join(name for name in featureNames)))
         with open(self.urlFile, "r") as f:
             for line in f:
@@ -710,10 +708,9 @@ class scrape(startFishing):
                 if not self.siteValidation(url):
                     if self.database:
                         try:
-                            self.cursor.execute(
+                            self.db.execute(
                                 "INSERT INTO errors (url, error) VALUES (?, ?)",
                                 (url, ", ".join(str(error) for error in self.errors)))
-                            self.conn.commit()
                         except Exception:
                             pass
                     self.checkInternet()
@@ -726,10 +723,9 @@ class scrape(startFishing):
                 if not filename:
                     if self.database:
                         try:
-                            self.cursor.execute(
+                            self.db.execute(
                                 "INSERT INTO errors (url, error) VALUES (?, ?)",
                                 (url, ", ".join(str(error) for error in self.errors)))
-                            self.conn.commit()
                         except Exception:
                             pass
                     self.urlNum += 1
@@ -739,10 +735,9 @@ class scrape(startFishing):
                 if not self.expand(urlID):
                     if self.database:
                         try:
-                            self.cursor.execute(
+                            self.db.execute(
                                 "INSERT INTO errors (url, error) VALUES (?, ?)",
                                 (url, ", ".join(str(error) for error in self.errors)))
-                            self.conn.commit()
                         except Exception:
                             pass
                     self.urlNum += 1
@@ -752,10 +747,9 @@ class scrape(startFishing):
                     if self.database:
                         try:
                             time = self.getTime()
-                            self.cursor.execute(
+                            self.db.execute(
                                 "INSERT INTO metadata (url, UTCtime, classification) VALUES (?, ?, ?)",
                                 (url, time, self.classVal))
-                            self.conn.commit()
                         except Exception as e:
                             # In case the url is already in the database, just continuing with the
                             # main event loop
@@ -778,13 +772,12 @@ class scrape(startFishing):
                     if not self.saveScreenshot(url, filename, validated=True):
                         if self.database:
                             try:
-                                self.cursor.execute(
+                                self.db.execute(
                                     "INSERT INTO errors (url, error) VALUES (?, ?)",
                                     (url, ", ".join(str(error) for error in self.errors)))
                             except Exception:
                                 pass
-                            self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
-                            self.conn.commit()
+                            self.db.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                         self.urlNum += 1
                         self.allErrors.append(self.errors)
                         continue
@@ -835,13 +828,12 @@ class scrape(startFishing):
                                 self.errors.append(e)
                                 if self.database:
                                     try:
-                                        self.cursor.execute(
+                                        self.db.execute(
                                             "INSERT INTO errors (url, error) VALUES (?, ?)",
                                             (url, ", ".join(str(error) for error in self.errors)))
                                     except Exception:
                                         pass
-                                    self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
-                                    self.conn.commit()
+                                    self.db.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                                 try:
                                     os.remove(self.dataDir + "/screenshots/" + filename + ".png")
                                 except FileNotFoundError:
@@ -901,13 +893,12 @@ class scrape(startFishing):
                         if self.database:
                             self.errors.append('analyzerError')
                             try:
-                                self.cursor.execute(
+                                self.db.execute(
                                     "INSERT INTO errors (url, error) VALUES (?, ?)",
                                     (url, ", ".join(str(error) for error in self.errors)))
                             except Exception:
                                 pass
-                            self.cursor.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
-                            self.conn.commit()
+                            self.db.execute("DELETE FROM metadata ORDER BY id DESC LIMIT 1")
                         self.allErrors.append(self.errors)
                         self.id -= 1
                         try:
@@ -933,18 +924,16 @@ class scrape(startFishing):
                     if self.database:
                         # newFeatures = {key:val for key, val in newFeatures.items() if key != 'classVal'}
                         # newFeatureNames = {key:val for key, val in newFeatureNames.items() if key != 'classVal'}
-                        self.cursor.execute("""INSERT INTO {} ({}) VALUES ({})""".format(analyzer.name(),
+                        self.db.execute("""INSERT INTO {} ({}) VALUES ({})""".format(analyzer.name(),
                             ",".join(name for name in newFeatureNames.keys()),
                             ",".join("?" for i in range(len(newFeatureNames.keys())))),
                             [value for value in newFeatures.values()])
                     classCheck += 1
                 if classCheck == len(self.analyzers) + 1:
                     if self.database:
-                        self.cursor.execute("""INSERT INTO allData ({}) VALUES ({})""".format(
+                        self.db.execute("""INSERT INTO allData ({}) VALUES ({})""".format(
                             ",".join(name for name in self.allFeatureNames.keys()),
                             ",".join("?" for i in range(len(self.allFeatureNames.keys())))),
-                            [value for value in features.values()])
-                        self.conn.commit()
                     self.allFeatures.append(features)
                 self.id += 1
                 self.urlNum += 1
