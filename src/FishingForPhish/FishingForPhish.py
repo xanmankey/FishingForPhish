@@ -1000,7 +1000,8 @@ class saveFish(scrape):
     # Comparing attributes from ranker Feature Selection methods
 
     ## For FS and probably classification, I plan on keeping up with the @override functionality
-    ## (to allow for maximum customization)
+    ## (to allow for maximum customization).
+    ## Not sure how I want to group these yet though (maybe static methods of a selection class? Similar to analyzer)
     def InfoGain(self):
 
     def Correlational(self):
