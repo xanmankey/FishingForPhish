@@ -999,6 +999,14 @@ class saveFish(scrape):
 
     # Comparing attributes from ranker Feature Selection methods
 
+    ## For FS and probably classification, I plan on keeping up with the @override functionality
+    ## (to allow for maximum customization)
+    def InfoGain(self):
+
+    def Correlational(self):
+
+    def ChiSquared(self):
+
     ## Feature selection with Scikit-learn?
     def FS(self):
         '''The feature selection process used; the correlational, information gain, and chiSquared
