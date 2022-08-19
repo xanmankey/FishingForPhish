@@ -349,17 +349,18 @@ class scrape(startFishing):
                         continue
                     else:
                         # execute is an alias for run
-                        self.cursor.execute(creation)
+                        self.db.execute(creation)
                 ## Not sure if committing is necessary with postgres
                 # self.conn.commit()
             else:
                 open(self.dataDir + "/data.db", "w").close()
-                self.conn = sqlite3.connect(self.database)
-                self.conn.row_factory = sqlite3.Row
-                self.cursor = self.conn.cursor()
+                self.db = Postgres(self.dataDir + "/data.db")
+                # self.conn = sqlite3.connect(self.database)
+                # self.conn.row_factory = sqlite3.Row
+                # self.cursor = self.conn.cursor()
                 for creation in tables.values():
-                    self.cursor.execute(creation)
-                self.conn.commit()
+                    self.db.execute(creation)
+                # self.conn.commit()
 
     def preallocate(length):
         '''Preallocate memory for a numpy array and pandas dataframe.
