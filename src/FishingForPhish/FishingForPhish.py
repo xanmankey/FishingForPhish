@@ -409,6 +409,7 @@ class scrape(startFishing):
                     # Still should add more support for different datatypes
                     # in regards to autogenerating databases and datasets
                     # and the relation between the two
+                    ## TODO: remove datatyping based on tables; I'm gonna store data in memory
                     if datatype.lower() == "numeric":
                         columns.append(name + " FLOAT")
                     elif datatype.lower() == "string":
