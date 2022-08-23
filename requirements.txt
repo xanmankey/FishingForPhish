@@ -1,3 +1,4 @@
+# You may need to add the --no-binary flag when installing to avoid psycopg2 errors
 async-generator==1.10
 attrs==22.1.0
 beautifulsoup4==4.10.0
