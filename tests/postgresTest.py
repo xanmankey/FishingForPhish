@@ -4,6 +4,8 @@
 # '-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wshadow'
 # Decided to test using psycopg2 for the extra control (I might migrate back to Postgres testing, but I have to figure out this error first)
 # Maybe watch THIS tutorial for help: https://www.youtube.com/watch?v=M2NzvnfS-hI
+# TEST INSTALL: PATH=/usr/pgsql-14.5/lib:$PATH pip install --no-binary psycopg2 psycopg2
+# (looking at setup proposed here: https://stackoverflow.com/questions/5500332/cant-connect-the-postgresql-with-psycopg2)
 import psycopg2
 
 def main():
