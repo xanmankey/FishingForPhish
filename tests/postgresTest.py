@@ -8,7 +8,7 @@ import psycopg2
 
 def main():
     # Create db (using a testDB rn for further abstraction of the issue)
-    con = psycopg2.connect(database="testDB", user="postgres", password="", host="127.0.0.1", port="5432")
+    con = psycopg2.connect(database="testDB", user="admin", password="", host="localhost", port="5432")
     cur = con.cursor()
     # Create table
     cur.execute("CREATE TABLE test (name text)")
