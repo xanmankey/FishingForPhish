@@ -6,6 +6,7 @@
 # Maybe watch THIS tutorial for help: https://www.youtube.com/watch?v=M2NzvnfS-hI
 # TEST INSTALL: PATH=/usr/pgsql-14.5/lib:$PATH pip install --no-binary psycopg2 psycopg2
 # (looking at setup proposed here: https://stackoverflow.com/questions/5500332/cant-connect-the-postgresql-with-psycopg2)
+# To find psycopg2
 import psycopg2
 
 def main():
