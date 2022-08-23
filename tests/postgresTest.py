@@ -5,7 +5,7 @@
 # Decided to test using psycopg2 for the extra control (I might migrate back to Postgres testing, but I have to figure out this error first)
 # Maybe watch THIS tutorial for help: https://www.youtube.com/watch?v=M2NzvnfS-hI
 # TEST INSTALL: PATH=/usr/pgsql-14.5/lib:$PATH pip install --no-binary psycopg2 psycopg2
-# ?PATH=/usr/bin/pg_config/lib:$PATH pip install --no-binary psycopg2 psycopg2
+# PATH=/usr/bin/pg_config/lib:$PATH pip3 install --no-binary psycopg2 psycopg2
 # ?/usr/bin/pg_config
 # (looking at setup proposed here: https://stackoverflow.com/questions/5500332/cant-connect-the-postgresql-with-psycopg2)
 # To find psycopg2
