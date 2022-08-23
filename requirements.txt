@@ -1,3 +1,6 @@
+# Need to add an addendum that psycopg2 is required; you can either build from source following instructions (recommended)
+# or use a prebuilt binary (instructions
+
 async-generator==1.10
 attrs==22.1.0
 beautifulsoup4==4.10.0
