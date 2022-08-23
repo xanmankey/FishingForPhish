@@ -3,10 +3,11 @@
 # Original clang CFLAGS:
 # '-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wshadow'
 # Decided to test using psycopg2 for the extra control (I might migrate back to Postgres testing, but I have to figure out this error first)
+# Maybe watch THIS tutorial for help: https://www.youtube.com/watch?v=M2NzvnfS-hI
 import psycopg2
 
 def main():
-    # Create db
+    # Create db (using a testDB rn for further abstraction of the issue)
     con = psycopg2.connect(database="testDB", user="postgres", password="", host="127.0.0.1", port="5432")
     cur = con.cursor()
     # Create table
