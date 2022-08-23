@@ -1,5 +1,5 @@
 # Need to add an addendum that psycopg2 is required; you can either build from source following instructions (recommended)
-# or use a prebuilt binary (instructions
+# or use a prebuilt binary (pip3 install psycopg2-binary)
 
 async-generator==1.10
 attrs==22.1.0
